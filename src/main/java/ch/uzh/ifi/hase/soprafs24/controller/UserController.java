@@ -7,7 +7,10 @@ import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ import java.util.List;
  */
 @RestController
 public class UserController {
+
 
   private final UserService userService;
 
@@ -53,5 +57,20 @@ public class UserController {
     User createdUser = userService.createUser(userInput);
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
+  }
+
+  @PutMapping("/users/{userId}/image")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void saveProfilePicture(@PathVariable Long userId, @RequestHeader("token") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
+    // TO DO: Check for file size
+    userService.saveProfilePicture(userId, token, imageFile);
+  }
+
+  @GetMapping("/users/{userId}/image")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public byte[] getProfilePicture(@PathVariable Long userId, @RequestHeader("token") String token) throws IOException {
+    return userService.getProfilePicture(userId, token);
   }
 }

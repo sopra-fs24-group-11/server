@@ -37,6 +37,9 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
+  @Embedded
+  private Image profileImage;
+
   public Long getId() {
     return id;
   }
@@ -75,5 +78,13 @@ public class User implements Serializable {
 
   public void setStatus(UserStatus status) {
     this.status = status;
+  }
+
+  public Image getProfileImage() {
+    return profileImage;
+  }
+
+  public void setProfileImage(Image profileImage) {
+    this.profileImage = profileImage;
   }
 }
