@@ -38,6 +38,7 @@ public class UserService {
 
   private final Logger log = LoggerFactory.getLogger(UserService.class);
 
+  private final Random random = new Random();
   private final UserRepository userRepository;
 
   @Autowired
@@ -168,7 +169,6 @@ public class UserService {
     g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
     // random background colour
-    Random random = new Random();
     Color bgColor = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     g2d.setColor(bgColor);
     g2d.fillRect(0, 0, width, height);
@@ -191,7 +191,6 @@ public class UserService {
       ImageIO.write(image, "jpg", baos);
       return baos.toByteArray();
     } catch (IOException e) {
-      e.printStackTrace();
       return null;
     }
   }
@@ -202,7 +201,7 @@ public class UserService {
       File file = new File(fileName);
       ImageIO.write(ImageIO.read(new ByteArrayInputStream(imageData)), "jpg", file);
     } catch (IOException e) {
-      e.printStackTrace();
+      return;
     }
   }
 
