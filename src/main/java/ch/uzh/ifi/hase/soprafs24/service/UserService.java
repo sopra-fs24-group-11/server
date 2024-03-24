@@ -63,6 +63,7 @@ public class UserService {
     newUser.setProfileImage(profileImage);
 
     checkIfUserNameExists(newUser);
+    checkIfUserNameIsValid(newUser);
     // saves the given entity but data is only persisted in the database once
     // flush() is called
     newUser = userRepository.save(newUser);
@@ -85,9 +86,16 @@ public class UserService {
   private void checkIfUserNameExists(User userToBe) {
     User userByUsername = userRepository.findByUsername(userToBe.getUsername());
 
-    String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
+    String baseErrorMessage = "The username provided is not unique. Therefore, the user could not be created!";
     if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+    }
+  }
+  private void checkIfUserNameIsValid(User userToBe) {
+    String un = userToBe.getUsername();
+    String baseErrorMessage = "The username should have at least two characters, no spaces, and only contain letters, numbers or '-._'!";
+    if (un.length()<2 || un.isBlank() || un.contains(" ") || !un.matches("^[a-zA-Z0-9\\-._]+$")) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
     }
   }
 
