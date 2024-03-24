@@ -38,6 +38,7 @@ public class User implements Serializable {
   private UserStatus status;
 
   @Embedded
+  @Column(nullable = false)
   private Image profileImage;
 
   public Long getId() {

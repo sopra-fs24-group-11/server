@@ -45,6 +45,10 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
+  public User getUser(Long userId) {
+    return userRepository.findById(userId).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+  }
 
   public List<User> getUsers() {
     return this.userRepository.findAll();
@@ -53,6 +57,11 @@ public class UserService {
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.OFFLINE);
+
+    Image profileImage = new Image();
+    profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
+    newUser.setProfileImage(profileImage);
+
     checkIfUserNameExists(newUser);
     // saves the given entity but data is only persisted in the database once
     // flush() is called
@@ -83,8 +92,18 @@ public class UserService {
   }
 
 
-
-
+  public User loginUser(User loginUser) {
+    User existingUser = userRepository.findByUsername(loginUser.getUsername());
+    if (existingUser == null || !Objects.equals(loginUser.getName(), existingUser.getName())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              "The username and/or password provided are wrong. Please try again to log in!");
+    }
+    existingUser.setStatus(UserStatus.ONLINE);
+    existingUser = userRepository.save(existingUser);
+    userRepository.flush();
+    log.debug("Updated UserStatus for User: {}", existingUser);
+    return existingUser;
+  }
 
 
 
@@ -92,9 +111,9 @@ public class UserService {
    * Image Service
    */
   public void saveProfilePicture(Long userId, String token, MultipartFile imageFile) throws IOException {
-    User user = userRepository.findById(userId).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    // compare tokens
+    User user = getUser(userId);
+    // TO DO: compare tokens
+
     byte[] imageData = imageFile.getBytes();
     Image profileImage = new Image();
     profileImage.setProfilePicture(imageData);
@@ -103,15 +122,27 @@ public class UserService {
     userRepository.flush();
     log.debug("Profile picture saved for User: {}", user);
   }
+
+  public void deleteProfilePicture (Long userId, String token){
+    User user = getUser(userId);
+    // TO DO: compare tokens
+
+    Image profileImage = user.getProfileImage();
+    profileImage.setProfilePicture(generateDefaultImage(user.getUsername()));
+    user.setProfileImage(profileImage);
+    userRepository.save(user);
+    userRepository.flush();
+    log.debug("Profile picture saved for User: {}", user);
+  }
+
+
   public byte[] getProfilePicture(Long userId, String token) {
-    User user = userRepository.findById(userId).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    // compare tokens
-    /*Image profileImage = user.getProfileImage();
-    return profileImage.getProfilePicture();*/
-    byte[] imageData = generateDefaultImage("Masd");
-    saveGeneratedImage(imageData, "default_image.jpg");
-    return imageData;
+    User user = getUser(userId);
+    // TO DO: compare tokens
+
+    Image profileImage = user.getProfileImage();
+    viewImageInFolder(profileImage.getProfilePicture());
+    return profileImage.getProfilePicture();
   }
 
 
@@ -127,12 +158,13 @@ public class UserService {
     Graphics2D g2d = image.createGraphics();
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
     // random background colour
     Random random = new Random();
     Color bgColor = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
-
     g2d.setColor(bgColor);
     g2d.fillRect(0, 0, width, height);
+
     Font font = new Font("Arial", Font.BOLD, 300);
     g2d.setFont(font);
     g2d.setColor(Color.WHITE);
@@ -151,20 +183,16 @@ public class UserService {
       ImageIO.write(image, "jpg", baos);
       return baos.toByteArray();
     } catch (IOException e) {
-      // Handle exception
       e.printStackTrace();
       return null;
     }
   }
-  private void saveGeneratedImage(byte[] imageData, String fileName) {
+
+  private void viewImageInFolder(byte[] imageData) {
+    String fileName = "default_image.jpg";
     try {
-      // Create a new file with the specified file name
       File file = new File(fileName);
-
-      // Write the image data to the file
       ImageIO.write(ImageIO.read(new ByteArrayInputStream(imageData)), "jpg", file);
-
-      System.out.println("Image saved as: " + file.getAbsolutePath());
     } catch (IOException e) {
       e.printStackTrace();
     }
