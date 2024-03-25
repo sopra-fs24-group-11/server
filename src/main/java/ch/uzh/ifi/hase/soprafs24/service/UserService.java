@@ -88,6 +88,19 @@ public class UserService {
     return newUser;
   }
 
+  public String loginUser(User loginUser) {
+    User existingUser = userRepository.findByUsername(loginUser.getUsername());
+    if (existingUser == null || !Objects.equals(loginUser.getPassword(), existingUser.getPassword())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              "The username and/or password provided are wrong. Please try again to log in!");
+    }
+    existingUser.setStatus(UserStatus.ONLINE);
+    existingUser = userRepository.save(existingUser);
+    userRepository.flush();
+    log.debug("Updated UserStatus for User: {}", existingUser);
+    return existingUser.getToken();
+  }
+
   public void updateUser(String token, User user) {
     User existingUser = getUserByToken(token);
     checkIfUserNameIsValid(user);
@@ -143,18 +156,7 @@ public class UserService {
 
 
 
-  public String loginUser(User loginUser) {
-    User existingUser = userRepository.findByUsername(loginUser.getUsername());
-    if (existingUser == null || !Objects.equals(loginUser.getPassword(), existingUser.getPassword())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "The username and/or password provided are wrong. Please try again to log in!");
-    }
-    existingUser.setStatus(UserStatus.ONLINE);
-    existingUser = userRepository.save(existingUser);
-    userRepository.flush();
-    log.debug("Updated UserStatus for User: {}", existingUser);
-    return existingUser.getToken();
-  }
+
 
 
 
@@ -192,7 +194,7 @@ public class UserService {
     // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();
-    viewImageInFolder(profileImage.getProfilePicture());
+    /*viewImageInFolder(profileImage.getProfilePicture());*/
     return profileImage.getProfilePicture();
   }
 
