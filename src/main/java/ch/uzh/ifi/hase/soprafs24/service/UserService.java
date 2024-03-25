@@ -124,6 +124,7 @@ public class UserService {
 
   public void deleteUser(String token) {
     User user = getUserByToken(token);
+    // To DO: Delete all Friends and Trips
     userRepository.deleteById(user.getId());
   }
 

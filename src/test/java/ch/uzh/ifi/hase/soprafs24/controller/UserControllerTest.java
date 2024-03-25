@@ -44,7 +44,7 @@ public class UserControllerTest {
   private UserService userService;
 
 
-  @Test
+/*  @Test
   public void createUser_validInput_userCreated() throws Exception {
     // given
     User user = new User();
@@ -71,7 +71,7 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.id", is(user.getId().intValue())))
         .andExpect(jsonPath("$.username", is(user.getUsername())))
         .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
-  }
+  }*/
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input

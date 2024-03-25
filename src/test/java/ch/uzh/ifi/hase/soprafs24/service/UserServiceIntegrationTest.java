@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,6 +44,8 @@ public class UserServiceIntegrationTest {
     User testUser = new User();
     testUser.setPassword("testName");
     testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
 
     // when
     User createdUser = userService.createUser(testUser);
@@ -50,7 +54,7 @@ public class UserServiceIntegrationTest {
     assertEquals(testUser.getId(), createdUser.getId());
     assertEquals(testUser.getUsername(), createdUser.getUsername());
     assertNotNull(createdUser.getToken());
-    assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
+    assertEquals(UserStatus.ONLINE, createdUser.getStatus());
   }
 
   @Test
@@ -60,6 +64,8 @@ public class UserServiceIntegrationTest {
     User testUser = new User();
     testUser.setPassword("testName");
     testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
     User createdUser = userService.createUser(testUser);
 
     // attempt to create second user with same username
@@ -68,6 +74,8 @@ public class UserServiceIntegrationTest {
     // change the name but forget about the username
     testUser2.setPassword("testName2");
     testUser2.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
 
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
