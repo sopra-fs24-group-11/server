@@ -103,7 +103,7 @@ public class UserService {
 
   public User loginUser(User loginUser) {
     User existingUser = userRepository.findByUsername(loginUser.getUsername());
-    if (existingUser == null || !Objects.equals(loginUser.getName(), existingUser.getName())) {
+    if (existingUser == null || !Objects.equals(loginUser.getPassword(), existingUser.getPassword())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
               "The username and/or password provided are wrong. Please try again to log in!");
     }
