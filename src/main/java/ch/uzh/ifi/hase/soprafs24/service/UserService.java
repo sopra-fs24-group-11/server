@@ -110,7 +110,8 @@ public class UserService {
 
 
   public void deleteUser(String token) {
-    return;
+    User user = getUserByToken(token);
+    userRepository.deleteById(user.getId());
   }
 
 
