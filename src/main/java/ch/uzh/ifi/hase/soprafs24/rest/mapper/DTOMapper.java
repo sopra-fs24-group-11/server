@@ -2,8 +2,10 @@ package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -25,6 +27,8 @@ public interface DTOMapper {
 
   @Mapping(source = "password", target = "password")
   @Mapping(source = "username", target = "username")
+  @Mapping(source = "email", target = "email")
+  @Mapping(source = "birthday", target = "birthday")
   User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
   @Mapping(source = "id", target = "id")
@@ -38,5 +42,15 @@ public interface DTOMapper {
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "token", target = "token")
-  UserLoginDTO convertEntityToUserLoginDTO(User user);
+  UserLoginGetDTO convertEntityToUserLoginGetDTO(User user);
+
+  @Mapping(source = "password", target = "password")
+  @Mapping(source = "username", target = "username")
+  User convertUserLoginPostDTOtoEntity(UserLoginPostDTO userLoginPostDTO);
+
+  @Mapping(source = "password", target = "password")
+  @Mapping(source = "username", target = "username")
+  @Mapping(source = "email", target = "email")
+  @Mapping(source = "birthday", target = "birthday")
+  User convertUserPutDTOToEntity(UserPutDTO userPutDTO);
 }

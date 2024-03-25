@@ -59,16 +59,18 @@ public class UserService {
 
 
   public User createUser(User newUser) {
+    checkIfUserNameExists(newUser);
+    checkIfUserNameIsValid(newUser);
+
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
     newUser.setCreationDate(LocalDate.now());
+    newUser.setLevel(0.00);
 
     Image profileImage = new Image();
     profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
     newUser.setProfileImage(profileImage);
 
-    checkIfUserNameExists(newUser);
-    checkIfUserNameIsValid(newUser);
     // saves the given entity but data is only persisted in the database once
     // flush() is called
     newUser = userRepository.save(newUser);
@@ -77,6 +79,32 @@ public class UserService {
     log.debug("Created Information for User: {}", newUser);
     return newUser;
   }
+
+  public void updateUser(Long id, String token, User user) {
+    User existingUser = getUser(id, token);
+    checkIfUserNameIsValid(user);
+    /*checkIfEmailIsValid(user);*/
+    if (!Objects.equals(user.getUsername(), existingUser.getUsername())) {
+      checkIfUserNameExists(user);
+    }
+
+    // Update the existing user with new information
+    existingUser.setUsername(user.getUsername());
+    existingUser.setBirthday(user.getBirthday());
+    existingUser.setEmail(user.getEmail());
+    existingUser.setPassword(user.getPassword());
+    // Save the updated user
+    existingUser = userRepository.save(existingUser);
+    userRepository.flush();
+    log.debug("Updated Information for User: {}", existingUser);
+  }
+
+
+
+  public void deleteUser(Long id, String token) {
+    return;
+  }
+
 
   /**
    * This is a helper method that will check the uniqueness criteria of the
@@ -104,8 +132,14 @@ public class UserService {
     }
   }
 
+  public void checkIfEmailIsValid(User user) {
+    String email = user.getEmail();
+    if(!email.matches("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Invalid email");
+    };
+  }
 
-  public User loginUser(User loginUser) {
+  public String loginUser(User loginUser) {
     User existingUser = userRepository.findByUsername(loginUser.getUsername());
     if (existingUser == null || !Objects.equals(loginUser.getPassword(), existingUser.getPassword())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -115,7 +149,7 @@ public class UserService {
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
     log.debug("Updated UserStatus for User: {}", existingUser);
-    return existingUser;
+    return existingUser.getToken();
   }
 
 

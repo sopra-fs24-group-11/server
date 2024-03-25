@@ -2,8 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 import java.time.LocalDate;
 
-public class UserPostDTO {
-
+public class UserPutDTO {
   private String password;
 
   private String username;

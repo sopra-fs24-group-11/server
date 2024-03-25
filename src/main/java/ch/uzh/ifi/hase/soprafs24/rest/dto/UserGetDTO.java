@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDate;
 

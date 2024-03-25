@@ -38,7 +38,7 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @Column
+  @Column(nullable = false)
   private LocalDate birthday;
 
   @Column
@@ -47,7 +47,7 @@ public class User implements Serializable {
   @Column
   private Double level;
 
-  @Column
+  @Column(nullable = false)
   private String email;
 
   @Embedded
