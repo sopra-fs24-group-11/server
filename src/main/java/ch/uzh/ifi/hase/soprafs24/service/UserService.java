@@ -46,6 +46,14 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
+  public User getUserByToken(String token) {
+    User user = userRepository.findByToken(token);
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    }
+    return user;
+  }
+
   public User getUser(Long userId, String token) {
     User user =  userRepository.findById(userId).orElseThrow(() ->
             new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -80,8 +88,8 @@ public class UserService {
     return newUser;
   }
 
-  public void updateUser(Long id, String token, User user) {
-    User existingUser = getUser(id, token);
+  public void updateUser(String token, User user) {
+    User existingUser = getUserByToken(token);
     checkIfUserNameIsValid(user);
     /*checkIfEmailIsValid(user);*/
     if (!Objects.equals(user.getUsername(), existingUser.getUsername())) {
@@ -101,7 +109,7 @@ public class UserService {
 
 
 
-  public void deleteUser(Long id, String token) {
+  public void deleteUser(String token) {
     return;
   }
 
@@ -132,12 +140,7 @@ public class UserService {
     }
   }
 
-  public void checkIfEmailIsValid(User user) {
-    String email = user.getEmail();
-    if(!email.matches("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Invalid email");
-    };
-  }
+
 
   public String loginUser(User loginUser) {
     User existingUser = userRepository.findByUsername(loginUser.getUsername());
@@ -157,8 +160,8 @@ public class UserService {
   /**
    * Image Service
    */
-  public void saveProfilePicture(Long userId, String token, MultipartFile imageFile) throws IOException {
-    User user = getUser(userId, token);
+  public void saveProfilePicture(String token, MultipartFile imageFile) throws IOException {
+    User user = getUserByToken(token);
     // TO DO: compare tokens
 
     byte[] imageData = imageFile.getBytes();
@@ -170,8 +173,8 @@ public class UserService {
     log.debug("Profile picture saved for User: {}", user);
   }
 
-  public void deleteProfilePicture (Long userId, String token){
-    User user = getUser(userId, token);
+  public void deleteProfilePicture (String token){
+    User user = getUserByToken(token);
     // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();
@@ -183,8 +186,8 @@ public class UserService {
   }
 
 
-  public byte[] getProfilePicture(Long userId, String token) {
-    User user = getUser(userId, token);
+  public byte[] getProfilePicture(String token) {
+    User user = getUserByToken(token);
     // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();

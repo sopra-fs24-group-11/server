@@ -30,14 +30,10 @@ public class UserController {
   @PostMapping("/users/register")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public void createUser(@RequestBody UserPostDTO userPostDTO) {
-    // convert API user to internal representation
+  public String createUser(@RequestBody UserPostDTO userPostDTO) {
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
-    // create user
-    User createdUser = userService.createUser(userInput);
-    // convert internal representation of user back to API
-    /*return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);*/
+    User user = userService.createUser(userInput);
+    return user.getToken();
   }
 
   @PostMapping("/users/login")
@@ -48,48 +44,48 @@ public class UserController {
     return userService.loginUser(userInput);
   }
 
-  @GetMapping("/users/{userId}")
+  @GetMapping("/users")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO getUser(@PathVariable Long userId, @RequestHeader ("token") String token) {
-    User user = userService.getUser(userId, token);
+  public UserGetDTO getUser(@RequestHeader ("token") String token) {
+    User user = userService.getUserByToken(token);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
 
-  @PutMapping("/users/{userId}")
+  @PutMapping("/users")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void updateUser(@PathVariable Long userId, @RequestHeader ("token") String token, @RequestBody UserPutDTO userPutDTO) {
+  public void updateUser(@RequestHeader ("token") String token, @RequestBody UserPutDTO userPutDTO) {
     User user = DTOMapper.INSTANCE.convertUserPutDTOToEntity(userPutDTO);
-    userService.updateUser(userId, token, user);
+    userService.updateUser(token, user);
   }
 
-  @DeleteMapping("/users/{userId}")
+  @DeleteMapping("/users")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void deleteUser(@PathVariable Long userId, @RequestHeader ("token") String token) {
-    userService.deleteUser(userId, token);
+  public void deleteUser(@RequestHeader ("token") String token) {
+    userService.deleteUser(token);
   }
 
 
   // image
-  @PutMapping("/users/{userId}/image")
+  @PutMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void saveProfilePicture(@PathVariable Long userId, @RequestHeader("token") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
+  public void saveProfilePicture(@RequestHeader("token") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
     // TO DO: Check for file size and type
-    userService.saveProfilePicture(userId, token, imageFile);
+    userService.saveProfilePicture(token, imageFile);
   }
-  @GetMapping("/users/{userId}/image")
+  @GetMapping("/users/image")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public byte[] getProfilePicture(@PathVariable Long userId, @RequestHeader("token") String token) {
-    return userService.getProfilePicture(userId, token);
+  public byte[] getProfilePicture(@RequestHeader("token") String token) {
+    return userService.getProfilePicture(token);
   }
-  @DeleteMapping("/users/{userId}/image")
+  @DeleteMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void deleteProfilePicture(@PathVariable Long userId, @RequestHeader("token") String token) {
-    userService.deleteProfilePicture(userId, token);
+  public void deleteProfilePicture(@RequestHeader("token") String token) {
+    userService.deleteProfilePicture(token);
   }
 }
