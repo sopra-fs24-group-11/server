@@ -15,13 +15,13 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
 import java.util.*;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.awt.geom.Path2D;
 import java.util.List;
 import java.io.File;
 
@@ -46,18 +46,22 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  public User getUser(Long userId) {
-    return userRepository.findById(userId).orElseThrow(() ->
+  public User getUser(Long userId, String token) {
+    User user =  userRepository.findById(userId).orElseThrow(() ->
             new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    if (!token.equals(user.getToken())){
+      new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access denied");
+    };
+
+    return user;
   }
 
-  public List<User> getUsers() {
-    return this.userRepository.findAll();
-  }
 
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
-    newUser.setStatus(UserStatus.OFFLINE);
+    newUser.setStatus(UserStatus.ONLINE);
+    newUser.setCreationDate(LocalDate.now());
 
     Image profileImage = new Image();
     profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
@@ -120,7 +124,7 @@ public class UserService {
    * Image Service
    */
   public void saveProfilePicture(Long userId, String token, MultipartFile imageFile) throws IOException {
-    User user = getUser(userId);
+    User user = getUser(userId, token);
     // TO DO: compare tokens
 
     byte[] imageData = imageFile.getBytes();
@@ -133,7 +137,7 @@ public class UserService {
   }
 
   public void deleteProfilePicture (Long userId, String token){
-    User user = getUser(userId);
+    User user = getUser(userId, token);
     // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();
@@ -146,7 +150,7 @@ public class UserService {
 
 
   public byte[] getProfilePicture(Long userId, String token) {
-    User user = getUser(userId);
+    User user = getUser(userId, token);
     // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();

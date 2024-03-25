@@ -1,6 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
+import org.apache.tomcat.jni.Local;
+
+import java.time.LocalDate;
 
 public class UserGetDTO {
 
@@ -8,6 +11,14 @@ public class UserGetDTO {
   private String password;
   private String username;
   private UserStatus status;
+
+  private LocalDate birthday;
+  private LocalDate creationDate;
+  private Double level;
+
+  private String email;
+
+
 
   public Long getId() {
     return id;
@@ -33,6 +44,7 @@ public class UserGetDTO {
     this.username = username;
   }
 
+
   public UserStatus getStatus() {
     return status;
   }
@@ -40,4 +52,35 @@ public class UserGetDTO {
   public void setStatus(UserStatus status) {
     this.status = status;
   }
+
+  public LocalDate getBirthday() {
+    return birthday;
+  }
+
+  public void setBirthday (LocalDate birthday) {
+    this.birthday = birthday;
+  }
+  public LocalDate getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate (LocalDate creationDate) {
+    this.creationDate = creationDate;
+  }
+  public Double getLevel () {
+    return level;
+  }
+
+  public void setLevel (Double level) {
+    this.level = level;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
 }

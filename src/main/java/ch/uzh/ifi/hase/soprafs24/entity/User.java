@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
+import java.time.LocalDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,6 +37,18 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private UserStatus status;
+
+  @Column
+  private LocalDate birthday;
+
+  @Column
+  private LocalDate creationDate;
+
+  @Column
+  private Double level;
+
+  @Column
+  private String email;
 
   @Embedded
   @Column(nullable = false)
@@ -77,8 +90,38 @@ public class User implements Serializable {
     return status;
   }
 
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
   public void setStatus(UserStatus status) {
     this.status = status;
+  }
+
+  public LocalDate getBirthday() {
+    return birthday;
+  }
+
+  public void setBirthday (LocalDate birthday) {
+    this.birthday = birthday;
+  }
+  public LocalDate getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate (LocalDate creationDate) {
+    this.creationDate = creationDate;
+  }
+  public Double getLevel () {
+    return level;
+  }
+
+  public void setLevel (Double level) {
+    this.level = level;
   }
 
   public Image getProfileImage() {
