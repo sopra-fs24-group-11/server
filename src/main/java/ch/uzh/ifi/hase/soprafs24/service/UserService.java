@@ -69,6 +69,7 @@ public class UserService {
   public User createUser(User newUser) {
     checkIfUserNameExists(newUser);
     checkIfUserNameIsValid(newUser);
+    checkIfUserHasNoNullValues(newUser);
 
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
@@ -152,6 +153,19 @@ public class UserService {
     String baseErrorMessage = "The username should have at least two characters, no spaces, and only contain letters, numbers or '-._'!";
     if (un.length()<2 || un.isBlank() || un.contains(" ") || !un.matches("^[a-zA-Z0-9\\-._]+$")) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+    }
+  }
+
+  private void checkIfUserHasNoNullValues(User user) {
+    String baseErrorMessage = "The %s should not be null!";
+    if (user.getUsername()==null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username"));
+    } else if (user.getBirthday()==null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "birthday"));
+    } else if (user.getPassword()==null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "password"));
+    } else if (user.getEmail()==null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "email"));
     }
   }
 

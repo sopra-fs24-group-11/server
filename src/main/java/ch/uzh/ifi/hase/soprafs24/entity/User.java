@@ -5,6 +5,9 @@ import java.time.LocalDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Internal User Representation
@@ -41,15 +44,30 @@ public class User implements Serializable {
   @Column(nullable = false)
   private LocalDate birthday;
 
-  @Column
+  @Column(nullable = false)
   private LocalDate creationDate;
 
-  @Column
+  @Column(nullable = false)
   private Double level;
 
   @Column(nullable = false)
   private String email;
 
+  /*@ManyToMany
+  @JoinTable(
+          name = "user_friends",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "friend_id")
+  )
+  private Set<User> friends = new HashSet<>();
+
+  public Set<User> getFriends() {
+    return friends;
+  }
+
+  public void setFriends(Set<User> friends) {
+    this.friends = friends;
+  }*/
   @Embedded
   @Column(nullable = false)
   private Image profileImage;
@@ -90,6 +108,10 @@ public class User implements Serializable {
     return status;
   }
 
+  public void setStatus(UserStatus status) {
+    this.status = status;
+  }
+
   public String getEmail() {
     return email;
   }
@@ -98,9 +120,7 @@ public class User implements Serializable {
     this.email = email;
   }
 
-  public void setStatus(UserStatus status) {
-    this.status = status;
-  }
+
 
   public LocalDate getBirthday() {
     return birthday;
