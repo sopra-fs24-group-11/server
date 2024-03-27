@@ -47,7 +47,7 @@ public class UserController {
   @GetMapping("/users")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO getUser(@RequestHeader ("token") String token) {
+  public UserGetDTO getUser(@RequestHeader ("Authorization") String token) {
     User user = userService.getUserByToken(token);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
@@ -55,7 +55,7 @@ public class UserController {
   @PutMapping("/users")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void updateUser(@RequestHeader ("token") String token, @RequestBody UserPutDTO userPutDTO) {
+  public void updateUser(@RequestHeader ("Authorization") String token, @RequestBody UserPutDTO userPutDTO) {
     User user = DTOMapper.INSTANCE.convertUserPutDTOToEntity(userPutDTO);
     userService.updateUser(token, user);
   }
@@ -63,7 +63,7 @@ public class UserController {
   @DeleteMapping("/users")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void deleteUser(@RequestHeader ("token") String token) {
+  public void deleteUser(@RequestHeader ("Authorization") String token) {
     userService.deleteUser(token);
   }
 
@@ -72,20 +72,20 @@ public class UserController {
   @PutMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void saveProfilePicture(@RequestHeader("token") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
+  public void saveProfilePicture(@RequestHeader("Authorization") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
     // TO DO: Check for file size and type
     userService.saveProfilePicture(token, imageFile);
   }
   @GetMapping("/users/image")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public byte[] getProfilePicture(@RequestHeader("token") String token) {
+  public byte[] getProfilePicture(@RequestHeader("Authorization") String token) {
     return userService.getProfilePicture(token);
   }
   @DeleteMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void deleteProfilePicture(@RequestHeader("token") String token) {
+  public void deleteProfilePicture(@RequestHeader("Authorization") String token) {
     userService.deleteProfilePicture(token);
   }
 }
