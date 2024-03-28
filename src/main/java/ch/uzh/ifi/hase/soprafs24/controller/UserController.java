@@ -1,14 +1,18 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User Controller
@@ -22,9 +26,11 @@ public class UserController {
 
 
   private final UserService userService;
+  private final FriendshipService friendshipService;
 
-  UserController(UserService userService) {
+  UserController(UserService userService, FriendshipService friendshipService) {
     this.userService = userService;
+    this.friendshipService = friendshipService;
   }
 
   @PostMapping("/users/register")
@@ -68,6 +74,21 @@ public class UserController {
   }
 
 
+  @GetMapping("/users/search")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<MatchingUserGetDTO> getMatchingUsers(@RequestHeader("Authorization") String token, @RequestParam("name") String name) {
+    List<User> users = userService.getMatchingUsers(token, name);
+    List<MatchingUserGetDTO> userGetDTOs = new ArrayList<>();
+
+    for (User user : users) {
+      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToMatchingUserGetDTO(user));
+    }
+    return userGetDTOs;
+  }
+
+
+
   // image
   @PutMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -87,5 +108,70 @@ public class UserController {
   @ResponseBody
   public void deleteProfilePicture(@RequestHeader("Authorization") String token) {
     userService.deleteProfilePicture(token);
+  }
+
+
+
+  // friends
+  // TO DO: notifications
+  @GetMapping("/users/friends")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<User> getAllFriends(@RequestHeader("Authorization") String token) {
+    User user = userService.getUserByToken(token);
+    return friendshipService.getAllFriends(user);
+  }
+  @PostMapping("/users/friends/{friendId}")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public void makeRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
+    User sender = userService.getUserByToken(token);
+    User receiver = userService.getUserById(friendId);
+    friendshipService.sendRequest(sender, receiver);
+  }
+  @PutMapping("/users/friends/{friendId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void acceptRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId)  {
+    User acceptor = userService.getUserByToken(token);
+    User requester = userService.getUserById(friendId);
+    friendshipService.acceptRequest(acceptor, requester);
+  }
+
+
+  // like this?:
+  @DeleteMapping("/users/friends/{friendId}/reject")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void rejectRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
+    User rejector = userService.getUserByToken(token);
+    User requester = userService.getUserById(friendId);
+    friendshipService.rejectRequest(rejector, requester);
+  }
+  @DeleteMapping("/users/friends/{friendId}/withdraw")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void withdrawRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
+    User requester = userService.getUserByToken(token);
+    User receiver = userService.getUserById(friendId);
+    friendshipService.withdrawRequest(receiver, requester);
+  }
+  @DeleteMapping("/users/friends/{friendId}/delete")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteFriendship(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
+    User deleter = userService.getUserByToken(token);
+    User friend = userService.getUserById(friendId);
+    friendshipService.deleteFriendship(deleter, friend);
+  }
+
+  // or like this?:
+  @DeleteMapping("/users/friends/{friendId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteFriend(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
+    User deleter = userService.getUserByToken(token);
+    User friend = userService.getUserById(friendId);
+    friendshipService.deleteFriend(friend, deleter);
   }
 }

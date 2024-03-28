@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.io.File;
+import java.util.stream.Collectors;
 
 /**
  * User Service
@@ -52,6 +53,11 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
     }
     return user;
+  }
+
+  public User getUserById(Long id) {
+    return userRepository.findById(id).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
   }
 
   public User getUser(Long userId, String token) {
@@ -127,8 +133,17 @@ public class UserService {
     User user = getUserByToken(token);
     // To DO: Delete all Friends and Trips
     userRepository.deleteById(user.getId());
+    log.debug("Deleted User: {}", user);
   }
 
+  public List<User> getMatchingUsers(String token, String username) {
+    User requester = getUserByToken(token);
+    List<User> matchingUsers = userRepository.findAllByUsernameStartsWith(username);
+    matchingUsers = matchingUsers.stream()
+            .filter(user -> !Objects.equals(user.getId(), requester.getId()))
+            .collect(Collectors.toList());
+    return matchingUsers;
+  }
 
   /**
    * This is a helper method that will check the uniqueness criteria of the
