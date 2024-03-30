@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.entity.Image;
+import ch.uzh.ifi.hase.soprafs24.entity.Feedback;
+import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +43,12 @@ public class UserService {
 
   private final Random random = new Random();
   private final UserRepository userRepository;
+  private final FeedbackRepository feedbackRepository;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository) {
     this.userRepository = userRepository;
+    this.feedbackRepository = feedbackRepository;
   }
 
   public User getUserByToken(String token) {
@@ -127,12 +131,11 @@ public class UserService {
     log.debug("Updated Information for User: {}", existingUser);
   }
 
-
-
   public void deleteUser(String token) {
     User user = getUserByToken(token);
     // To DO: Delete all Friends and Trips
     userRepository.deleteById(user.getId());
+    userRepository.flush();
     log.debug("Deleted User: {}", user);
   }
 
@@ -143,6 +146,19 @@ public class UserService {
             .filter(user -> !Objects.equals(user.getId(), requester.getId()))
             .collect(Collectors.toList());
     return matchingUsers;
+  }
+
+  public void giveFeedback(String token, String message) {
+    if (message == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Give a message!");
+    }
+    User user = getUserByToken(token);
+    Feedback feedback = new Feedback();
+    feedback.setUserId(user.getId());
+    feedback.setMessage(message);
+    feedbackRepository.save(feedback);
+    feedbackRepository.flush();
+    log.debug("Gave Feedback: {}", feedback);
   }
 
   /**

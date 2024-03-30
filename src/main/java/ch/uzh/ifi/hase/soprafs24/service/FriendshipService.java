@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Friend;
 import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.FriendshipRepository;
@@ -15,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 
 @Service
@@ -30,35 +30,89 @@ public class FriendshipService {
     this.friendshipRepository = friendshipRepository;
   }
 
+  public List<Friend> getAllReceivedFriendRequests(User user) {
+    List<Friend> result = new ArrayList<>();
+    List<Friendship> listOne = friendshipRepository.findAllByFriend2(user);
+    if (listOne != null) {
+      for (Friendship friendship : listOne) {
+        if (friendship.getStatus() == FriendShipStatus.PENDING) {
+          User friend = friendship.getFriend2();
+          Friend newFriend = new Friend();
+          newFriend.setFriendId(friend.getId());
+          newFriend.setLevel(friend.getLevel());
+          newFriend.setUsername(friend.getUsername());
+          newFriend.setPoints(friendship.getPoints());
+          newFriend.setStatus(friendship.getStatus());
+          result.add(newFriend);
+        }
+      }
+    }
+    return result;
+  }
 
-  public List<User> getAllFriends(User user) {
-    // TO DO:
-    // don't return users but progress as well
-    // only return accepted requests
-    List<User> result = new ArrayList<>();
+  public List<Friend> getAllSentFriendRequests(User user) {
+    List<Friend> result = new ArrayList<>();
+    List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
+    if (listOne != null) {
+      for (Friendship friendship : listOne) {
+        if (friendship.getStatus() == FriendShipStatus.PENDING) {
+          User friend = friendship.getFriend2();
+          Friend newFriend = new Friend();
+          newFriend.setFriendId(friend.getId());
+          newFriend.setLevel(friend.getLevel());
+          newFriend.setUsername(friend.getUsername());
+          newFriend.setPoints(friendship.getPoints());
+          newFriend.setStatus(friendship.getStatus());
+          result.add(newFriend);
+        }
+      }
+    }
+    return result;
+  }
+
+  public List<Friend> getAllPendingFriendRequests(User user) {
+    List<Friend> result = new ArrayList<>();
+    result.addAll(getAllSentFriendRequests(user));
+    result.addAll(getAllReceivedFriendRequests(user));
+    return result;
+  }
+
+
+
+  public List<Friend> getAllAcceptedFriends(User user) {
+    List<Friend> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
     List<Friendship> listTwo = friendshipRepository.findAllByFriend2(user);
     if (listOne == null && listTwo == null) {
       return new ArrayList<>(); // Return an empty list
     }
-    if (listOne == null) {
-      for (Friendship friendship : listTwo) {
-        result.add(friendship.getFriend2());
-      }
-      return result;
-    }
-    if (listTwo == null) {
+    if (listOne != null) {
       for (Friendship friendship : listOne) {
-        result.add(friendship.getFriend2());
+        if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
+          User friend = friendship.getFriend2();
+          Friend newFriend = new Friend();
+          newFriend.setFriendId(friend.getId());
+          newFriend.setLevel(friend.getLevel());
+          newFriend.setUsername(friend.getUsername());
+          newFriend.setPoints(friendship.getPoints());
+          newFriend.setStatus(friendship.getStatus());
+          result.add(newFriend);
+        }
       }
-      return result;
     }
-
-    for (Friendship friendship : listOne) {
-      result.add(friendship.getFriend2());
-    }
-    for (Friendship friendship : listTwo) {
-      result.add(friendship.getFriend1());
+    if (listTwo != null) {
+      for (Friendship friendship : listTwo) {
+        if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
+          User friend = friendship.getFriend1();
+          Friend newFriend = new Friend();
+          newFriend.setFriendId(friend.getId());
+          newFriend.setLevel(friend.getLevel());
+          newFriend.setUsername(friend.getUsername());
+          newFriend.setPoints(friendship.getPoints());
+          newFriend.setStatus(friendship.getStatus());
+          result.add(newFriend);
+        }
+      }
     }
     return result;
   }
@@ -93,7 +147,7 @@ public class FriendshipService {
 
 
 
-  // Question: should we make three requests or only one? How do we differentiate if it is a rejection, withdrawal or deletion then?
+  // Question: should we make three requests or only one?
   public void rejectRequest(User rejector, User requester) {
     Friendship friendship = friendshipRepository.findByFriend1AndFriend2(requester, rejector);
     if (friendship == null) {

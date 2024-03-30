@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Friend;
 import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
@@ -87,6 +88,12 @@ public class UserController {
     return userGetDTOs;
   }
 
+  @PostMapping("/users/feedback")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessageDTO messageDTO) {
+    userService.giveFeedback(token, messageDTO.getMessage());
+  }
 
 
   // image
@@ -117,10 +124,57 @@ public class UserController {
   @GetMapping("/users/friends")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<User> getAllFriends(@RequestHeader("Authorization") String token) {
+  public List<FriendGetDTO> getAllAcceptedFriends(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
-    return friendshipService.getAllFriends(user);
+    List<Friend> friends =  friendshipService.getAllAcceptedFriends(user);
+    List<FriendGetDTO> friendGetDTOs = new ArrayList<>();
+
+    for (Friend friend : friends) {
+      friendGetDTOs.add(DTOMapper.INSTANCE.convertEntityToFriendGetDTO(friend));
+    }
+    return friendGetDTOs;
   }
+  @GetMapping("/users/friends/requests")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<FriendGetDTO> getAllReceivedFriendRequests(@RequestHeader("Authorization") String token) {
+    User user = userService.getUserByToken(token);
+    List<Friend> friends = friendshipService.getAllReceivedFriendRequests(user);
+    List<FriendGetDTO> friendGetDTOs = new ArrayList<>();
+
+    for (Friend friend : friends) {
+      friendGetDTOs.add(DTOMapper.INSTANCE.convertEntityToFriendGetDTO(friend));
+    }
+    return friendGetDTOs;
+  }
+  @GetMapping("/users/friends/pending")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<FriendGetDTO> getAllPendingFriendRequests(@RequestHeader("Authorization") String token) {
+    User user = userService.getUserByToken(token);
+    List<Friend> friends = friendshipService.getAllPendingFriendRequests(user);
+    List<FriendGetDTO> friendGetDTOs = new ArrayList<>();
+
+    for (Friend friend : friends) {
+      friendGetDTOs.add(DTOMapper.INSTANCE.convertEntityToFriendGetDTO(friend));
+    }
+    return friendGetDTOs;
+  }
+  @GetMapping("/users/friends/sent")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<FriendGetDTO> getAllSentFriendRequests(@RequestHeader("Authorization") String token) {
+    User user = userService.getUserByToken(token);
+    List<Friend> friends = friendshipService.getAllSentFriendRequests(user);
+    List<FriendGetDTO> friendGetDTOs = new ArrayList<>();
+
+    for (Friend friend : friends) {
+      friendGetDTOs.add(DTOMapper.INSTANCE.convertEntityToFriendGetDTO(friend));
+    }
+    return friendGetDTOs;
+  }
+
+
   @PostMapping("/users/friends/{friendId}")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
@@ -137,9 +191,18 @@ public class UserController {
     User requester = userService.getUserById(friendId);
     friendshipService.acceptRequest(acceptor, requester);
   }
-
-
   // like this?:
+  @DeleteMapping("/users/friends/{friendId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteFriend(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
+    User deleter = userService.getUserByToken(token);
+    User friend = userService.getUserById(friendId);
+    friendshipService.deleteFriend(friend, deleter);
+  }
+
+
+  // or like this?:
   @DeleteMapping("/users/friends/{friendId}/reject")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
@@ -163,15 +226,5 @@ public class UserController {
     User deleter = userService.getUserByToken(token);
     User friend = userService.getUserById(friendId);
     friendshipService.deleteFriendship(deleter, friend);
-  }
-
-  // or like this?:
-  @DeleteMapping("/users/friends/{friendId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public void deleteFriend(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
-    User deleter = userService.getUserByToken(token);
-    User friend = userService.getUserById(friendId);
-    friendshipService.deleteFriend(friend, deleter);
   }
 }
