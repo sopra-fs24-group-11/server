@@ -30,10 +30,12 @@ public class TripParticipant implements Serializable {
   @Column(nullable = false)
   private boolean favouriteTrip;
 
-  @Column(nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @Column(nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "trip_id", nullable = false)
   private Trip trip;
 
   public Long getId() {
