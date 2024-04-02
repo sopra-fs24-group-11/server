@@ -114,4 +114,30 @@ public class TripParticipantService {
   }
 
 
+
+
+  public void acceptInvitation(User user, Trip trip) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+    }
+    participant.setStatus(InvitationStatus.ACCEPTED);
+    tripParticipantRepository.save(participant);
+    tripParticipantRepository.flush();
+    log.debug("Participant accepted trip invitation {}", participant);
+  }
+  public void rejectInvitation(User user, Trip trip) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+    }
+
+    tripParticipantRepository.deleteById(participant.getId());
+    tripParticipantRepository.flush();
+    log.debug("Participant rejected trip invitation {}", participant);
+    // to do: trip member count minus 1
+  }
+
+  
+
 }

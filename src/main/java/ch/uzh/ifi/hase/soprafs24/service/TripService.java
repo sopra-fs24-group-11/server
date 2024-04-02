@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -60,6 +61,29 @@ public class TripService {
     log.debug("Created Trip: {}", newTrip);
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
+  }
+
+  public void updateTrip(Long tripId, User oldAdmin, Trip newTrip) {
+    if (!isAdmin(tripId, oldAdmin)) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+    }
+
+    Trip trip = getTripById(tripId);
+    if(newTrip.getAdministrator() != null) {
+      trip.setAdministrator(newTrip.getAdministrator());
+    }
+    trip.setTripName(newTrip.getTripName());
+    trip.setTripDescription(newTrip.getTripName());
+    trip.setMeetUpTime(newTrip.getMeetUpTime());
+    trip.setMeetUpPlace(newTrip.getMeetUpPlace());
+    tripRepository.save(trip);
+    tripRepository.flush();
+    log.debug("Changed admin for Trip: {}", trip);
+  }
+
+  public boolean isAdmin(Long tripId, User requester) {
+    Trip trip = getTripById(tripId);
+    return Objects.equals(trip.getAdministrator(), requester);
   }
 
 }
