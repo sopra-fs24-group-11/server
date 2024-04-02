@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
@@ -8,6 +9,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.MatchingUserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ParticipantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TripPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.ConnectionService;
 import ch.uzh.ifi.hase.soprafs24.service.TripParticipantService;
 import ch.uzh.ifi.hase.soprafs24.service.TripService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -127,4 +130,12 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.markTripAsFavorite(user, trip);
   }
+
+  @GetMapping("/trips/{tripId}/startPoint")
+  @ResponseStatus
+  @ResponseBody
+  public List<Station> getStations (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam String start) {
+    return ConnectionService.getLocations(start);
+  }
+
 }
