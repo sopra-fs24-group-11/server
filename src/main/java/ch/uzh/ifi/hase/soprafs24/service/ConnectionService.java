@@ -90,6 +90,8 @@ public class ConnectionService {
     }
   }
 
+  // get connections with coordinates and destination code in trip destination (defined in /trips/new, TripService.getTripById + getMeetUpPlace)
+  // get connections with start location code and destination code in trip destination (defined in /trips/new, TripService.getTripById + getMeetUpPlace)
 
 
 }
