@@ -11,24 +11,28 @@ public class TripParticipant implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trip_participant_sequence")
+  @SequenceGenerator(name = "trip_participant_sequence", sequenceName = "trip_participant_sequence", allocationSize = 1)
   private Long id;
 
   @Embedded
+  @AttributeOverrides({
+          @AttributeOverride(name = "stationName", column = @Column(nullable = true)),
+          @AttributeOverride(name = "stationCode", column = @Column(nullable = true))
+  })
   private Station startPoint;
 
-  @Column(nullable = false)
-  private LocalDateTime meetUpTime;
+  private LocalDateTime startTime;
 
   @ManyToOne
   @JoinColumn(name = "invitator_id", nullable = false)
   private User invitator;
 
   @Column(nullable = false)
-  private InvitationStatus status;
+  private InvitationStatus status = InvitationStatus.PENDING;
 
   @Column(nullable = false)
-  private boolean favouriteTrip;
+  private boolean favouriteTrip = false;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
@@ -54,12 +58,12 @@ public class TripParticipant implements Serializable {
     this.startPoint = startPoint;
   }
 
-  public LocalDateTime getMeetUpTime() {
-    return meetUpTime;
+  public LocalDateTime getStartTime() {
+    return startTime;
   }
 
-  public void setMeetUpTime(LocalDateTime meetUpTime) {
-    this.meetUpTime = meetUpTime;
+  public void setStartTime(LocalDateTime startTime) {
+    this.startTime = startTime;
   }
 
   public User getInvitator() {

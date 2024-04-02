@@ -13,7 +13,8 @@ public class ParticipantConnection implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "participant_connection_sequence")
+  @SequenceGenerator(name = "participant_connection_sequence", sequenceName = "participant_connection_sequence", allocationSize = 1)
   private Long id;
 
   @Column(nullable = false)

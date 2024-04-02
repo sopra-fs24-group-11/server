@@ -24,20 +24,23 @@ public class TripService {
 
   // private final ConnectionService connectionService;
 
+  private final TripParticipantService tripParticipantService;
+
   @Autowired
-  public TripService(@Qualifier("tripRepository") TripRepository tripRepository) {
+  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService) {
     this.tripRepository = tripRepository;
+    this.tripParticipantService = tripParticipantService;
   }
 
-  public void createTrip(Trip newTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
+  public void createTrip(Trip newTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
     // Station station = connectionService.checkIfNameAndCodeAreCorrectAndTurnIntoStation(meetUpPlace, meetUpCode)
     newTrip.setAdministrator(administrator);
     int maximum = 10+(int)Math.floor(administrator.getLevel());
-    if (maximum < userIds.size() + 1) { // invited plus administrator
+    if (maximum < invited.size() + 1) { // invited plus administrator
       throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d", maximum));
     }
     newTrip.setMaxParticipants(maximum);
-    newTrip.setNumberOfParticipants(userIds.size() + 1);
+    newTrip.setNumberOfParticipants(invited.size() + 1);
 
     // temporary here until connectionService works:
     Station station = new Station();
@@ -50,6 +53,6 @@ public class TripService {
     tripRepository.flush();
     log.debug("Created Trip: {}", newTrip);
     // store every trip participant
-
+    tripParticipantService.storeParticipants(newTrip, administrator, invited);
   }
 }

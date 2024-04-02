@@ -10,7 +10,8 @@ public class Friendship implements Serializable {
 
   private static final long serialVersionUID = 1L;
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "friendship_sequence")
+  @SequenceGenerator(name = "friendship_sequence", sequenceName = "friendship_sequence", allocationSize = 1)
   private Long id;
   @ManyToOne
   @JoinColumn(nullable = false)

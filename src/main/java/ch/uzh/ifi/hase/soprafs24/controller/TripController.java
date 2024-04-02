@@ -9,6 +9,7 @@ import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,10 +30,16 @@ public class TripController {
     List<Long> userIds = tripPostDTO.getParticipants();
     String temporaryMeetUpPlace = tripPostDTO.getTemporaryMeetUpPlace();
     String temporaryMeetUpCode = tripPostDTO.getTemporaryMeetUpCode();
+
     // add check to see if userIds exist and if userIds are not double?
+    List<User> invited = new ArrayList<>();
+    for (Long id : userIds) {
+      invited.add(userService.getUserById(id));
+    }
+
 
     Trip tripInput = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
     User administrator = userService.getUserByToken(token);
-    tripService.createTrip(tripInput, administrator, userIds, temporaryMeetUpPlace, temporaryMeetUpCode);
+    tripService.createTrip(tripInput, administrator, invited, temporaryMeetUpPlace, temporaryMeetUpCode);
   }
 }

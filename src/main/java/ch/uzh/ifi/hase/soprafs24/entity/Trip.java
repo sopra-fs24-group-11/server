@@ -9,7 +9,8 @@ public class Trip implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trip_sequence")
+  @SequenceGenerator(name = "trip_sequence", sequenceName = "trip_sequence", allocationSize = 1)
   private Long id;
 
   @Column(nullable = false)

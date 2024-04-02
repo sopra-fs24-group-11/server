@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -11,7 +8,8 @@ public class Feedback implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feedback_sequence")
+  @SequenceGenerator(name = "feedback_sequence", sequenceName = "feedback_sequence", allocationSize = 1)
   private Long id;
   @Column(nullable = false)
   private Long userId;
