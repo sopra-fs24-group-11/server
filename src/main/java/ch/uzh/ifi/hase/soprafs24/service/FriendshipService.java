@@ -1,10 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
+import ch.uzh.ifi.hase.soprafs24.constant.FriendshipStatusSearch;
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
 import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.FriendshipRepository;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.MatchingUserGetDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,4 +215,35 @@ public class FriendshipService {
     }
   }
 
+  public FriendshipStatusSearch findFriendStatusSearch (User searcher, User friend) {
+    Friendship friendship1 = friendshipRepository.findByFriend1AndFriend2(searcher, friend);
+    Friendship friendship2 = friendshipRepository.findByFriend1AndFriend2(friend, searcher);
+    if (friendship1 == null && friendship2 == null) {
+      return FriendshipStatusSearch.NOTHING;
+    }
+    else if (friendship1 != null && friendship2 != null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "There shouldn't be two symmetric friendships...");
+    }
+    if (friendship1 == null) {
+      if (friendship2.getStatus() == FriendShipStatus.PENDING) {
+        // searcher has got pending request to answer
+        return FriendshipStatusSearch.RECEIVED;
+      }
+      else {
+        // completed friendship if searcher has initiated friendship
+        return FriendshipStatusSearch.COMPLETED;
+      }
+    }
+    else if (friendship2 == null) {
+      if (friendship1.getStatus() == FriendShipStatus.PENDING) {
+        // searcher has sent request and is waiting for response
+        return FriendshipStatusSearch.SENT;
+      }
+      else {
+        // completed friendship if searcher hasn't initiated friendship
+        return FriendshipStatusSearch.COMPLETED;
+      }
+    }
+    return FriendshipStatusSearch.NOTHING;
+  }
 }

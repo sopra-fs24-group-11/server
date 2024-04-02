@@ -83,7 +83,10 @@ public class UserController {
     List<MatchingUserGetDTO> userGetDTOs = new ArrayList<>();
 
     for (User user : users) {
-      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToMatchingUserGetDTO(user));
+      MatchingUserGetDTO searchedUser = DTOMapper.INSTANCE.convertEntityToMatchingUserGetDTO(user);
+      searchedUser.setStatus(friendshipService.findFriendStatusSearch(userService.getUserByToken(token), user));
+      userGetDTOs.add(searchedUser);
+
     }
     return userGetDTOs;
   }

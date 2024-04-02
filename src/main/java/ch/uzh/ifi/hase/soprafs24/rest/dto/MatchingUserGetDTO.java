@@ -1,10 +1,13 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
+import ch.uzh.ifi.hase.soprafs24.constant.FriendshipStatusSearch;
+
 public class MatchingUserGetDTO {
   private Long id;
   private String username;
   private Double level;
 
+  private FriendshipStatusSearch status;
   public Long getId() {
     return id;
   }
@@ -27,5 +30,13 @@ public class MatchingUserGetDTO {
 
   public void setLevel (Double level) {
     this.level = level;
+  }
+
+  public FriendshipStatusSearch getStatus () {
+    return status;
+  }
+
+  public void setStatus (FriendshipStatusSearch status) {
+    this.status = status;
   }
 }
