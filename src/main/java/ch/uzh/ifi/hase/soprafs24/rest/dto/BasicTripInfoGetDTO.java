@@ -1,42 +1,22 @@
-package ch.uzh.ifi.hase.soprafs24.entity;
+package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import ch.uzh.ifi.hase.soprafs24.entity.Station;
+
 import java.time.LocalDateTime;
 
-@Entity
-public class Trip implements Serializable {
-  private static final long serialVersionUID = 1L;
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trip_sequence")
-  @SequenceGenerator(name = "trip_sequence", sequenceName = "trip_sequence", allocationSize = 1)
+public class BasicTripInfoGetDTO {
   private Long id;
-
-  @Column(nullable = false)
   private String tripName;
 
-  @Column(nullable = false)
   private String tripDescription;
 
-  @ManyToOne
-  @JoinColumn(name = "administrator_id", nullable = false)
-  private User administrator;
-
-  @Column(nullable = false)
   private int numberOfParticipants;
 
-  @Column(nullable = false)
-  private int maxParticipants;
-
-  @Embedded
   private Station meetUpPlace;
 
-  @Column(nullable = false)
   private LocalDateTime meetUpTime;
 
-  @Column(nullable = false)
-  private boolean completed = false;
+  private boolean completed;
 
   private int rating;
 
@@ -64,13 +44,6 @@ public class Trip implements Serializable {
     this.tripDescription = tripDescription;
   }
 
-  public User getAdministrator() {
-    return administrator;
-  }
-
-  public void setAdministrator(User administrator) {
-    this.administrator = administrator;
-  }
 
   public int getNumberOfParticipants() {
     return numberOfParticipants;
@@ -78,14 +51,6 @@ public class Trip implements Serializable {
 
   public void setNumberOfParticipants(int numberOfParticipants) {
     this.numberOfParticipants = numberOfParticipants;
-  }
-
-  public int getMaxParticipants() {
-    return maxParticipants;
-  }
-
-  public void setMaxParticipants(int maxParticipants) {
-    this.maxParticipants = maxParticipants;
   }
 
   public Station getMeetUpPlace() {

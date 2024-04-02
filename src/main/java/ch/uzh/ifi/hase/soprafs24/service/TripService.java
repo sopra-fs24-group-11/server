@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
+import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.TripRepository;
 import org.slf4j.Logger;
@@ -32,6 +33,11 @@ public class TripService {
     this.tripParticipantService = tripParticipantService;
   }
 
+  public Trip getTripById(Long id) {
+    return tripRepository.findById(id).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found"));
+  }
+
   public void createTrip(Trip newTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
     // Station station = connectionService.checkIfNameAndCodeAreCorrectAndTurnIntoStation(meetUpPlace, meetUpCode)
     newTrip.setAdministrator(administrator);
@@ -55,4 +61,5 @@ public class TripService {
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
   }
+
 }
