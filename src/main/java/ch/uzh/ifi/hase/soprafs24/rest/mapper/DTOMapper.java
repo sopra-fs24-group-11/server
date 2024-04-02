@@ -84,4 +84,11 @@ public interface DTOMapper {
   @Mapping(source = "completed", target = "completed")
   @Mapping(source = "rating", target = "rating")
   BasicTripInfoGetDTO convertEntityToBasicTripInfoGetDTO(Trip trip);
+
+
+  // to do: map temporaryMeetUpName and temporaryMeetUpCode to a station
+  @Mapping(source = "tripName", target = "tripName")
+  @Mapping(source = "tripDescription", target = "tripDescription")
+  @Mapping(source = "meetUpTime", target = "meetUpTime")
+  Trip convertTripPutDTOToEntity(TripPutDTO tripPutDTO);
 }

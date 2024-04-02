@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -138,6 +139,38 @@ public class TripParticipantService {
     // to do: trip member count minus 1
   }
 
-  
+  public void leaveTrip(User leaver, Trip trip) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(leaver, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+    }
+    if (Objects.equals(trip.getAdministrator().getId(), leaver.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot leave before announcing a new admin");
+    }
+    // to do: delete connections of participant and revert / delete list items
+    tripParticipantRepository.deleteById(participant.getId());
+    tripParticipantRepository.flush();
+    log.debug("Participant rejected trip invitation {}", participant);
+    // to do: trip member count minus 1
+  }
+
+  public void removeMemberFromTrip(User userToBeRemoved, User requester, Trip trip) {
+    if (!Objects.equals(trip.getAdministrator().getId(), requester.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+    }
+    if (Objects.equals(userToBeRemoved.getId(), requester.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot remove yourself from the trip");
+    }
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(userToBeRemoved, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be removed is not part of this trip");
+    }
+    tripParticipantRepository.deleteById(participant.getId());
+    tripParticipantRepository.flush();
+    log.debug("Admin removed participant from trip {}", participant);
+    // to do: trip member count minus 1
+  }
+
+
 
 }

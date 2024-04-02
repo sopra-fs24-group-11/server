@@ -4,10 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.BasicTripInfoGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.MatchingUserGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.ParticipantGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TripPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.ConnectionService;
 import ch.uzh.ifi.hase.soprafs24.service.TripParticipantService;
@@ -143,6 +140,67 @@ public class TripController {
   @ResponseBody
   public List<Station> getStations (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y) {
     return ConnectionService.getLocationsCoord(x, y);
+  }
+
+
+
+
+
+
+  @PutMapping("/trips/{tripId}/invitation")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void acceptInvitation(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.acceptInvitation(user, trip);
+  }
+  @DeleteMapping("/trips/{tripId}/invitation")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void rejectInvitation(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.rejectInvitation(user, trip);
+  }
+  @PutMapping("/trips/{tripId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPutDTO tripPutDTO) {
+    Trip newTrip = DTOMapper.INSTANCE.convertTripPutDTOToEntity(tripPutDTO);
+    User oldAdmin = userService.getUserByToken(token);
+    tripService.updateTrip(tripId, oldAdmin, newTrip);
+  }
+  @GetMapping("/trips/{tripId}/admin")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public boolean isAdmin(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    return tripService.isAdmin(tripId, user);
+  }
+  @DeleteMapping("/trips/{tripId}/exit")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void leaveTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.leaveTrip(user, trip);
+  }
+  @DeleteMapping("/trips/{tripId}/users/{userId}/kick")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void removeMemberFromTrip(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("userId") Long userId) {
+    User userToBeRemoved = userService.getUserById(userId);
+    User requester = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.removeMemberFromTrip(userToBeRemoved, requester, trip);
+  }
+  @DeleteMapping("/trips/{tripId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteTrip(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    User requester = userService.getUserByToken(token);
+    tripService.deleteTrip(tripId, requester);
   }
 
 }

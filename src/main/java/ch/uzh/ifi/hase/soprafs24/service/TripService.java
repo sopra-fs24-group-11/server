@@ -83,7 +83,19 @@ public class TripService {
 
   public boolean isAdmin(Long tripId, User requester) {
     Trip trip = getTripById(tripId);
-    return Objects.equals(trip.getAdministrator(), requester);
+    return Objects.equals(trip.getAdministrator().getId(), requester.getId());
+  }
+
+  public void deleteTrip(Long tripId, User requester) {
+    if (!isAdmin(tripId, requester)) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+    }
+    Trip trip = getTripById(tripId);
+    tripRepository.deleteById(tripId);
+    tripRepository.flush();
+    log.debug("Deleted Trip: {}", trip);
+    // to do: delete all connections
+    // make a loop and delete each one in tripparticipantservice and there delete / revert each list item
   }
 
 }
