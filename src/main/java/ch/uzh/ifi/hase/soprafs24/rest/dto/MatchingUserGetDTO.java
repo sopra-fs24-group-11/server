@@ -7,7 +7,7 @@ public class MatchingUserGetDTO {
   private String username;
   private Double level;
 
-  private FriendshipStatusSearch status;
+  private FriendshipStatusSearch friendshipStatus;
   public Long getId() {
     return id;
   }
@@ -33,10 +33,10 @@ public class MatchingUserGetDTO {
   }
 
   public FriendshipStatusSearch getStatus () {
-    return status;
+    return friendshipStatus;
   }
 
-  public void setStatus (FriendshipStatusSearch status) {
-    this.status = status;
+  public void setStatus (FriendshipStatusSearch friendshipStatus) {
+    this.friendshipStatus = friendshipStatus;
   }
 }

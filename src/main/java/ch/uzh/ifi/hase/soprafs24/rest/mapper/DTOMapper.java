@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
+import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.mapstruct.*;
@@ -55,6 +56,7 @@ public interface DTOMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "username", target = "username")
   @Mapping(source = "level", target = "level")
+  @Mapping(target = "status", ignore = true)
   MatchingUserGetDTO convertEntityToMatchingUserGetDTO(User user);
 
   @Mapping(source = "friendId", target = "friendId")
@@ -62,4 +64,9 @@ public interface DTOMapper {
   @Mapping(source = "level", target = "level")
   @Mapping(source = "points", target = "points")
   FriendGetDTO convertEntityToFriendGetDTO(Friend friend);
+
+  @Mapping(source = "tripName", target = "tripName")
+  @Mapping(source = "tripDescription", target = "tripDescription")
+  @Mapping(source = "meetUpTime", target = "meetUpTime")
+  Trip convertTripPostDTOtoEntity(TripPostDTO tripPostDTO);
 }

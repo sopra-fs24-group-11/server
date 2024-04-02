@@ -35,9 +35,9 @@ public class Trip implements Serializable {
   private LocalDateTime meetUpTime;
 
   @Column(nullable = false)
-  private boolean completed;
+  private boolean completed = false;
 
-  @Column(nullable = false)
+
   private int rating;
 
   public Long getId() {

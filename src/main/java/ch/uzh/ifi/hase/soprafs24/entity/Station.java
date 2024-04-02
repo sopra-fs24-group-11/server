@@ -6,7 +6,7 @@ public class Station {
   @Column(nullable = false)
   private String stationName;
   @Column(nullable = false)
-  private Integer stationCode;
+  private String stationCode;
 
   public String getStationName() {
     return this.stationName;
@@ -16,10 +16,10 @@ public class Station {
     this.stationName = name;
   }
 
-  public Integer getStationCode() {
+  public String getStationCode() {
     return this.stationCode;
   }
-  public void setStationCode(Integer code) {
+  public void setStationCode(String code) {
     this.stationCode = code;
   }
 }
