@@ -132,10 +132,17 @@ public class TripController {
   }
 
   @GetMapping("/trips/{tripId}/startPoint")
-  @ResponseStatus
+  @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<Station> getStations (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam String start) {
-    return ConnectionService.getLocations(start);
+    return ConnectionService.getLocationsName(start);
+  }
+
+  @GetMapping("/trips/{tripId}/geoLocation")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<Station> getStations (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y) {
+    return ConnectionService.getLocationsCoord(x, y);
   }
 
 }
