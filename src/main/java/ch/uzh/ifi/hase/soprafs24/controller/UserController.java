@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
-import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -94,8 +93,8 @@ public class UserController {
   @PostMapping("/users/feedback")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessageDTO messageDTO) {
-    userService.giveFeedback(token, messageDTO.getMessage());
+  public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessagePostDTO messagePostDTO) {
+    userService.giveFeedback(token, messagePostDTO.getMessage());
   }
 
 
@@ -133,7 +132,9 @@ public class UserController {
     List<FriendGetDTO> friendGetDTOs = new ArrayList<>();
 
     for (Friend friend : friends) {
-      friendGetDTOs.add(DTOMapper.INSTANCE.convertEntityToFriendGetDTO(friend));
+      FriendGetDTO tempDTO =  DTOMapper.INSTANCE.convertEntityToFriendGetDTO(friend);
+      tempDTO.setStatus(userService.getUserById(friend.getFriendId()).getStatus());
+      friendGetDTOs.add(tempDTO);
     }
     return friendGetDTOs;
   }

@@ -63,10 +63,25 @@ public interface DTOMapper {
   @Mapping(source = "username", target = "username")
   @Mapping(source = "level", target = "level")
   @Mapping(source = "points", target = "points")
+  @Mapping(target = "status", ignore = true)
   FriendGetDTO convertEntityToFriendGetDTO(Friend friend);
 
   @Mapping(source = "tripName", target = "tripName")
   @Mapping(source = "tripDescription", target = "tripDescription")
   @Mapping(source = "meetUpTime", target = "meetUpTime")
   Trip convertTripPostDTOtoEntity(TripPostDTO tripPostDTO);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "username", target = "username")
+  ParticipantGetDTO convertEntityToParticipantGetDTO(User user);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "tripName", target = "tripName")
+  @Mapping(source = "tripDescription", target = "tripDescription")
+  @Mapping(source = "numberOfParticipants", target = "numberOfParticipants")
+  @Mapping(source = "meetUpPlace", target = "meetUpPlace")
+  @Mapping(source = "meetUpTime", target = "meetUpTime")
+  @Mapping(source = "completed", target = "completed")
+  @Mapping(source = "rating", target = "rating")
+  BasicTripInfoGetDTO convertEntityToBasicTripInfoGetDTO(Trip trip);
 }

@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-public class MessageDTO {
+public class MessagePostDTO {
   private String message;
 
   public String getMessage() {
