@@ -38,7 +38,7 @@ public class FriendshipService {
     if (listOne != null) {
       for (Friendship friendship : listOne) {
         if (friendship.getStatus() == FriendShipStatus.PENDING) {
-          User friend = friendship.getFriend2();
+          User friend = friendship.getFriend1();
           Friend newFriend = new Friend();
           newFriend.setFriendId(friend.getId());
           newFriend.setLevel(friend.getLevel());

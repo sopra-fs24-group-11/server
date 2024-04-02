@@ -41,12 +41,14 @@ public class TripService {
 
     // temporary here until connectionService works:
     Station station = new Station();
-    station.setStationCode("8500010");
-    station.setStationName("Basel SBB");
+    station.setStationCode(meetUpCode);
+    station.setStationName(meetUpPlace);
 
 
     newTrip.setMeetUpPlace(station);
-
+    tripRepository.save(newTrip);
+    tripRepository.flush();
+    log.debug("Created Trip: {}", newTrip);
     // store every trip participant
 
   }

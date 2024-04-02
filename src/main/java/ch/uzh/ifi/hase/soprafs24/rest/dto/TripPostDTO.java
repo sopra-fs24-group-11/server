@@ -37,7 +37,7 @@ public class TripPostDTO {
     return temporaryMeetUpPlace;
   }
 
-  public void setTemporaryMeetUpPlace(String meetUpPlace) {
+  public void setTemporaryMeetUpPlace(String temporaryMeetUpPlace) {
     this.temporaryMeetUpPlace = temporaryMeetUpPlace;
   }
 
@@ -45,7 +45,7 @@ public class TripPostDTO {
     return temporaryMeetUpCode;
   }
 
-  public void setTemporaryMeetUpCode(String meetUpCode) {
+  public void setTemporaryMeetUpCode(String temporaryMeetUpCode) {
     this.temporaryMeetUpCode = temporaryMeetUpCode;
   }
 
