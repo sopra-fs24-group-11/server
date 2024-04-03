@@ -153,7 +153,7 @@ public class ConnectionService {
             String jsonNumber = jsonSection
                     .getJSONObject("journey")
                     .getString("number");
-            String retName = jsonType + " " + jsonNumber;
+            String retName = jsonType + jsonNumber;
 
             // setup of connection departure time
             String jsonDepartureTime = jsonSection
