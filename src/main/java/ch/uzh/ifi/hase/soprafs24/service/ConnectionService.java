@@ -3,9 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Connection;
-import ch.uzh.ifi.hase.soprafs24.entity.Trip;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +30,10 @@ public class ConnectionService {
   public static List<Station> getLocationsName(String name) {
     try {
       // Http request to transport.opendata
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder()
-              .uri(URI.create(String.format("http://transport.opendata.ch/v1/locations?query=%s&type=station", name)))
+              .uri(URI.create(String.format("http://transport.opendata.ch/v1/locations?query=%s&type=station", encodedName)))
               .version(HttpClient.Version.HTTP_2)
               .GET()
               .build();
