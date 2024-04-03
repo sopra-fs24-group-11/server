@@ -277,7 +277,10 @@ public class TripController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void deleteConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
-    return;
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
+    connectionService.deleteConnection(participant);
   }
 
   @GetMapping("/trips/{tripId}/todos")
