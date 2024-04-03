@@ -6,10 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs24.service.ConnectionService;
-import ch.uzh.ifi.hase.soprafs24.service.TripParticipantService;
-import ch.uzh.ifi.hase.soprafs24.service.TripService;
-import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import ch.uzh.ifi.hase.soprafs24.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,6 +37,7 @@ public class TripController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public Long createTrip(@RequestHeader ("Authorization") String token, @RequestBody TripPostDTO tripPostDTO) {
+    NullChecker.tripPostDTOChecker(tripPostDTO);
     List<Long> userIds = tripPostDTO.getParticipants();
     Trip tripInput = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
     User administrator = userService.getUserByToken(token);
@@ -49,6 +47,7 @@ public class TripController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPutDTO tripPutDTO) {
+    NullChecker.tripPutDTOChecker(tripPutDTO);
     List<Long> userIds = tripPutDTO.getParticipants();
     Trip updatedTrip = DTOMapper.INSTANCE.convertTripPutDTOtoEntity(tripPutDTO);
     User administrator = userService.getUserByToken(token);

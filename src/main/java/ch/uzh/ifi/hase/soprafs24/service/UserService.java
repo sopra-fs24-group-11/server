@@ -67,22 +67,10 @@ public class UserService {
             new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
   }
 
-  public User getUser(Long userId, String token) {
-    User user =  userRepository.findById(userId).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-    if (!token.equals(user.getToken())){
-      new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access denied");
-    };
-
-    return user;
-  }
-
 
   public User createUser(User newUser) {
     checkIfUserNameExists(newUser);
     checkIfUserNameIsValid(newUser);
-    checkIfUserHasNoNullValues(newUser);
 
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
@@ -160,9 +148,6 @@ public class UserService {
   }
 
   public void giveFeedback(String token, String message) {
-    if (message == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Give a message!");
-    }
     User user = getUserByToken(token);
     Feedback feedback = new Feedback();
     feedback.setUserId(user.getId());
@@ -198,18 +183,7 @@ public class UserService {
     }
   }
 
-  private void checkIfUserHasNoNullValues(User user) {
-    String baseErrorMessage = "The %s should not be null!";
-    if (user.getUsername()==null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username"));
-    } else if (user.getBirthday()==null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "birthday"));
-    } else if (user.getPassword()==null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "password"));
-    } else if (user.getEmail()==null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "email"));
-    }
-  }
+
 
 
 

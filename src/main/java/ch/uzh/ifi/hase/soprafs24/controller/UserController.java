@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
+import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public String createUser(@RequestBody UserPostDTO userPostDTO) {
+    NullChecker.userPostDTOChecker(userPostDTO);
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
     User user = userService.createUser(userInput);
     return user.getToken();
@@ -46,6 +48,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public String loginUser(@RequestBody UserLoginPostDTO userLoginPostDTO) {
+    NullChecker.userLoginPostDTOChecker(userLoginPostDTO);
     User userInput = DTOMapper.INSTANCE.convertUserLoginPostDTOtoEntity(userLoginPostDTO);
     return userService.loginUser(userInput);
   }
@@ -68,6 +71,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateUser(@RequestHeader ("Authorization") String token, @RequestBody UserPutDTO userPutDTO) {
+    NullChecker.userPutDTOChecker(userPutDTO);
     User user = DTOMapper.INSTANCE.convertUserPutDTOToEntity(userPutDTO);
     userService.updateUser(token, user);
   }
@@ -100,6 +104,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessagePostDTO messagePostDTO) {
+    NullChecker.messagePostDTOChecker(messagePostDTO);
     userService.giveFeedback(token, messagePostDTO.getMessage());
   }
 

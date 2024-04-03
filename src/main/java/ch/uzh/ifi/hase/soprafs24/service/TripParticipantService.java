@@ -175,11 +175,13 @@ public class TripParticipantService {
     if (Objects.equals(trip.getAdministrator().getId(), user.getId())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot reject an invitation, admin has automatically accepted");
     }
+    if (participant.getStatus()==InvitationStatus.ACCEPTED) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot reject an invitation that has already been accepted - You have to leave the trip instead");
+    }
 
     tripParticipantRepository.deleteById(participant.getId());
     tripParticipantRepository.flush();
     log.debug("Participant rejected trip invitation {}", participant);
-    // to do: trip member count minus 1
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);
@@ -195,11 +197,16 @@ public class TripParticipantService {
     if (Objects.equals(trip.getAdministrator().getId(), leaver.getId())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot leave before announcing a new admin");
     }
+    if (participant.getStatus()==InvitationStatus.PENDING) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot leave a trip that hasn't been accepted yet - You have to reject the invitation instead");
+    }
+
     // to do: delete connections of participant and revert / delete list items
+
     tripParticipantRepository.deleteById(participant.getId());
     tripParticipantRepository.flush();
     log.debug("Participant rejected trip invitation {}", participant);
-    // to do: trip member count minus 1
+
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);
     tripRepository.flush();
@@ -220,7 +227,7 @@ public class TripParticipantService {
     tripParticipantRepository.deleteById(participant.getId());
     tripParticipantRepository.flush();
     log.debug("Admin removed participant from trip {}", participant);
-    // to do: trip member count minus 1
+
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);
     tripRepository.flush();

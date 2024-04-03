@@ -43,15 +43,10 @@ public class TripService {
   }
 
   public Long createTrip(Trip newTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
-    if (meetUpCode == null || meetUpPlace == null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
-    }
-    if (userIds == null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Should be a list of userIds");
-    }
     if (userIds.contains(administrator.getId())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
     }
+    // remove duplicates
     List<User> invited = new ArrayList<>();
     Set<Long> set = new HashSet<>();
     for (Long id : userIds) {
@@ -87,12 +82,6 @@ public class TripService {
   public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
     if (!isAdmin(tripId, administrator)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
-    }
-    if (meetUpCode == null || meetUpPlace == null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
-    }
-    if (userIds == null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Should be a list of userIds");
     }
     if (userIds.contains(administrator.getId())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
@@ -139,7 +128,7 @@ public class TripService {
     for (User user : toAdd) {
       tripParticipantService.storeParticipant(trip, administrator, user);
     }
-
+    trip.setNumberOfParticipants(trip.getNumberOfParticipants()-toDelete.size()+toAdd.size());
     tripRepository.save(trip);
     tripRepository.flush();
     log.debug("Updated Trip: {}", trip);
