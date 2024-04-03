@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.TripParticipantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.TripRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,21 @@ public class TripParticipantService {
   private final Logger log = LoggerFactory.getLogger(UserService.class);
 
   private final TripParticipantRepository tripParticipantRepository;
+  private final TripRepository tripRepository;
+
 
   @Autowired
-  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository) {
+  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository) {
     this.tripParticipantRepository = tripParticipantRepository;
+    this.tripRepository = tripRepository;
+  }
+
+  public List<TripParticipant> getTripParticipants(Trip trip) {
+    List<TripParticipant> participants = tripParticipantRepository.findAllByTrip(trip);
+    if (participants == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No participants found");
+    }
+    return participants;
   }
 
   public void storeParticipants(Trip trip, User administrator, List<User> invited) {
@@ -65,17 +77,15 @@ public class TripParticipantService {
     log.debug("Created Trip Participant: {}", newParticipant);
   }
 
-  public List<User> getTripParticipants(Trip trip) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByTrip(trip);
-    if (participants == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No participants found");
-    }
+  public List<User> getTripUsers(Trip trip) {
+    List<TripParticipant> participants = getTripParticipants(trip);
     List<User> users = new ArrayList<>();
     for (TripParticipant participant : participants) {
       users.add(participant.getUser());
     }
     return users;
   }
+
 
   public List<TripParticipant> getAllTripsOfAUser(User user) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByUser(user);
@@ -162,11 +172,19 @@ public class TripParticipantService {
     if (participant == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
     }
+    if (Objects.equals(trip.getAdministrator().getId(), user.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot reject an invitation, admin has automatically accepted");
+    }
 
     tripParticipantRepository.deleteById(participant.getId());
     tripParticipantRepository.flush();
     log.debug("Participant rejected trip invitation {}", participant);
     // to do: trip member count minus 1
+
+    trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
+    tripRepository.save(trip);
+    tripRepository.flush();
+    log.debug("One member less in trip: {}", trip);
   }
 
   public void leaveTrip(User leaver, Trip trip) {
@@ -182,6 +200,10 @@ public class TripParticipantService {
     tripParticipantRepository.flush();
     log.debug("Participant rejected trip invitation {}", participant);
     // to do: trip member count minus 1
+    trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
+    tripRepository.save(trip);
+    tripRepository.flush();
+    log.debug("One member less in trip: {}", trip);
   }
 
   public void removeMemberFromTrip(User userToBeRemoved, User requester, Trip trip) {
@@ -199,8 +221,27 @@ public class TripParticipantService {
     tripParticipantRepository.flush();
     log.debug("Admin removed participant from trip {}", participant);
     // to do: trip member count minus 1
+    trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
+    tripRepository.save(trip);
+    tripRepository.flush();
+    log.debug("One member less in trip: {}", trip);
   }
 
+  public TripParticipant getTripParticipant(Trip trip, User user) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be announced as new Admin is not part of this trip");
+    }
+    return participant;
+  }
 
+  public void deleteEverythingRelatedToATrip(Trip trip) {
+    List<TripParticipant> participants = getTripParticipants(trip);
+    tripParticipantRepository.deleteAll(participants);
+    tripParticipantRepository.flush();
+    log.debug("Deleted All Members of Trip: {}", trip);
+    // to do: delete all connections
+    // make a loop and delete each one in tripparticipantservice and there delete / revert each list item
+  }
 
 }

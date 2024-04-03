@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
@@ -23,14 +24,17 @@ public class TripService {
 
   private final TripRepository tripRepository;
 
+  private final UserService userService;
+
   // private final ConnectionService connectionService;
 
   private final TripParticipantService tripParticipantService;
 
   @Autowired
-  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService) {
+  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService) {
     this.tripRepository = tripRepository;
     this.tripParticipantService = tripParticipantService;
+    this.userService = userService;
   }
 
   public Trip getTripById(Long id) {
@@ -38,8 +42,25 @@ public class TripService {
             new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found"));
   }
 
-  public Long createTrip(Trip newTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
-    // Station station = connectionService.checkIfNameAndCodeAreCorrectAndTurnIntoStation(meetUpPlace, meetUpCode)
+  public Long createTrip(Trip newTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
+    if (meetUpCode == null || meetUpPlace == null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
+    }
+    if (userIds == null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Should be a list of userIds");
+    }
+    if (userIds.contains(administrator.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
+    }
+    List<User> invited = new ArrayList<>();
+    Set<Long> set = new HashSet<>();
+    for (Long id : userIds) {
+      if (set.add(id)) {
+        invited.add(userService.getUserById(id));
+      }
+    }
+
+
     newTrip.setAdministrator(administrator);
     int maximum = 10+(int)Math.floor(administrator.getLevel());
     if (maximum < invited.size() + 1) { // invited plus administrator
@@ -63,13 +84,28 @@ public class TripService {
     return newTrip.getId();
   }
 
-  public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
-    if (meetUpCode == null || meetUpPlace == null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
-    }
+  public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
     if (!isAdmin(tripId, administrator)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
+    if (meetUpCode == null || meetUpPlace == null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
+    }
+    if (userIds == null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Should be a list of userIds");
+    }
+    if (userIds.contains(administrator.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
+    }
+    List<User> invited = new ArrayList<>();
+    Set<Long> set = new HashSet<>();
+    for (Long id : userIds) {
+      if (set.add(id)) {
+        invited.add(userService.getUserById(id));
+      }
+    }
+
+
 
     Station station = new Station();
     station.setStationCode(meetUpCode);
@@ -81,7 +117,7 @@ public class TripService {
     trip.setMeetUpTime(updatedTrip.getMeetUpTime());
     trip.setMeetUpPlace(station);
 
-    List<User> participants = tripParticipantService.getTripParticipants(trip);
+    List<User> participants = tripParticipantService.getTripUsers(trip);
     invited.add(administrator);
     List<User> toAdd = new ArrayList<>();
     List<User> toDelete = new ArrayList<>();
@@ -119,6 +155,10 @@ public class TripService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
     Trip trip = getTripById(tripId);
+    TripParticipant participant = tripParticipantService.getTripParticipant(trip, newAdmin);
+    if (participant.getStatus() == InvitationStatus.PENDING) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "New Admin you wanted to choose has not yet accepted the trip request");
+    }
     trip.setAdministrator(newAdmin);
     tripRepository.save(trip);
     tripRepository.flush();
@@ -131,13 +171,14 @@ public class TripService {
     }
     Trip trip = getTripById(tripId);
 
-    /*tripParticipantService.deleteAllForATrip(trip);*/
+    tripParticipantService.deleteEverythingRelatedToATrip(trip);
 
     tripRepository.deleteById(tripId);
     tripRepository.flush();
     log.debug("Deleted Trip: {}", trip);
-    // to do: delete all connections
-    // make a loop and delete each one in tripparticipantservice and there delete / revert each list item
+
   }
+
+
 
 }

@@ -41,45 +41,18 @@ public class TripController {
   @ResponseBody
   public Long createTrip(@RequestHeader ("Authorization") String token, @RequestBody TripPostDTO tripPostDTO) {
     List<Long> userIds = tripPostDTO.getParticipants();
-    String temporaryMeetUpPlace = tripPostDTO.getTemporaryMeetUpPlace();
-    String temporaryMeetUpCode = tripPostDTO.getTemporaryMeetUpCode();
-    if (temporaryMeetUpCode == null || temporaryMeetUpPlace == null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
-    }
-
-    List<User> invited = new ArrayList<>();
-    Set<Long> set = new HashSet<>();
-    for (Long id : userIds) {
-      if (set.add(id)) {
-        invited.add(userService.getUserById(id));
-      }
-    }
-
     Trip tripInput = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
     User administrator = userService.getUserByToken(token);
-    if (userIds.contains(administrator.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
-    }
-    return tripService.createTrip(tripInput, administrator, invited, temporaryMeetUpPlace, temporaryMeetUpCode);
+    return tripService.createTrip(tripInput, administrator, userIds, tripPostDTO.getTemporaryMeetUpPlace(), tripPostDTO.getTemporaryMeetUpCode());
   }
   @PutMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPostDTO tripPostDTO) {
-    List<Long> userIds = tripPostDTO.getParticipants();
-    List<User> invited = new ArrayList<>();
-    Set<Long> set = new HashSet<>();
-    for (Long id : userIds) {
-      if (set.add(id)) {
-        invited.add(userService.getUserById(id));
-      }
-    }
-    Trip updatedTrip = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
+  public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPutDTO tripPutDTO) {
+    List<Long> userIds = tripPutDTO.getParticipants();
+    Trip updatedTrip = DTOMapper.INSTANCE.convertTripPutDTOtoEntity(tripPutDTO);
     User administrator = userService.getUserByToken(token);
-    if (userIds.contains(administrator.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
-    }
-    tripService.updateTrip(tripId, updatedTrip, administrator, invited, tripPostDTO.getTemporaryMeetUpPlace(), tripPostDTO.getTemporaryMeetUpCode());
+    tripService.updateTrip(tripId, updatedTrip, administrator, userIds, tripPutDTO.getTemporaryMeetUpPlace(), tripPutDTO.getTemporaryMeetUpCode());
   }
   @GetMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.OK)
@@ -97,7 +70,7 @@ public class TripController {
   @ResponseBody
   public List<ParticipantGetDTO> getTripParticipants(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     Trip trip = tripService.getTripById(tripId);
-    List<User> users = tripParticipantService.getTripParticipants(trip);
+    List<User> users = tripParticipantService.getTripUsers(trip);
     List<ParticipantGetDTO> participantGetDTOs = new ArrayList<>();
     if (!users.contains(userService.getUserByToken(token))) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not part of this trip and you can't see its participants");

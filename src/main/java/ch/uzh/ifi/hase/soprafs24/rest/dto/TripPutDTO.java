@@ -1,9 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TripPutDTO {
-  // new admin missing - make id field or user field?
+
   private String tripName;
 
   private String tripDescription;
@@ -13,6 +14,10 @@ public class TripPutDTO {
   private String temporaryMeetUpCode;
 
   private LocalDateTime meetUpTime;
+
+  private List<Long> participants;
+
+  private int rating;
 
   public String getTripName() {
     return tripName;
@@ -54,4 +59,19 @@ public class TripPutDTO {
     this.meetUpTime = meetUpTime;
   }
 
+  public List<Long> getParticipants() {
+    return participants;
+  }
+
+  public void setParticipants(List<Long> participants) {
+    this.participants = participants;
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
+  }
 }
