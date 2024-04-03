@@ -128,21 +128,12 @@ public class TripController {
     tripParticipantService.markTripAsFavorite(user, trip);
   }
 
-  @GetMapping("/trips/{tripId}/startPoint")
+  @GetMapping("/trips/searchStation")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<Station> getStations (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam String start) {
+  public List<Station> getStations (@RequestHeader("Authorization") String token, @RequestParam String start) {
     return ConnectionService.getLocationsName(start);
   }
-
-  @GetMapping("/trips/{tripId}/geoLocation")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public List<Station> getStations (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y) {
-    return ConnectionService.getLocationsCoord(x, y);
-  }
-
-
 
 
 
