@@ -44,7 +44,7 @@ public class TripParticipantService {
   public TripParticipant getTripParticipant(Trip trip, User user) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be announced as new Admin is not part of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip");
     }
     return participant;
   }
