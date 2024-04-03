@@ -13,9 +13,8 @@ public class ToDoItem extends Item implements Serializable {
   @Column(nullable=false)
   private boolean completed;
 
-  @ManyToOne
-  @JoinColumn(name = "selectedParticipant")
-  private TripParticipant participant;
+  //@Column(name = "selectedParticipant", nullable = true)
+  //private Long participantId;
 
   @ManyToOne
   @JoinColumn(name = "trip_id", nullable = false)
@@ -29,13 +28,13 @@ public class ToDoItem extends Item implements Serializable {
     this.completed = completed;
   }
 
-  public TripParticipant getParticipant() {
-    return participant;
+  /*public Long getParticipant() {
+    return participantId;
   }
 
-  public void setParticipant(TripParticipant participant) {
-    this.participant = participant;
-  }
+  public void setParticipant(Long participantId) {
+    this.participantId = participantId;
+  }*/
 
   public Trip getTrip() {
     return trip;

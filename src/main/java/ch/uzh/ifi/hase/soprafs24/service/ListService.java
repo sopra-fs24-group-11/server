@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
+import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.repository.GroupPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ToDoRepository;
@@ -41,8 +42,13 @@ public class ListService {
     return;
   }
 
-  public String addTodo(Trip trip, String item) {
-    return "hallo";
+  public String addTodo(Trip trip, ToDoItem newToDoItem) {
+    newToDoItem.setTrip(trip);
+    newToDoItem.setCompleted(false);
+    newToDoItem = toDoRepository.save(newToDoItem);
+    toDoRepository.flush();
+
+    return newToDoItem.getItem();
   }
 
   public void deleteTodo(Trip trip, Long itemId) {

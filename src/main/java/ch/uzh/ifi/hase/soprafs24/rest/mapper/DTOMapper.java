@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Friend;
-import ch.uzh.ifi.hase.soprafs24.entity.ParticipantConnection;
-import ch.uzh.ifi.hase.soprafs24.entity.Trip;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -107,6 +104,20 @@ public interface DTOMapper {
   @Mapping(source = "arrivalTime", target = "arrivalTime")
   @Mapping(source = "arrivalPoint", target = "arrivalPoint")
   ConnectionPostDTO convertEntityToConnectionPostDTO(ParticipantConnection participantConnection);
+
+  @Mapping(source = "item", target = "item")
+  ToDoItem convertToDoPostDTOToEntity(ToDoPostDTO toDoPostDTO);
+
+  @Mapping(source = "item", target = "item")
+  ToDoPostDTO convertEntityToToDoPostDTO(ToDoItem toDoItem);
+
+  @Mapping(source = "item", target = "item")
+  @Mapping(source = "completed", target = "completed")
+  ToDoItem convertToDoPutDTOToEntity(ToDoPutDTO toDoPutDTO);
+
+  @Mapping(source = "item", target = "item")
+  @Mapping(source = "completed", target = "completed")
+  ToDoPutDTO convertEntityToToDoPutDTO(ToDoItem toDoItem);
 
 
 }

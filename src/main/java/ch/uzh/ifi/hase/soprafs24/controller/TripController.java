@@ -302,9 +302,10 @@ public class TripController {
   @PostMapping("trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public String createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+  public String createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ToDoPostDTO toDoPostDTO) {
     Trip trip = tripService.getTripById(tripId);
-    return listService.addTodo(trip);
+    ToDoItem toDoItem = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(toDoPostDTO);
+    return listService.addTodo(trip, toDoItem);
   }
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}")
