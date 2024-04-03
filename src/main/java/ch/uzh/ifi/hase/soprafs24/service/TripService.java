@@ -128,9 +128,6 @@ public class TripService {
     for (User user : toAdd) {
       tripParticipantService.storeParticipant(trip, administrator, user);
     }
-    System.out.println(trip.getNumberOfParticipants());
-    System.out.println(toDelete.size());
-    System.out.println(toAdd.size());
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()+toAdd.size());
     tripRepository.save(trip);

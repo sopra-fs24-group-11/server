@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public abstract class Notification implements Serializable {
+public abstract class Item implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
