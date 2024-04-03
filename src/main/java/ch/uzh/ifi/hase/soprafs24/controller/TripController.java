@@ -83,9 +83,9 @@ public class TripController {
   public List<BasicTripInfoGetDTO> getTripHistory(@RequestHeader("Authorization") String token) {
     // get all trips of a user no matter the status
     User user = userService.getUserByToken(token);
-    List<Trip> tripHistory = tripParticipantService.getTripHistory(user);
+    List<Trip> trips = tripParticipantService.getTripHistory(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : tripHistory) {
+    for (Trip trip : trips) {
       basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
     }
     return basics;
@@ -96,9 +96,22 @@ public class TripController {
   public List<BasicTripInfoGetDTO> getCurrentTrips(@RequestHeader("Authorization") String token) {
     // get all ongoing trips of a user
     User user = userService.getUserByToken(token);
-    List<Trip> tripHistory = tripParticipantService.getCurrentTrips(user);
+    List<Trip> trips = tripParticipantService.getCurrentTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : tripHistory) {
+    for (Trip trip : trips) {
+      basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
+    }
+    return basics;
+  }
+  @GetMapping("/trips/invitations")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<BasicTripInfoGetDTO> getUnansweredTrips(@RequestHeader("Authorization") String token) {
+    // get all unanswered trips of a user
+    User user = userService.getUserByToken(token);
+    List<Trip> trips = tripParticipantService.getUnansweredTrips(user);
+    List<BasicTripInfoGetDTO> basics = new ArrayList<>();
+    for (Trip trip : trips) {
       basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
     }
     return basics;
@@ -109,9 +122,9 @@ public class TripController {
   public List<BasicTripInfoGetDTO> getFavoriteTrips(@RequestHeader("Authorization") String token) {
     // get all favourite trips of a user
     User user = userService.getUserByToken(token);
-    List<Trip> tripHistory = tripParticipantService.getFavoriteTrips(user);
+    List<Trip> trips = tripParticipantService.getFavoriteTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : tripHistory) {
+    for (Trip trip : trips) {
       basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
     }
     return basics;

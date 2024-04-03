@@ -132,7 +132,19 @@ public class TripParticipantService {
   }
 
   public List<Trip> getCurrentTrips(User user) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompleted(user, false);
+    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.ACCEPTED);
+    if (participants == null) {
+      return new ArrayList<>(); // Return an empty list
+    }
+    List<Trip> trips = new ArrayList<>();
+    for (TripParticipant participant : participants) {
+      trips.add(participant.getTrip());
+    }
+    return trips;
+  }
+
+  public List<Trip> getUnansweredTrips(User user) {
+    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.PENDING);
     if (participants == null) {
       return new ArrayList<>(); // Return an empty list
     }
