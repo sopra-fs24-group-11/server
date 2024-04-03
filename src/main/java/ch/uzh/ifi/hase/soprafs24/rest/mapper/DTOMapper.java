@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
+import ch.uzh.ifi.hase.soprafs24.entity.ParticipantConnection;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
@@ -90,6 +91,22 @@ public interface DTOMapper {
   @Mapping(source = "completed", target = "completed")
   @Mapping(source = "rating", target = "rating")
   BasicTripInfoGetDTO convertEntityToBasicTripInfoGetDTO(Trip trip);
+
+  @Mapping(source = "connectionType", target = "connectionType")
+  @Mapping(source = "connectionName", target = "connectionName")
+  @Mapping(source = "departureTime", target = "departureTime")
+  @Mapping(source = "departurePoint", target = "departurePoint")
+  @Mapping(source = "arrivalTime", target = "arrivalTime")
+  @Mapping(source = "arrivalPoint", target = "arrivalPoint")
+  ParticipantConnection convertConnectionPostDTOToEntity(ConnectionPostDTO connectionPostDTO);
+
+  @Mapping(source = "connectionType", target = "connectionType")
+  @Mapping(source = "connectionName", target = "connectionName")
+  @Mapping(source = "departureTime", target = "departureTime")
+  @Mapping(source = "departurePoint", target = "departurePoint")
+  @Mapping(source = "arrivalTime", target = "arrivalTime")
+  @Mapping(source = "arrivalPoint", target = "arrivalPoint")
+  ConnectionPostDTO convertEntityToConnectionPostDTO(ParticipantConnection participantConnection);
 
 
 }

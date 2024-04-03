@@ -98,4 +98,33 @@ public class NullChecker {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Participants list cannot be null");
     }
   }
+
+  public static void connectionPostDTOsChecker(List<ConnectionPostDTO> dtos) {
+    for(ConnectionPostDTO dto : dtos) {
+      if (dto.getConnectionType() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Connection type cannot be null");
+      }
+      if (dto.getConnectionName() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Connection name cannot be null");
+      }
+      if (dto.getDepartureTime() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Departure time cannot be null");
+      }
+      if (dto.getDeparturePoint() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Departure point cannot be null");
+      }
+      if (dto.getDeparturePoint().getStationName() == null || dto.getDeparturePoint().getStationCode() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Departure station information cannot be null");
+      }
+      if (dto.getArrivalTime() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arrival time cannot be null");
+      }
+      if (dto.getArrivalPoint() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arrival point cannot be null");
+      }
+      if (dto.getArrivalPoint().getStationName() == null || dto.getArrivalPoint().getStationCode() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arrival station information cannot be null");
+      }
+    }
+  }
 }
