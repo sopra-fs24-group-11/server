@@ -21,13 +21,15 @@ public class TripController {
   private final UserService userService;
 
   private final TripParticipantService tripParticipantService;
+  private final ListService listService;
 
 
 
-  TripController(TripService tripService, UserService userService, TripParticipantService tripParticipantService) {
+  TripController(TripService tripService, UserService userService, TripParticipantService tripParticipantService, ListService listService) {
     this.tripService = tripService;
     this.userService = userService;
     this.tripParticipantService = tripParticipantService;
+    this.listService = listService;
   }
 
   @PostMapping("/trips/new")
@@ -248,5 +250,37 @@ public class TripController {
   @ResponseBody
   public void deleteConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     return;
+  }
+
+  @GetMapping("/trips/{tripId}/todos")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void getTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    Trip trip = tripService.getTripById(tripId);
+    listService.getTodos(trip);
+  }
+
+  @PutMapping("trips/{tripId}/todos/{itemId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    Trip trip = tripService.getTripById(tripId);
+    listService.updateTodo(trip, itemId);
+  }
+
+  @PostMapping("trips/{tripId}/todos")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public String createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    Trip trip = tripService.getTripById(tripId);
+    return listService.addTodo(trip);
+  }
+
+  @DeleteMapping("trips/{tripId}/todos/{itemId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    Trip trip = tripService.getTripById(tripId);
+    listService.deleteTodo(trip, itemId);
   }
 }
