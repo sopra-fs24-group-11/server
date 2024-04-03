@@ -3,7 +3,9 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Connection;
+import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ import java.util.List;
 @Service
 @Transactional
 public class ConnectionService {
+
   public static List<Station> getLocationsName(String name) {
     try {
       // Http request to transport.opendata

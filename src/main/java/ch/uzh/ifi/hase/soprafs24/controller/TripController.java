@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Station;
-import ch.uzh.ifi.hase.soprafs24.entity.Trip;
-import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.*;
@@ -136,7 +133,14 @@ public class TripController {
     return ConnectionService.getLocationsName(start);
   }
 
-
+  @GetMapping("/trips/{tripId}/startPoint")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<List<Connection>> getConnectionsByCode (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam String start) {
+    Trip trip = tripService.getTripById(tripId);
+    String end = trip.getMeetUpPlace().getStationCode();
+    return ConnectionService.getConnectionsByCode(start, end);
+  }
 
 
   @PutMapping("/trips/{tripId}/invitation")
