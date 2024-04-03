@@ -27,12 +27,14 @@ public class TripParticipantService {
 
   private final TripParticipantRepository tripParticipantRepository;
   private final TripRepository tripRepository;
+  private final ConnectionService connectionService;
 
 
   @Autowired
-  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository) {
+  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository, ConnectionService connectionService) {
     this.tripParticipantRepository = tripParticipantRepository;
     this.tripRepository = tripRepository;
+    this.connectionService = connectionService;
   }
 
   public List<TripParticipant> getTripParticipants(Trip trip) {
@@ -41,6 +43,14 @@ public class TripParticipantService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No participants found");
     }
     return participants;
+  }
+
+  public TripParticipant getTripParticipant(Trip trip, User user) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be announced as new Admin is not part of this trip");
+    }
+    return participant;
   }
 
   public void storeParticipants(Trip trip, User administrator, List<User> invited) {
@@ -93,8 +103,23 @@ public class TripParticipantService {
   }
 
   public void deleteAllForAUser(User user) {
-    // TO DO: delete all connections and list items
+    // TO DO: delete / revert list items
+    List<TripParticipant> tripAdmins = tripParticipantRepository.findAllByUserAndTripAdministrator(user, user);
+    System.out.println(tripAdmins);
+    if (tripAdmins != null && !tripAdmins.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete if you are an admin");
+    }
     List<TripParticipant> tripParticipants = getAllTripsOfAUser(user);
+
+    for (TripParticipant pa : tripParticipants) {
+      connectionService.deleteConnection(pa);
+      Trip trip = pa.getTrip();
+      trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
+      tripRepository.save(trip);
+      tripRepository.flush();
+      log.debug("One member less in trip: {}", trip);
+    }
+
     tripParticipantRepository.deleteAll(tripParticipants);
     tripParticipantRepository.flush();
     log.debug("Deleted all friendships of user who chose to delete account");
@@ -191,6 +216,8 @@ public class TripParticipantService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot reject an invitation that has already been accepted - You have to leave the trip instead");
     }
 
+    // to do: revert / delete list items -> even if there shouldn't be any, it could happen (via postman) and a 500 error would be thrown
+    connectionService.deleteConnection(participant);
     tripParticipantRepository.deleteById(participant.getId());
     tripParticipantRepository.flush();
     log.debug("Participant rejected trip invitation {}", participant);
@@ -213,9 +240,9 @@ public class TripParticipantService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot leave a trip that hasn't been accepted yet - You have to reject the invitation instead");
     }
 
-    // to do: delete connections of participant and revert / delete list items
-
-    tripParticipantRepository.deleteById(participant.getId());
+    // to do: revert / delete list items
+    connectionService.deleteConnection(participant);
+    tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
     log.debug("Participant rejected trip invitation {}", participant);
 
@@ -236,7 +263,9 @@ public class TripParticipantService {
     if (participant == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be removed is not part of this trip");
     }
-    tripParticipantRepository.deleteById(participant.getId());
+    // to do: revert / delete list items
+    connectionService.deleteConnection(participant);
+    tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
     log.debug("Admin removed participant from trip {}", participant);
 
@@ -246,21 +275,17 @@ public class TripParticipantService {
     log.debug("One member less in trip: {}", trip);
   }
 
-  public TripParticipant getTripParticipant(Trip trip, User user) {
-    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
-    if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be announced as new Admin is not part of this trip");
-    }
-    return participant;
-  }
+
 
   public void deleteEverythingRelatedToATrip(Trip trip) {
     List<TripParticipant> participants = getTripParticipants(trip);
+    for (TripParticipant pa : participants) {
+      connectionService.deleteConnection(pa);
+    }
     tripParticipantRepository.deleteAll(participants);
     tripParticipantRepository.flush();
     log.debug("Deleted All Members of Trip: {}", trip);
-    // to do: delete all connections
-    // make a loop and delete each one in tripparticipantservice and there delete / revert each list item
+    // to do:  delete / revert each list item
   }
 
 }

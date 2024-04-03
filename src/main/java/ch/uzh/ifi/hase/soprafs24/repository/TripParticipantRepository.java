@@ -16,6 +16,7 @@ public interface TripParticipantRepository extends JpaRepository<TripParticipant
   List<TripParticipant> findAllByUserAndTripCompletedAndStatus(User user, boolean completed, InvitationStatus status);
   TripParticipant findByUserAndTripAndStatus(User user, Trip trip, InvitationStatus status);
   List<TripParticipant> findAllByUserAndTripCompleted(User user, boolean completed);
+  List<TripParticipant> findAllByUserAndTripAdministrator(User user, User administrator);
   TripParticipant findByUserAndTrip(User user, Trip trip);
   List<TripParticipant> findAllByUser(User user);
 }

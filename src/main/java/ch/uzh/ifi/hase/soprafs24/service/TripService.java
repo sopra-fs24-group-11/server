@@ -23,10 +23,8 @@ public class TripService {
   private final Logger log = LoggerFactory.getLogger(UserService.class);
 
   private final TripRepository tripRepository;
-
   private final UserService userService;
 
-  // private final ConnectionService connectionService;
 
   private final TripParticipantService tripParticipantService;
 

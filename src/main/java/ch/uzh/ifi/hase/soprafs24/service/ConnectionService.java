@@ -243,6 +243,10 @@ public class ConnectionService {
   }
 
   public void saveConnection(TripParticipant participant, List<ParticipantConnection> connections) {
+    if(!participantConnectionRepository.findAllByParticipant(participant).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You already have a connection, update it.");
+
+    }
     for (ParticipantConnection connection : connections) {
       connection.setParticipant(participant);
     }
