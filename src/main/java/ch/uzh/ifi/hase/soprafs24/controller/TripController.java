@@ -56,7 +56,7 @@ public class TripController {
   public BasicTripInfoGetDTO getTripInfo(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
-    tripParticipantService.isPartOfTrip(user, trip);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     return (DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
 
   }

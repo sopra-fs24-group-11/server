@@ -100,8 +100,8 @@ public class TripParticipantService {
     log.debug("Deleted all friendships of user who chose to delete account");
   }
 
-  public void isPartOfTrip(User user, Trip trip) {
-    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
+  public void isPartOfTripAndHasAccepted(User user, Trip trip) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTripAndStatus(user, trip, InvitationStatus.ACCEPTED);
     if (participant == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
     }
