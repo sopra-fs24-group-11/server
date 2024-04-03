@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Station;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,9 +11,7 @@ public class TripPostDTO {
 
   private String tripDescription;
 
-  private String temporaryMeetUpPlace;
-
-  private String temporaryMeetUpCode;
+  private Station meetUpPlace;
 
   private LocalDateTime meetUpTime;
 
@@ -33,20 +33,12 @@ public class TripPostDTO {
     this.tripDescription = tripDescription;
   }
 
-  public String getTemporaryMeetUpPlace() {
-    return temporaryMeetUpPlace;
+  public Station getMeetUpPlace() {
+    return meetUpPlace;
   }
 
-  public void setTemporaryMeetUpPlace(String temporaryMeetUpPlace) {
-    this.temporaryMeetUpPlace = temporaryMeetUpPlace;
-  }
-
-  public String getTemporaryMeetUpCode() {
-    return temporaryMeetUpCode;
-  }
-
-  public void setTemporaryMeetUpCode(String temporaryMeetUpCode) {
-    this.temporaryMeetUpCode = temporaryMeetUpCode;
+  public void setMeetUpPlace(Station meetUpPlace) {
+    this.meetUpPlace = meetUpPlace;
   }
 
   public LocalDateTime getMeetUpTime() {

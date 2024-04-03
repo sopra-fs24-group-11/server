@@ -20,7 +20,7 @@ import java.util.*;
 @Service
 @Transactional
 public class TripService {
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final Logger log = LoggerFactory.getLogger(TripService.class);
 
   private final TripRepository tripRepository;
   private final UserService userService;
@@ -40,7 +40,7 @@ public class TripService {
             new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found"));
   }
 
-  public Long createTrip(Trip newTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
+  public Long createTrip(Trip newTrip, User administrator, List<Long> userIds) {
     if (userIds.contains(administrator.getId())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
     }
@@ -62,13 +62,7 @@ public class TripService {
     newTrip.setMaxParticipants(maximum);
     newTrip.setNumberOfParticipants(invited.size() + 1);
 
-    // temporary here until connectionService works:
-    Station station = new Station();
-    station.setStationCode(meetUpCode);
-    station.setStationName(meetUpPlace);
 
-
-    newTrip.setMeetUpPlace(station);
     tripRepository.save(newTrip);
     tripRepository.flush();
     log.debug("Created Trip: {}", newTrip);
@@ -77,7 +71,7 @@ public class TripService {
     return newTrip.getId();
   }
 
-  public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<Long> userIds, String meetUpPlace, String meetUpCode) {
+  public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<Long> userIds) {
     if (!isAdmin(tripId, administrator)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
@@ -92,17 +86,13 @@ public class TripService {
       }
     }
 
-
-
-    Station station = new Station();
-    station.setStationCode(meetUpCode);
-    station.setStationName(meetUpPlace);
-
     Trip trip = getTripById(tripId);
+
     trip.setTripName(updatedTrip.getTripName());
     trip.setTripDescription(updatedTrip.getTripDescription());
     trip.setMeetUpTime(updatedTrip.getMeetUpTime());
-    trip.setMeetUpPlace(station);
+    trip.setMeetUpPlace(updatedTrip.getMeetUpPlace());
+    trip.setRating(updatedTrip.getRating());
 
     List<User> participants = tripParticipantService.getTripUsers(trip);
     invited.add(administrator);

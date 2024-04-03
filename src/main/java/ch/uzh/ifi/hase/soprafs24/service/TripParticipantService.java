@@ -23,7 +23,7 @@ import java.util.Objects;
 @Transactional
 public class TripParticipantService {
 
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final Logger log = LoggerFactory.getLogger(TripParticipantService.class);
 
   private final TripParticipantRepository tripParticipantRepository;
   private final TripRepository tripRepository;
@@ -38,11 +38,7 @@ public class TripParticipantService {
   }
 
   public List<TripParticipant> getTripParticipants(Trip trip) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByTrip(trip);
-    if (participants == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No participants found");
-    }
-    return participants;
+    return tripParticipantRepository.findAllByTrip(trip);
   }
 
   public TripParticipant getTripParticipant(Trip trip, User user) {
@@ -98,15 +94,13 @@ public class TripParticipantService {
 
 
   public List<TripParticipant> getAllTripsOfAUser(User user) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByUser(user);
-    return Objects.requireNonNullElseGet(participants, ArrayList::new);
+    return tripParticipantRepository.findAllByUser(user);
   }
 
   public void deleteAllForAUser(User user) {
     // TO DO: delete / revert list items
     List<TripParticipant> tripAdmins = tripParticipantRepository.findAllByUserAndTripAdministrator(user, user);
-    System.out.println(tripAdmins);
-    if (tripAdmins != null && !tripAdmins.isEmpty()) {
+    if (!tripAdmins.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete if you are an admin");
     }
     List<TripParticipant> tripParticipants = getAllTripsOfAUser(user);
@@ -134,9 +128,6 @@ public class TripParticipantService {
 
   public List<Trip> getTripHistory(User user) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompleted(user, true);
-    if (participants == null) {
-      return new ArrayList<>(); // Return an empty list
-    }
     List<Trip> trips = new ArrayList<>();
     for (TripParticipant participant : participants) {
       trips.add(participant.getTrip());
@@ -146,9 +137,6 @@ public class TripParticipantService {
 
   public List<Trip> getFavoriteTrips(User user) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndFavouriteTrip(user, true);
-    if (participants == null) {
-      return new ArrayList<>(); // Return an empty list
-    }
     List<Trip> trips = new ArrayList<>();
     for (TripParticipant participant : participants) {
       trips.add(participant.getTrip());
@@ -158,9 +146,6 @@ public class TripParticipantService {
 
   public List<Trip> getCurrentTrips(User user) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.ACCEPTED);
-    if (participants == null) {
-      return new ArrayList<>(); // Return an empty list
-    }
     List<Trip> trips = new ArrayList<>();
     for (TripParticipant participant : participants) {
       trips.add(participant.getTrip());
@@ -170,9 +155,6 @@ public class TripParticipantService {
 
   public List<Trip> getUnansweredTrips(User user) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.PENDING);
-    if (participants == null) {
-      return new ArrayList<>(); // Return an empty list
-    }
     List<Trip> trips = new ArrayList<>();
     for (TripParticipant participant : participants) {
       trips.add(participant.getTrip());

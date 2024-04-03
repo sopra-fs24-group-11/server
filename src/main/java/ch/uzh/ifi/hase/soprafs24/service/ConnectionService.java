@@ -34,7 +34,7 @@ import java.util.List;
 @Transactional
 public class ConnectionService {
 
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final Logger log = LoggerFactory.getLogger(ConnectionService.class);
   private final ParticipantConnectionRepository participantConnectionRepository;
 
   @Autowired
@@ -229,11 +229,7 @@ public class ConnectionService {
 
   // 4 methods:
   public List<ParticipantConnection> getConnection(TripParticipant participant) {
-    List<ParticipantConnection> connections = participantConnectionRepository.findAllByParticipant(participant);
-    if (connections == null) {
-      return new ArrayList<>();
-    }
-    return connections;
+    return participantConnectionRepository.findAllByParticipant(participant);
   }
 
   public void deleteConnection(TripParticipant participant) {

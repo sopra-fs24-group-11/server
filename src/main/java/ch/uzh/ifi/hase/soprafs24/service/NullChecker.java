@@ -59,11 +59,11 @@ public class NullChecker {
     if (dto.getTripDescription() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be null");
     }
-    if (dto.getTemporaryMeetUpPlace() == null) {
+    if (dto.getMeetUpPlace() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up place cannot be null");
     }
-    if (dto.getTemporaryMeetUpCode() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up code cannot be null");
+    if (dto.getMeetUpPlace().getStationName() == null || dto.getMeetUpPlace().getStationCode() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up station information cannot be null");
     }
     if (dto.getMeetUpTime() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be null");
@@ -85,11 +85,11 @@ public class NullChecker {
     if (dto.getTripDescription() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be null");
     }
-    if (dto.getTemporaryMeetUpPlace() == null) {
+    if (dto.getMeetUpPlace() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up place cannot be null");
     }
-    if (dto.getTemporaryMeetUpCode() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up code cannot be null");
+    if (dto.getMeetUpPlace().getStationName() == null || dto.getMeetUpPlace().getStationCode() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up station information cannot be null");
     }
     if (dto.getMeetUpTime() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be null");
@@ -97,9 +97,13 @@ public class NullChecker {
     if (dto.getParticipants() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Participants list cannot be null");
     }
+    List<Long> ids = dto.getParticipants();
+    if (ids.contains(null)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ids in participant list cannot be null");
+    }
   }
 
-  public static void connectionPostDTOsChecker(List<ConnectionDTO> dtos) {
+  public static void connectionDTOsChecker(List<ConnectionDTO> dtos) {
     for(ConnectionDTO dto : dtos) {
       if (dto.getConnectionType() == null) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Connection type cannot be null");

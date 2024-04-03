@@ -20,7 +20,7 @@ import java.util.List;
 @Transactional
 public class ListService {
 
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final Logger log = LoggerFactory.getLogger(ListService.class);
 
   private final ToDoRepository toDoRepository;
   private final GroupPackingRepository groupPackingRepository;

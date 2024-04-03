@@ -39,7 +39,7 @@ public class TripController {
     List<Long> userIds = tripPostDTO.getParticipants();
     Trip tripInput = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
     User administrator = userService.getUserByToken(token);
-    return tripService.createTrip(tripInput, administrator, userIds, tripPostDTO.getTemporaryMeetUpPlace(), tripPostDTO.getTemporaryMeetUpCode());
+    return tripService.createTrip(tripInput, administrator, userIds);
   }
   @PutMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -49,7 +49,7 @@ public class TripController {
     List<Long> userIds = tripPutDTO.getParticipants();
     Trip updatedTrip = DTOMapper.INSTANCE.convertTripPutDTOtoEntity(tripPutDTO);
     User administrator = userService.getUserByToken(token);
-    tripService.updateTrip(tripId, updatedTrip, administrator, userIds, tripPutDTO.getTemporaryMeetUpPlace(), tripPutDTO.getTemporaryMeetUpCode());
+    tripService.updateTrip(tripId, updatedTrip, administrator, userIds);
   }
   @GetMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.OK)
@@ -230,9 +230,10 @@ public class TripController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public void saveConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionDTO> connectionDTOS) {
-    NullChecker.connectionPostDTOsChecker(connectionDTOS);
+    NullChecker.connectionDTOsChecker(connectionDTOS);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
 
     List<ParticipantConnection> connections = new ArrayList<>();
@@ -245,9 +246,10 @@ public class TripController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionDTO> connectionDTOS) {
-    NullChecker.connectionPostDTOsChecker(connectionDTOS);
+    NullChecker.connectionDTOsChecker(connectionDTOS);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
 
     List<ParticipantConnection> connections = new ArrayList<>();
@@ -262,6 +264,7 @@ public class TripController {
   public List<ConnectionDTO> getConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
     List<ParticipantConnection> connections = connectionService.getConnection(participant);
     List<ConnectionDTO> dtos = new ArrayList<>();
@@ -276,6 +279,7 @@ public class TripController {
   public void deleteConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
     connectionService.deleteConnection(participant);
   }
@@ -286,9 +290,8 @@ public class TripController {
   public List<ConnectionAndUserDTO> getConnections(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     List<TripParticipant> participants = tripParticipantService.getTripParticipants(trip);
-
-    // To Do: check if user is in trip!!!
 
     List<ConnectionAndUserDTO> dtos = new ArrayList<>();
     for (TripParticipant participant : participants) {

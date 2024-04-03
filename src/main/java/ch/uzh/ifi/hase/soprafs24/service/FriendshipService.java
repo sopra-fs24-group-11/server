@@ -42,40 +42,40 @@ public class FriendshipService {
   public List<Friend> getAllReceivedFriendRequests(User user) {
     List<Friend> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend2(user);
-    if (listOne != null) {
-      for (Friendship friendship : listOne) {
-        if (friendship.getStatus() == FriendShipStatus.PENDING) {
-          User friend = friendship.getFriend1();
-          Friend newFriend = new Friend();
-          newFriend.setFriendId(friend.getId());
-          newFriend.setLevel(friend.getLevel());
-          newFriend.setUsername(friend.getUsername());
-          newFriend.setPoints(friendship.getPoints());
-          newFriend.setStatus(friendship.getStatus());
-          result.add(newFriend);
-        }
+
+    for (Friendship friendship : listOne) {
+      if (friendship.getStatus() == FriendShipStatus.PENDING) {
+        User friend = friendship.getFriend1();
+        Friend newFriend = new Friend();
+        newFriend.setFriendId(friend.getId());
+        newFriend.setLevel(friend.getLevel());
+        newFriend.setUsername(friend.getUsername());
+        newFriend.setPoints(friendship.getPoints());
+        newFriend.setStatus(friendship.getStatus());
+        result.add(newFriend);
       }
     }
+
     return result;
   }
 
   public List<Friend> getAllSentFriendRequests(User user) {
     List<Friend> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
-    if (listOne != null) {
-      for (Friendship friendship : listOne) {
-        if (friendship.getStatus() == FriendShipStatus.PENDING) {
-          User friend = friendship.getFriend2();
-          Friend newFriend = new Friend();
-          newFriend.setFriendId(friend.getId());
-          newFriend.setLevel(friend.getLevel());
-          newFriend.setUsername(friend.getUsername());
-          newFriend.setPoints(friendship.getPoints());
-          newFriend.setStatus(friendship.getStatus());
-          result.add(newFriend);
-        }
+
+    for (Friendship friendship : listOne) {
+      if (friendship.getStatus() == FriendShipStatus.PENDING) {
+        User friend = friendship.getFriend2();
+        Friend newFriend = new Friend();
+        newFriend.setFriendId(friend.getId());
+        newFriend.setLevel(friend.getLevel());
+        newFriend.setUsername(friend.getUsername());
+        newFriend.setPoints(friendship.getPoints());
+        newFriend.setStatus(friendship.getStatus());
+        result.add(newFriend);
       }
     }
+
     return result;
   }
 
@@ -90,15 +90,10 @@ public class FriendshipService {
     List<Friendship> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
     List<Friendship> listTwo = friendshipRepository.findAllByFriend2(user);
-    if (listOne == null && listTwo == null) {
-      return new ArrayList<>(); // Return an empty list
-    }
-    if (listOne != null) {
-      result.addAll(listOne);
-    }
-    if (listTwo != null) {
-      result.addAll(listTwo);
-    }
+
+    result.addAll(listOne);
+    result.addAll(listTwo);
+
     return result;
   }
 
@@ -107,37 +102,33 @@ public class FriendshipService {
     List<Friend> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
     List<Friendship> listTwo = friendshipRepository.findAllByFriend2(user);
-    if (listOne == null && listTwo == null) {
-      return new ArrayList<>(); // Return an empty list
-    }
-    if (listOne != null) {
-      for (Friendship friendship : listOne) {
-        if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
-          User friend = friendship.getFriend2();
-          Friend newFriend = new Friend();
-          newFriend.setFriendId(friend.getId());
-          newFriend.setLevel(friend.getLevel());
-          newFriend.setUsername(friend.getUsername());
-          newFriend.setPoints(friendship.getPoints());
-          newFriend.setStatus(friendship.getStatus());
-          result.add(newFriend);
-        }
+
+    for (Friendship friendship : listOne) {
+      if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
+        User friend = friendship.getFriend2();
+        Friend newFriend = new Friend();
+        newFriend.setFriendId(friend.getId());
+        newFriend.setLevel(friend.getLevel());
+        newFriend.setUsername(friend.getUsername());
+        newFriend.setPoints(friendship.getPoints());
+        newFriend.setStatus(friendship.getStatus());
+        result.add(newFriend);
       }
     }
-    if (listTwo != null) {
-      for (Friendship friendship : listTwo) {
-        if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
-          User friend = friendship.getFriend1();
-          Friend newFriend = new Friend();
-          newFriend.setFriendId(friend.getId());
-          newFriend.setLevel(friend.getLevel());
-          newFriend.setUsername(friend.getUsername());
-          newFriend.setPoints(friendship.getPoints());
-          newFriend.setStatus(friendship.getStatus());
-          result.add(newFriend);
-        }
+
+    for (Friendship friendship : listTwo) {
+      if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
+        User friend = friendship.getFriend1();
+        Friend newFriend = new Friend();
+        newFriend.setFriendId(friend.getId());
+        newFriend.setLevel(friend.getLevel());
+        newFriend.setUsername(friend.getUsername());
+        newFriend.setPoints(friendship.getPoints());
+        newFriend.setStatus(friendship.getStatus());
+        result.add(newFriend);
       }
     }
+
     return result;
   }
 

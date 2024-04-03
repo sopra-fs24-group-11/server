@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ConnectionAndUserDTO {
   private String username;
-  private List<ConnectionDTO> connectionDTO;
+  private List<ConnectionDTO> connection;
 
   public String getUsername() {
     return username;
@@ -15,11 +15,11 @@ public class ConnectionAndUserDTO {
   }
 
   public List<ConnectionDTO> getConnectionDTO() {
-    return connectionDTO;
+    return connection;
   }
 
-  public void setConnectionDTO(List<ConnectionDTO> connectionDTO) {
-    this.connectionDTO = connectionDTO;
+  public void setConnectionDTO(List<ConnectionDTO> connection) {
+    this.connection = connection;
   }
 
 
