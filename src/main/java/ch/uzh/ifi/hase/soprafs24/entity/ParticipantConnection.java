@@ -17,6 +17,10 @@ public class ParticipantConnection implements Serializable {
   @SequenceGenerator(name = "participant_connection_sequence", sequenceName = "participant_connection_sequence", allocationSize = 1)
   private Long id;
 
+  @ManyToOne
+  @JoinColumn(name = "participant_id", nullable = false)
+  private TripParticipant participant;
+
   @Column(nullable = false)
   private ConnectionType connectionType;
 
@@ -97,5 +101,12 @@ public class ParticipantConnection implements Serializable {
 
   public void setArrivalPoint(Station arrivalPoint) {
     this.arrivalPoint = arrivalPoint;
+  }
+
+  public TripParticipant getParticipant() {
+    return participant;
+  }
+  public void setParticipant(TripParticipant participant) {
+    this.participant = participant;
   }
 }

@@ -1,8 +1,15 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
+import ch.uzh.ifi.hase.soprafs24.entity.ParticipantConnection;
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Connection;
+import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
+import ch.uzh.ifi.hase.soprafs24.repository.ParticipantConnectionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +33,14 @@ import java.util.List;
 @Service
 @Transactional
 public class ConnectionService {
+
+  private final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final ParticipantConnectionRepository participantConnectionRepository;
+
+  @Autowired
+  public ConnectionService(@Qualifier("participantConnectionRepository") ParticipantConnectionRepository participantConnectionRepository) {
+    this.participantConnectionRepository = participantConnectionRepository;
+  }
 
   public static List<Station> getLocationsName(String name) {
     try {
@@ -207,8 +222,43 @@ public class ConnectionService {
     }
   }
 
-  // get connections with coordinates and destination code in trip destination (defined in /trips/new, TripService.getTripById + getMeetUpPlace)
-  // get connections with start location code and destination code in trip destination (defined in /trips/new, TripService.getTripById + getMeetUpPlace)
 
+
+
+
+
+  // 4 methods:
+  public List<ParticipantConnection> getConnection(TripParticipant participant) {
+    List<ParticipantConnection> connections = participantConnectionRepository.findAllByParticipant(participant);
+    if (connections == null) {
+      return new ArrayList<>();
+    }
+    return connections;
+  }
+
+  public void deleteConnection(TripParticipant participant) {
+    participantConnectionRepository.deleteAllByParticipant(participant);
+    participantConnectionRepository.flush();
+    log.debug("Deleted connection for participant: {}", participant);
+  }
+
+  public void saveConnection(TripParticipant participant, List<ParticipantConnection> connections) {
+    for (ParticipantConnection connection : connections) {
+      connection.setParticipant(participant);
+    }
+    participantConnectionRepository.saveAll(connections);
+    participantConnectionRepository.flush();
+    log.debug("Created connection for participant: {}", participant);
+  }
+
+  public void udpateConnection(TripParticipant participant, List<ParticipantConnection> newConnection) {
+    for (ParticipantConnection connection : newConnection) {
+      connection.setParticipant(participant);
+    }
+    deleteConnection(participant);
+    participantConnectionRepository.saveAll(newConnection);
+    participantConnectionRepository.flush();
+    log.debug("Updated connection for participant: {}", participant);
+  }
 
 }
