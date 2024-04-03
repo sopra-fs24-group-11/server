@@ -223,4 +223,30 @@ public class TripController {
     tripService.deleteTrip(tripId, requester);
   }
 
+
+
+  @PostMapping("/trips/{tripId}/connection")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public void saveConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    return;
+  }
+  @PutMapping("/trips/{tripId}/connection")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    return;
+  }
+  @GetMapping("/trips/{tripId}/connection")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void getConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    return;
+  }
+  @DeleteMapping("/trips/{tripId}/connection")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    return;
+  }
 }
