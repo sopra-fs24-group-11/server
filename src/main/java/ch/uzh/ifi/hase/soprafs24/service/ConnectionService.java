@@ -58,11 +58,11 @@ public class ConnectionService {
       }
       return stations;
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "There was an error during API request to the external transport api");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This station could not be retrieved from external API");
     }
   }
 
-  public static List<Station> getLocationsCoord(String x, String y) {
+  public static Station getLocationsCoord(String x, String y) {
     try {
       // Http request to transport.opendata
       HttpClient client = HttpClient.newHttpClient();
@@ -76,23 +76,18 @@ public class ConnectionService {
     // parse string to JSON object & create empty list of stations
       JSONObject obj = new JSONObject(response.body());
       JSONArray jsonArray = obj.getJSONArray("stations");
-      List<Station> stations = new ArrayList<>();
 
     // extract name and id of stations and add them to the list of stations
-      for (int i = 0; i < jsonArray.length(); i++) {
-        JSONObject jsonStation = jsonArray.getJSONObject(i);
+        JSONObject jsonStation = jsonArray.getJSONObject(0);
 
         Station retStation = new Station();
-        Object nullableId = jsonStation.get("id");
-        if (nullableId instanceof String) {
+        if (!jsonStation.isNull("id")) {
           retStation.setStationCode(jsonStation.getString("id"));
           retStation.setStationName(jsonStation.getString("name"));
-          stations.add(retStation);
         }
-      }
-      return stations;
+      return retStation;
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "There was an error during API request to the external transport api");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This station could not be retrieved from external API");
     }
   }
 
@@ -208,7 +203,7 @@ public class ConnectionService {
       return connections;
 
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "There was an error during API request to the external transport api");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This station could not be retrieved from external API");
     }
   }
 

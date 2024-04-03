@@ -142,6 +142,16 @@ public class TripController {
     return ConnectionService.getConnectionsByCode(start, end);
   }
 
+  @GetMapping("/trips/{tripId}/geoLocation")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<List<Connection>> getConnectionsByLocation (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y) {
+    Trip trip = tripService.getTripById(tripId);
+    String end = trip.getMeetUpPlace().getStationCode();
+    String start = ConnectionService.getLocationsCoord(x, y).getStationCode();
+    return ConnectionService.getConnectionsByCode(start, end);
+  }
+
 
   @PutMapping("/trips/{tripId}/invitation")
   @ResponseStatus(HttpStatus.NO_CONTENT)
