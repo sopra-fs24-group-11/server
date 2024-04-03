@@ -13,6 +13,6 @@ public interface TripParticipantRepository extends JpaRepository<TripParticipant
   List<TripParticipant> findAllByTrip(Trip trip);
   List<TripParticipant> findAllByUserAndFavouriteTrip(User user, boolean favouriteTrip);
   List<TripParticipant> findAllByUserAndTripCompleted(User user, boolean completed);
-
   TripParticipant findByUserAndTrip(User user, Trip trip);
+  List<TripParticipant> findAllByUser(User user);
 }

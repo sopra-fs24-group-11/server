@@ -65,7 +65,18 @@ public class TripParticipantService {
     return users;
   }
 
+  public List<TripParticipant> getAllTripsOfAUser(User user) {
+    List<TripParticipant> participants = tripParticipantRepository.findAllByUser(user);
+    return Objects.requireNonNullElseGet(participants, ArrayList::new);
+  }
 
+  public void deleteAllForAUser(User user) {
+    // TO DO: delete all connections and list items
+    List<TripParticipant> tripParticipants = getAllTripsOfAUser(user);
+    tripParticipantRepository.deleteAll(tripParticipants);
+    tripParticipantRepository.flush();
+    log.debug("Deleted all friendships of user who chose to delete account");
+  }
 
   public List<Trip> getTripHistory(User user) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompleted(user, true);

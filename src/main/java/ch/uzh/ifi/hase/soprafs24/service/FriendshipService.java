@@ -32,6 +32,13 @@ public class FriendshipService {
     this.friendshipRepository = friendshipRepository;
   }
 
+  public void deleteAllForAUser(User user) {
+    List<Friendship> friendships = getAllFriendshipsOfAUser(user);
+    friendshipRepository.deleteAll(friendships);
+    friendshipRepository.flush();
+    log.debug("Deleted all friendships of user who chose to delete account");
+  }
+
   public List<Friend> getAllReceivedFriendRequests(User user) {
     List<Friend> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend2(user);
@@ -79,6 +86,21 @@ public class FriendshipService {
     return result;
   }
 
+  public List<Friendship> getAllFriendshipsOfAUser(User user) {
+    List<Friendship> result = new ArrayList<>();
+    List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
+    List<Friendship> listTwo = friendshipRepository.findAllByFriend2(user);
+    if (listOne == null && listTwo == null) {
+      return new ArrayList<>(); // Return an empty list
+    }
+    if (listOne != null) {
+      result.addAll(listOne);
+    }
+    if (listTwo != null) {
+      result.addAll(listTwo);
+    }
+    return result;
+  }
 
 
   public List<Friend> getAllAcceptedFriends(User user) {
@@ -149,41 +171,6 @@ public class FriendshipService {
 
 
 
-  // Question: should we make three requests or only one?
-  public void rejectRequest(User rejector, User requester) {
-    Friendship friendship = friendshipRepository.findByFriend1AndFriend2(requester, rejector);
-    if (friendship == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist");
-    }
-    friendshipRepository.deleteById(friendship.getId());
-    log.debug("Deleted Friendship: {}", friendship);
-  }
-  public void withdrawRequest(User receiver, User requester) {
-    Friendship friendship = friendshipRepository.findByFriend1AndFriend2(requester, receiver);
-    if (friendship == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist");
-    }
-    friendshipRepository.deleteById(friendship.getId());
-    log.debug("Deleted Friendship: {}", friendship);
-  }
-
-  public void deleteFriendship(User friend, User deleter) {
-    Friendship friendship1 = friendshipRepository.findByFriend1AndFriend2(deleter, friend);
-    Friendship friendship2 = friendshipRepository.findByFriend1AndFriend2(friend, deleter);
-    if (friendship1 == null && friendship2 == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist");
-    } else if (friendship1 == null) {
-      friendshipRepository.deleteById(friendship2.getId());
-      log.debug("Deleted Friendship: {}", friendship2);
-    } else if (friendship2 == null) {
-      friendshipRepository.deleteById(friendship1.getId());
-      log.debug("Deleted Friendship: {}", friendship1);
-    } else {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "There shouldn't be two symmetric friendships...");
-    }
-
-
-  }
   public void deleteFriend(User friend, User deleter) {
     Friendship friendship1 = friendshipRepository.findByFriend1AndFriend2(deleter, friend);
     Friendship friendship2 = friendshipRepository.findByFriend1AndFriend2(friend, deleter);

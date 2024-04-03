@@ -91,6 +91,9 @@ public class TripService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
     Trip trip = getTripById(tripId);
+
+    /*tripParticipantService.deleteAllForATrip(trip);*/
+
     tripRepository.deleteById(tripId);
     tripRepository.flush();
     log.debug("Deleted Trip: {}", trip);

@@ -49,6 +49,12 @@ public class UserController {
     User userInput = DTOMapper.INSTANCE.convertUserLoginPostDTOtoEntity(userLoginPostDTO);
     return userService.loginUser(userInput);
   }
+  @PutMapping("/users/logout")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void logoutUser(@RequestHeader ("Authorization") String token) {
+    userService.logoutUser(token);
+  }
 
   @GetMapping("/users")
   @ResponseStatus(HttpStatus.OK)
@@ -206,29 +212,4 @@ public class UserController {
   }
 
 
-  // or like this?:
-  @DeleteMapping("/users/friends/{friendId}/reject")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public void rejectRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
-    User rejector = userService.getUserByToken(token);
-    User requester = userService.getUserById(friendId);
-    friendshipService.rejectRequest(rejector, requester);
-  }
-  @DeleteMapping("/users/friends/{friendId}/withdraw")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public void withdrawRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
-    User requester = userService.getUserByToken(token);
-    User receiver = userService.getUserById(friendId);
-    friendshipService.withdrawRequest(receiver, requester);
-  }
-  @DeleteMapping("/users/friends/{friendId}/delete")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public void deleteFriendship(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
-    User deleter = userService.getUserByToken(token);
-    User friend = userService.getUserById(friendId);
-    friendshipService.deleteFriendship(deleter, friend);
-  }
 }

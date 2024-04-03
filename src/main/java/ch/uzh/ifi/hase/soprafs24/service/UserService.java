@@ -1,9 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.entity.Image;
-import ch.uzh.ifi.hase.soprafs24.entity.Feedback;
 import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.slf4j.Logger;
@@ -44,11 +43,15 @@ public class UserService {
   private final Random random = new Random();
   private final UserRepository userRepository;
   private final FeedbackRepository feedbackRepository;
+  private final FriendshipService friendshipService;
+  private final TripParticipantService tripParticipantService;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService) {
     this.userRepository = userRepository;
     this.feedbackRepository = feedbackRepository;
+    this.friendshipService = friendshipService;
+    this.tripParticipantService = tripParticipantService;
   }
 
   public User getUserByToken(String token) {
@@ -90,11 +93,8 @@ public class UserService {
     profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
     newUser.setProfileImage(profileImage);
 
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
     newUser = userRepository.save(newUser);
     userRepository.flush();
-
     log.debug("Created Information for User: {}", newUser);
     return newUser;
   }
@@ -133,10 +133,21 @@ public class UserService {
 
   public void deleteUser(String token) {
     User user = getUserByToken(token);
-    // To DO: Delete all Friends and Trips
+    // To DO: Delete all Friends and Trips!!!
+    friendshipService.deleteAllForAUser(user);
+    tripParticipantService.deleteAllForAUser(user);
+
     userRepository.deleteById(user.getId());
     userRepository.flush();
     log.debug("Deleted User: {}", user);
+  }
+
+  public void logoutUser(String token) {
+    User user = getUserByToken(token);
+    user.setStatus(UserStatus.OFFLINE);
+    userRepository.save(user);
+    userRepository.flush();
+    log.debug("User logged out: {}", user);
   }
 
   public List<User> getMatchingUsers(String token, String username) {
