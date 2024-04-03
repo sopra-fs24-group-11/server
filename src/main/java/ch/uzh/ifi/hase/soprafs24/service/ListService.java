@@ -38,8 +38,12 @@ public class ListService {
     return toDoRepository.findAllByTrip(trip);
   }
 
-  public void updateTodo(Trip trip, Long itemId) {
-    return;
+  public void updateTodo(Trip trip, Long itemId, ToDoItem updatedToDoItem) {
+    ToDoItem existingToDo = toDoRepository.findByid(itemId);
+    existingToDo.setCompleted(updatedToDoItem.isCompleted());
+    existingToDo.setItem(updatedToDoItem.getItem());
+    existingToDo = toDoRepository.save(existingToDo);
+    toDoRepository.flush();
   }
 
   public String addTodo(Trip trip, ToDoItem newToDoItem) {
