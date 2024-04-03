@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,12 +41,13 @@ public class ListService {
     return;
   }
 
-  public String addTodo(Trip trip) {
+  public String addTodo(Trip trip, String item) {
     return "hallo";
   }
 
   public void deleteTodo(Trip trip, Long itemId) {
-    return;
+    toDoRepository.deleteById(itemId);
+    toDoRepository.flush();
   }
 
 
