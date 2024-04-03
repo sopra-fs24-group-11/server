@@ -38,7 +38,7 @@ public class TripService {
             new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found"));
   }
 
-  public void createTrip(Trip newTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
+  public Long createTrip(Trip newTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
     // Station station = connectionService.checkIfNameAndCodeAreCorrectAndTurnIntoStation(meetUpPlace, meetUpCode)
     newTrip.setAdministrator(administrator);
     int maximum = 10+(int)Math.floor(administrator.getLevel());
@@ -60,6 +60,7 @@ public class TripService {
     log.debug("Created Trip: {}", newTrip);
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
+    return newTrip.getId();
   }
 
   public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {

@@ -39,7 +39,7 @@ public class TripController {
   @PostMapping("/trips/new")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public void createTrip(@RequestHeader ("Authorization") String token, @RequestBody TripPostDTO tripPostDTO) {
+  public Long createTrip(@RequestHeader ("Authorization") String token, @RequestBody TripPostDTO tripPostDTO) {
     List<Long> userIds = tripPostDTO.getParticipants();
     String temporaryMeetUpPlace = tripPostDTO.getTemporaryMeetUpPlace();
     String temporaryMeetUpCode = tripPostDTO.getTemporaryMeetUpCode();
@@ -60,7 +60,7 @@ public class TripController {
     if (userIds.contains(administrator.getId())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
     }
-    tripService.createTrip(tripInput, administrator, invited, temporaryMeetUpPlace, temporaryMeetUpCode);
+    return tripService.createTrip(tripInput, administrator, invited, temporaryMeetUpPlace, temporaryMeetUpCode);
   }
   @PutMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
