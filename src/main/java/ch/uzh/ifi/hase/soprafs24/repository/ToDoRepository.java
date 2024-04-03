@@ -13,4 +13,5 @@ import java.util.List;
 public interface ToDoRepository extends JpaRepository<ToDoItem, Long> {
 
   List<ToDoItem> findAllByTrip(Trip trip);
+  ToDoItem findByid(Long id);
 }
