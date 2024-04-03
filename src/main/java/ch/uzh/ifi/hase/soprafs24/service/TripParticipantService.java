@@ -53,6 +53,18 @@ public class TripParticipantService {
     log.debug("Created Trip Participants: {}", newParticipants);
   }
 
+  public void storeParticipant(Trip trip, User administrator, User user) {
+    TripParticipant newParticipant = new TripParticipant();
+
+    newParticipant.setUser(user);
+    newParticipant.setInvitator(administrator);
+    newParticipant.setTrip(trip);
+
+    tripParticipantRepository.save(newParticipant);
+    tripParticipantRepository.flush();
+    log.debug("Created Trip Participant: {}", newParticipant);
+  }
+
   public List<User> getTripParticipants(Trip trip) {
     List<TripParticipant> participants = tripParticipantRepository.findAllByTrip(trip);
     if (participants == null) {
@@ -76,6 +88,13 @@ public class TripParticipantService {
     tripParticipantRepository.deleteAll(tripParticipants);
     tripParticipantRepository.flush();
     log.debug("Deleted all friendships of user who chose to delete account");
+  }
+
+  public void isPartOfTrip(User user, Trip trip) {
+    TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
+    if (participant == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+    }
   }
 
   public List<Trip> getTripHistory(User user) {

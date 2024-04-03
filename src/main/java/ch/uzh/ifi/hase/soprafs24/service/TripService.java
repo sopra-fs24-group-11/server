@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Transactional
@@ -63,27 +62,66 @@ public class TripService {
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
   }
 
-  public void updateTrip(Long tripId, User oldAdmin, Trip newTrip) {
-    if (!isAdmin(tripId, oldAdmin)) {
+  public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<User> invited, String meetUpPlace, String meetUpCode) {
+    if (meetUpCode == null || meetUpPlace == null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "MeetUpCode or MeetUpPlace are null");
+    }
+    if (!isAdmin(tripId, administrator)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
 
+    Station station = new Station();
+    station.setStationCode(meetUpCode);
+    station.setStationName(meetUpPlace);
+
     Trip trip = getTripById(tripId);
-    if(newTrip.getAdministrator() != null) {
-      trip.setAdministrator(newTrip.getAdministrator());
+    trip.setTripName(updatedTrip.getTripName());
+    trip.setTripDescription(updatedTrip.getTripName());
+    trip.setMeetUpTime(updatedTrip.getMeetUpTime());
+    trip.setMeetUpPlace(station);
+
+    List<User> participants = tripParticipantService.getTripParticipants(trip);
+    invited.add(administrator);
+    List<User> toAdd = new ArrayList<>();
+    List<User> toDelete = new ArrayList<>();
+    for (User user : participants) {
+      if (!invited.contains(user)) {
+        toDelete.add(user);
+      }
     }
-    trip.setTripName(newTrip.getTripName());
-    trip.setTripDescription(newTrip.getTripName());
-    trip.setMeetUpTime(newTrip.getMeetUpTime());
-    trip.setMeetUpPlace(newTrip.getMeetUpPlace());
+
+    for (User user : invited) {
+      if (!participants.contains(user)) {
+        toAdd.add(user);
+      }
+    }
+
+    for (User user : toDelete) {
+      tripParticipantService.removeMemberFromTrip(user, administrator, trip);
+    }
+    for (User user : toAdd) {
+      tripParticipantService.storeParticipant(trip, administrator, user);
+    }
+
     tripRepository.save(trip);
     tripRepository.flush();
-    log.debug("Changed admin for Trip: {}", trip);
+    log.debug("Updated Trip: {}", trip);
   }
 
   public boolean isAdmin(Long tripId, User requester) {
     Trip trip = getTripById(tripId);
     return Objects.equals(trip.getAdministrator().getId(), requester.getId());
+  }
+
+  public void newAdmin(Long tripId, User oldAdmin, User newAdmin) {
+    if (!isAdmin(tripId, oldAdmin)) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+    }
+    Trip trip = getTripById(tripId);
+    trip.setAdministrator(newAdmin);
+    tripRepository.save(trip);
+    tripRepository.flush();
+    log.debug("New administrator for trip: {}", trip);
   }
 
   public void deleteTrip(Long tripId, User requester) {

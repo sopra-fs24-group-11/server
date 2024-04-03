@@ -62,6 +62,35 @@ public class TripController {
     }
     tripService.createTrip(tripInput, administrator, invited, temporaryMeetUpPlace, temporaryMeetUpCode);
   }
+  @PutMapping("/trips/{tripId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPostDTO tripPostDTO) {
+    List<Long> userIds = tripPostDTO.getParticipants();
+    List<User> invited = new ArrayList<>();
+    Set<Long> set = new HashSet<>();
+    for (Long id : userIds) {
+      if (set.add(id)) {
+        invited.add(userService.getUserById(id));
+      }
+    }
+    Trip updatedTrip = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
+    User administrator = userService.getUserByToken(token);
+    if (userIds.contains(administrator.getId())) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
+    }
+    tripService.updateTrip(tripId, updatedTrip, administrator, invited, tripPostDTO.getTemporaryMeetUpPlace(), tripPostDTO.getTemporaryMeetUpCode());
+  }
+  @GetMapping("/trips/{tripId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public BasicTripInfoGetDTO getTripInfo(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTrip(user, trip);
+    return (DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
+
+  }
 
   @GetMapping("/trips/{tripId}/participants")
   @ResponseStatus(HttpStatus.OK)
@@ -154,20 +183,21 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.rejectInvitation(user, trip);
   }
-  @PutMapping("/trips/{tripId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPutDTO tripPutDTO) {
-    Trip newTrip = DTOMapper.INSTANCE.convertTripPutDTOToEntity(tripPutDTO);
-    User oldAdmin = userService.getUserByToken(token);
-    tripService.updateTrip(tripId, oldAdmin, newTrip);
-  }
+
   @GetMapping("/trips/{tripId}/admin")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public boolean isAdmin(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     return tripService.isAdmin(tripId, user);
+  }
+  @PutMapping("/trips/{tripId}/admin/{adminId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void newAdmin(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("adminId") Long adminId) {
+    User oldAdmin = userService.getUserByToken(token);
+    User newAdmin = userService.getUserById(adminId);
+    tripService.newAdmin(tripId, oldAdmin, newAdmin);
   }
   @DeleteMapping("/trips/{tripId}/exit")
   @ResponseStatus(HttpStatus.NO_CONTENT)
