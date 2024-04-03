@@ -95,7 +95,7 @@ public interface DTOMapper {
   @Mapping(source = "departurePoint", target = "departurePoint")
   @Mapping(source = "arrivalTime", target = "arrivalTime")
   @Mapping(source = "arrivalPoint", target = "arrivalPoint")
-  ParticipantConnection convertConnectionPostDTOToEntity(ConnectionPostDTO connectionPostDTO);
+  ParticipantConnection convertConnectionDTOToEntity(ConnectionDTO connectionDTO);
 
   @Mapping(source = "connectionType", target = "connectionType")
   @Mapping(source = "connectionName", target = "connectionName")
@@ -103,7 +103,7 @@ public interface DTOMapper {
   @Mapping(source = "departurePoint", target = "departurePoint")
   @Mapping(source = "arrivalTime", target = "arrivalTime")
   @Mapping(source = "arrivalPoint", target = "arrivalPoint")
-  ConnectionPostDTO convertEntityToConnectionPostDTO(ParticipantConnection participantConnection);
+  ConnectionDTO convertEntityToConnectionDTO(ParticipantConnection participantConnection);
 
   @Mapping(source = "item", target = "item")
   ToDoItem convertToDoPostDTOToEntity(ToDoPostDTO toDoPostDTO);

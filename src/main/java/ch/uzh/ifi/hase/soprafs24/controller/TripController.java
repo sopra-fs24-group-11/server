@@ -8,11 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class TripController {
@@ -232,44 +229,44 @@ public class TripController {
   @PostMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public void saveConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionPostDTO> connectionPostDTOs) {
-    NullChecker.connectionPostDTOsChecker(connectionPostDTOs);
+  public void saveConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionDTO> connectionDTOS) {
+    NullChecker.connectionPostDTOsChecker(connectionDTOS);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
 
     List<ParticipantConnection> connections = new ArrayList<>();
-    for (ConnectionPostDTO dto : connectionPostDTOs) {
-      connections.add(DTOMapper.INSTANCE.convertConnectionPostDTOToEntity(dto));
+    for (ConnectionDTO dto : connectionDTOS) {
+      connections.add(DTOMapper.INSTANCE.convertConnectionDTOToEntity(dto));
     }
     connectionService.saveConnection(participant, connections);
   }
   @PutMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void updateConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionPostDTO> connectionPostDTOs) {
-    NullChecker.connectionPostDTOsChecker(connectionPostDTOs);
+  public void updateConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionDTO> connectionDTOS) {
+    NullChecker.connectionPostDTOsChecker(connectionDTOS);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
 
     List<ParticipantConnection> connections = new ArrayList<>();
-    for (ConnectionPostDTO dto : connectionPostDTOs) {
-      connections.add(DTOMapper.INSTANCE.convertConnectionPostDTOToEntity(dto));
+    for (ConnectionDTO dto : connectionDTOS) {
+      connections.add(DTOMapper.INSTANCE.convertConnectionDTOToEntity(dto));
     }
     connectionService.udpateConnection(participant, connections);
   }
   @GetMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<ConnectionPostDTO> getConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+  public List<ConnectionDTO> getConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
     List<ParticipantConnection> connections = connectionService.getConnection(participant);
-    List<ConnectionPostDTO> dtos = new ArrayList<>();
+    List<ConnectionDTO> dtos = new ArrayList<>();
     for (ParticipantConnection connection : connections) {
-      dtos.add(DTOMapper.INSTANCE.convertEntityToConnectionPostDTO(connection));
+      dtos.add(DTOMapper.INSTANCE.convertEntityToConnectionDTO(connection));
     }
     return dtos;
   }
@@ -281,6 +278,31 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
     connectionService.deleteConnection(participant);
+  }
+
+  @GetMapping("/trips/{tripId}/connections")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<ConnectionAndUserDTO> getConnections(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    List<TripParticipant> participants = tripParticipantService.getTripParticipants(trip);
+
+    // To Do: check if user is in trip!!!
+
+    List<ConnectionAndUserDTO> dtos = new ArrayList<>();
+    for (TripParticipant participant : participants) {
+      ConnectionAndUserDTO dto = new ConnectionAndUserDTO();
+      dto.setUsername(participant.getUser().getUsername());
+      List<ParticipantConnection> connections = connectionService.getConnection(participant);
+      List<ConnectionDTO> innerDTOs = new ArrayList<>();
+      for (ParticipantConnection connection : connections) {
+        innerDTOs.add(DTOMapper.INSTANCE.convertEntityToConnectionDTO(connection));
+      }
+      dto.setConnectionDTO(innerDTOs);
+      dtos.add(dto);
+    }
+    return dtos;
   }
 
   @GetMapping("/trips/{tripId}/todos")

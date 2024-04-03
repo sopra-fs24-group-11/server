@@ -5,7 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Station;
 
 import java.time.LocalDateTime;
 
-public class ConnectionPostDTO {
+public class ConnectionDTO {
     private ConnectionType connectionType;
     private String connectionName;
     private LocalDateTime departureTime;

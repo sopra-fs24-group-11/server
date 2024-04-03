@@ -99,8 +99,8 @@ public class NullChecker {
     }
   }
 
-  public static void connectionPostDTOsChecker(List<ConnectionPostDTO> dtos) {
-    for(ConnectionPostDTO dto : dtos) {
+  public static void connectionPostDTOsChecker(List<ConnectionDTO> dtos) {
+    for(ConnectionDTO dto : dtos) {
       if (dto.getConnectionType() == null) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Connection type cannot be null");
       }

@@ -100,7 +100,7 @@ public class TripService {
 
     Trip trip = getTripById(tripId);
     trip.setTripName(updatedTrip.getTripName());
-    trip.setTripDescription(updatedTrip.getTripName());
+    trip.setTripDescription(updatedTrip.getTripDescription());
     trip.setMeetUpTime(updatedTrip.getMeetUpTime());
     trip.setMeetUpPlace(station);
 
