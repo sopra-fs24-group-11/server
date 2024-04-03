@@ -311,9 +311,9 @@ public class TripController {
   @GetMapping("/trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void getTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+  public List<ToDoGetDTO> getTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     Trip trip = tripService.getTripById(tripId);
-    listService.getTodos(trip);
+    return listService.getTodos(trip);
   }
 
   @PutMapping("trips/{tripId}/todos/{itemId}")
@@ -323,6 +323,16 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     ToDoItem toDoItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(toDoPutDTO);
     listService.updateTodo(trip, itemId, toDoItem);
+  }
+
+  @PutMapping("trips/{tripId}/todos/{itemId}/responsible")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+    listService.updateResponsible(itemId, selectedParticipant);
   }
 
   @PostMapping("trips/{tripId}/todos")

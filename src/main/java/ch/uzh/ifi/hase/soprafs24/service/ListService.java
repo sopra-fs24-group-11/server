@@ -7,6 +7,8 @@ import ch.uzh.ifi.hase.soprafs24.repository.GroupPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ToDoRepository;
 import ch.uzh.ifi.hase.soprafs24.entity.ToDoItem;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ToDoGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,15 +36,28 @@ public class ListService {
     this.individualPackingRepository = individualPackingRepository;
   }
 
-  public List<ToDoItem> getTodos (Trip trip) {
-    // TODO: check null values
-    return toDoRepository.findAllByTrip(trip);
+  public List<ToDoGetDTO> getTodos (Trip trip) {
+    List<ToDoItem> toDoItems = toDoRepository.findAllByTrip(trip);
+    List<ToDoGetDTO> toDoGetDTOS = new ArrayList<>();
+    for (ToDoItem toDoItem: toDoItems) {
+      ToDoGetDTO toDoGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(toDoItem);
+      toDoGetDTOS.add(toDoGetDTO);
+    }
+    return toDoGetDTOS;
   }
 
   public void updateTodo(Trip trip, Long itemId, ToDoItem updatedToDoItem) {
     ToDoItem existingToDo = toDoRepository.findByid(itemId);
     existingToDo.setCompleted(updatedToDoItem.isCompleted());
     existingToDo.setItem(updatedToDoItem.getItem());
+    existingToDo = toDoRepository.save(existingToDo);
+    toDoRepository.flush();
+  }
+
+  public void updateResponsible(Long itemId, TripParticipant participant) {
+    //TODO: add possibility to remove a responsibility
+    ToDoItem existingToDo = toDoRepository.findByid(itemId);
+    existingToDo.setParticipantId(participant.getId());
     existingToDo = toDoRepository.save(existingToDo);
     toDoRepository.flush();
   }

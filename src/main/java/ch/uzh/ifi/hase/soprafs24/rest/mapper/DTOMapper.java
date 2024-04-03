@@ -121,5 +121,10 @@ public interface DTOMapper {
   @Mapping(source = "completed", target = "completed")
   ToDoPutDTO convertEntityToToDoPutDTO(ToDoItem toDoItem);
 
+  @Mapping(source = "item", target = "item")
+  @Mapping(source = "completed", target = "completed")
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "participantId", target = "participantId")
+  ToDoGetDTO convertEntityToToDoGetDTO(ToDoItem toDoItem);
 
 }

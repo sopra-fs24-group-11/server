@@ -37,11 +37,11 @@ public class ToDoItem implements Serializable {
     this.completed = completed;
   }
 
-  public Long getParticipant() {
+  public Long getParticipantId() {
     return participantId;
   }
 
-  public void setParticipant(Long participantId) {
+  public void setParticipantId(Long participantId) {
     this.participantId = participantId;
   }
 
