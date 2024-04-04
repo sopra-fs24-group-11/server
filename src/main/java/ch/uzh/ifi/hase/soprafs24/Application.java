@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.TimeZone;
+
 @RestController
 @SpringBootApplication
 @EnableScheduling
 public class Application {
 
   public static void main(String[] args) {
+    TimeZone.setDefault(TimeZone.getTimeZone("Europe/Zurich"));
     SpringApplication.run(Application.class, args);
   }
 

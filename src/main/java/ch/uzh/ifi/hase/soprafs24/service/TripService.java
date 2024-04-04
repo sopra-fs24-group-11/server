@@ -164,7 +164,7 @@ public class TripService {
 
     List<User> users = tripParticipantService.getTripUsers(trip);
     for (User user : users) {
-      notificationService.createUserNotification(user, String.format("The trip %s has been deleted", trip.getTripName()));
+      notificationService.createUserNotification(user, String.format("The trip '%s' has been deleted", trip.getTripName()));
     }
     notificationService.deleteAllNotificationsForATrip(trip);
     tripParticipantService.deleteEverythingRelatedToATrip(trip);

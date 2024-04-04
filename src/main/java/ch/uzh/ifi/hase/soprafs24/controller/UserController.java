@@ -207,7 +207,7 @@ public class UserController {
     friendshipService.sendRequest(sender, receiver);
     userService.increaseLevel(sender, 0.05);
   }
-  
+
   @PutMapping("/users/friends/{friendId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
