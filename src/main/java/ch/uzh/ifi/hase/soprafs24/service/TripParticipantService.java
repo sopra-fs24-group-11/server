@@ -108,6 +108,7 @@ public class TripParticipantService {
     tripParticipantRepository.save(newParticipant);
     tripParticipantRepository.flush();
     notificationService.createUserNotification(user, String.format("You were invited to the trip '%s' by %s", trip.getTripName(), administrator.getUsername()));
+    notificationService.createTripNotification(trip, String.format("%s added %s to the trip", administrator.getUsername(), user.getUsername()));
   }
 
 
@@ -263,7 +264,7 @@ public class TripParticipantService {
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
     notificationService.createTripNotification(trip, String.format("%s removed %s from the trip", requester.getUsername(), userToBeRemoved.getUsername()));
-    notificationService.createUserNotification(userToBeRemoved, String.format("%s removed you from the trip", requester.getUsername()));
+    notificationService.createUserNotification(userToBeRemoved, String.format("%s removed you from the trip '%s'", requester.getUsername(), trip.getTripName()));
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);

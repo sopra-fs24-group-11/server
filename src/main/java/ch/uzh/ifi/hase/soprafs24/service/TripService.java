@@ -113,6 +113,13 @@ public class TripService {
         toAdd.add(user);
       }
     }
+    // check if everyone invited is a friend
+    List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
+    for (User invite : toAdd) {
+      if (!friends.contains(invite)) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "You can only invite friends to a trip.");
+      }
+    }
 
     for (User user : toDelete) {
       tripParticipantService.removeMemberFromTrip(user, administrator, trip);
