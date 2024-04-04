@@ -385,7 +385,7 @@ public class TripController {
 
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.TODO);
-    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
+    // do not use checkIfItemHasParticipant, this function does not have the behaviour intended here
     listService.updateResponsible(itemId, selectedParticipant);
   }
 
@@ -401,7 +401,7 @@ public class TripController {
 
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.TODO);
-    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
+    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant);
     listService.deleteResponsible(itemId);
   }
 
@@ -465,7 +465,7 @@ public class TripController {
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
-    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
+    // do not use checkIfItemHasParticipant, this function does not have the behaviour intended here
     listService.updateResponsible(itemId, selectedParticipant);
   }
 
@@ -480,7 +480,7 @@ public class TripController {
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
-    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
+    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant);
     listService.deleteResponsible(itemId);
   }
 
