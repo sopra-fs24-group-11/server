@@ -28,9 +28,7 @@ public class TripParticipantService {
   private final TripParticipantRepository tripParticipantRepository;
   private final TripRepository tripRepository;
   private final ConnectionService connectionService;
-
   private final NotificationService notificationService;
-
 
   @Autowired
   public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository, ConnectionService connectionService, NotificationService notificationService) {

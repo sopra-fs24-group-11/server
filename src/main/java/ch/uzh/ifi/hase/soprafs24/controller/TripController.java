@@ -17,12 +17,10 @@ public class TripController {
 
   private final TripService tripService;
   private final UserService userService;
-
   private final TripParticipantService tripParticipantService;
   private final ListService listService;
   private final ConnectionService connectionService;
   private final NotificationService notificationService;
-
 
 
   TripController(TripService tripService, UserService userService, TripParticipantService tripParticipantService, ListService listService, ConnectionService connectionService, NotificationService notificationService) {
@@ -85,7 +83,6 @@ public class TripController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<BasicTripInfoGetDTO> getTripHistory(@RequestHeader("Authorization") String token) {
-    // get all trips of a user no matter the status
     User user = userService.getUserByToken(token);
     List<Trip> trips = tripParticipantService.getTripHistory(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
@@ -98,7 +95,6 @@ public class TripController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<BasicTripInfoGetDTO> getCurrentTrips(@RequestHeader("Authorization") String token) {
-    // get all ongoing trips of a user
     User user = userService.getUserByToken(token);
     List<Trip> trips = tripParticipantService.getCurrentTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
@@ -111,7 +107,6 @@ public class TripController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<BasicTripInfoGetDTO> getUnansweredTrips(@RequestHeader("Authorization") String token) {
-    // get all unanswered trips of a user
     User user = userService.getUserByToken(token);
     List<Trip> trips = tripParticipantService.getUnansweredTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
@@ -124,7 +119,6 @@ public class TripController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<BasicTripInfoGetDTO> getFavoriteTrips(@RequestHeader("Authorization") String token) {
-    // get all favourite trips of a user
     User user = userService.getUserByToken(token);
     List<Trip> trips = tripParticipantService.getFavoriteTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();

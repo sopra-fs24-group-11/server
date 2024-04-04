@@ -1,10 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
-import ch.uzh.ifi.hase.soprafs24.entity.Station;
-import ch.uzh.ifi.hase.soprafs24.entity.Trip;
-import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.TripRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +23,15 @@ public class TripService {
   private final UserService userService;
   private final TripParticipantService tripParticipantService;
   private final NotificationService notificationService;
+  private final FriendshipService friendshipService;
 
   @Autowired
-  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService, NotificationService notificationService) {
+  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService, NotificationService notificationService, FriendshipService friendshipService) {
     this.tripRepository = tripRepository;
     this.tripParticipantService = tripParticipantService;
     this.userService = userService;
     this.notificationService = notificationService;
+    this.friendshipService = friendshipService;
   }
 
   public Trip getTripById(Long id) {
@@ -52,8 +51,13 @@ public class TripService {
         invited.add(userService.getUserById(id));
       }
     }
-
-
+    // check if everyone invited is a friend
+    List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
+    for (User invite : invited) {
+      if (!friends.contains(invite)) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "You can only invite friends to a trip.");
+      }
+    }
     newTrip.setAdministrator(administrator);
     int maximum = 10+(int)Math.floor(administrator.getLevel());
     if (maximum < invited.size() + 1) { // invited plus administrator

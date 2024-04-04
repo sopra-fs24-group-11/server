@@ -135,6 +135,9 @@ public class FriendshipService {
     return result;
   }
 
+
+
+
   public void sendRequest(User sender, User receiver) {
     if (sender == receiver) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't have a friendship with yourself");
@@ -234,5 +237,19 @@ public class FriendshipService {
       }
     }
     return FriendshipStatusSearch.NOTHING;
+  }
+
+  public List<User> getAllAcceptedFriendsAsUsers(User user) {
+    List<User> result = new ArrayList<>();
+    List<Friendship> listOne = friendshipRepository.findAllByFriend1AndStatus(user, FriendShipStatus.ACCEPTED);
+    List<Friendship> listTwo = friendshipRepository.findAllByFriend2AndStatus(user, FriendShipStatus.ACCEPTED);
+
+    for (Friendship friendship : listOne) {
+        result.add(friendship.getFriend2());
+    }
+    for (Friendship friendship : listTwo) {
+        result.add(friendship.getFriend1());
+    }
+    return result;
   }
 }
