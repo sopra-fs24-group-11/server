@@ -10,11 +10,9 @@ public class UserGetDTO {
   private String password;
   private String username;
   private UserStatus status;
-
   private LocalDate birthday;
   private LocalDate creationDate;
   private Double level;
-
   private String email;
 
 
