@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -225,6 +226,23 @@ public class TripController {
     User requester = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripService.deleteTrip(trip, requester);
+  }
+
+  @GetMapping("/trips/{tripId}/pictures")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<MemberGetDTO> getMembersWithImages(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    List<User> users = tripParticipantService.getTripUsers(trip);
+
+    List<MemberGetDTO> memberGetDTOs = new ArrayList<>();
+
+    for (User u : users) {
+      memberGetDTOs.add(DTOMapper.INSTANCE.convertEntityToMemberGetDTO(u));
+    }
+    return memberGetDTOs;
   }
 
 
