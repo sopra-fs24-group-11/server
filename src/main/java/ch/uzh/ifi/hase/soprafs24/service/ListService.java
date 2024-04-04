@@ -31,7 +31,7 @@ public class ListService {
   private final IndividualPackingRepository individualPackingRepository;
 
   @Autowired
-  public ListService(@Qualifier("toDoRepository") ItemRepository itemRepository, @Qualifier("individualPackingRepository") IndividualPackingRepository individualPackingRepository) {
+  public ListService(@Qualifier("itemRepository") ItemRepository itemRepository, @Qualifier("individualPackingRepository") IndividualPackingRepository individualPackingRepository) {
     this.itemRepository = itemRepository;
     this.individualPackingRepository = individualPackingRepository;
   }
@@ -39,7 +39,7 @@ public class ListService {
   public List<ItemGetDTO> getItems (Trip trip, ItemType itemType, TripParticipant participant) {
     List<Item> items;
     if (itemType.equals(ItemType.INDIVIDUALPACKING)) {
-      items = itemRepository.findAllByTripAndItemTypeAndTripParticipant(trip, itemType, participant);
+      items = itemRepository.findAllByTripAndItemTypeAndParticipant(trip, itemType, participant);
     } else {
       items = itemRepository.findAllByTripAndItemType(trip, itemType);
     }

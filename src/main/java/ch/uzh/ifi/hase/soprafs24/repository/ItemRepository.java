@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("toDoRepository")
+@Repository("itemRepository")
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
   List<Item> findAllByTrip(Trip trip);
   List<Item> findAllByTripAndItemType(Trip trip, ItemType itemType);
 
-  List<Item> findAllByTripAndItemTypeAndTripParticipant(Trip trip, ItemType itemType, TripParticipant tripParticipant);
+  List<Item> findAllByTripAndItemTypeAndParticipant(Trip trip, ItemType itemType, TripParticipant tripParticipant);
   List<Item> findByidAndItemType(Long id, ItemType itemType);
   Item findByid(Long id);
 }
