@@ -46,7 +46,7 @@ public class ListService {
     return itemGetDTOS;
   }
 
-  public void updateItem(Trip trip, Long itemId, Item updatedItem) {
+  public void updateItem(Long itemId, Item updatedItem) {
     Item existingItem = getItemById(itemId);
     existingItem.setCompleted(updatedItem.isCompleted());
     existingItem.setItem(updatedItem.getItem());
@@ -55,14 +55,16 @@ public class ListService {
   }
 
   public void updateResponsible(Long itemId, TripParticipant participant) {
-    //TODO: add possibility to remove a responsibility
     Item existingItem = getItemById(itemId);
+    if (existingItem.getParticipantId() != null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to select this item");
+    }
     existingItem.setParticipantId(participant.getId());
     existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
-  public void deleteResponsible(Long itemId, TripParticipant participant) {
+  public void deleteResponsible(Long itemId) {
     Item existingItem = getItemById(itemId);
     existingItem.setParticipantId(null);
     existingItem = itemRepository.save(existingItem);
@@ -79,19 +81,36 @@ public class ListService {
     return newItem.getItem();
   }
 
-  public void deleteItem(Trip trip, Long itemId) {
-    //TODO check if id exists
+  public void deleteItem(Long itemId) {
     itemRepository.deleteById(itemId);
     itemRepository.flush();
   }
 
-  public Item getItemById(Long itemId) {
-    Item item = itemRepository.findByid(itemId);
-    if (item == null) {
+  private Item getItemById(Long itemId) {
+    return itemRepository.findById(itemId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Item not found"));
+  }
+
+  public void checkIfItemIdHasType(Long itemId, ItemType itemType) {
+    Item item = getItemById(itemId);
+    if (item.getItemType() != itemType) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
     }
-    return item;
   }
+
+  public void checkIfItemIdHasParticipant(Long itemId, Long participantId) {
+    Item item = getItemById(itemId);
+    if (item.getParticipantId() != participantId) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to unselect this item");
+    }
+  }
+
+  public void checkIfItemIdHasTrip(Long itemId, Trip trip) {
+    Item item = getItemById(itemId);
+    if (item.getTrip() != trip) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change this item");
+    }
+  }
+
 
 
 }

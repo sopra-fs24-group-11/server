@@ -13,5 +13,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
   List<Item> findAllByTrip(Trip trip);
   List<Item> findAllByTripAndItemType(Trip trip, ItemType itemType);
+
+  List<Item> findByidAndItemType(Long id, ItemType itemType);
   Item findByid(Long id);
 }

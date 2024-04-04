@@ -339,8 +339,10 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    Item item = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
-    listService.updateItem(trip, itemId, item);
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.TODO);
+    Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    listService.updateItem(itemId, updatedItem);
   }
 
   @PutMapping("trips/{tripId}/todos/{itemId}/responsible")
@@ -351,6 +353,10 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.TODO);
+    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
     listService.updateResponsible(itemId, selectedParticipant);
   }
 
@@ -362,7 +368,11 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
-    listService.deleteResponsible(itemId, selectedParticipant);
+
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.TODO);
+    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
+    listService.deleteResponsible(itemId);
   }
 
   @PostMapping("trips/{tripId}/todos")
@@ -383,7 +393,9 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    listService.deleteItem(trip, itemId);
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.TODO);
+    listService.deleteItem(itemId);
   }
 
   @GetMapping("/trips/{tripId}/grouppackings")
@@ -403,8 +415,10 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    Item item = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
-    listService.updateItem(trip, itemId, item);
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
+    Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    listService.updateItem(itemId, updatedItem);
   }
 
   @PutMapping("trips/{tripId}/grouppackings/{itemId}/responsible")
@@ -415,6 +429,9 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
+    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
     listService.updateResponsible(itemId, selectedParticipant);
   }
 
@@ -426,7 +443,10 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
-    listService.deleteResponsible(itemId, selectedParticipant);
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
+    listService.checkIfItemIdHasParticipant(itemId, selectedParticipant.getId());
+    listService.deleteResponsible(itemId);
   }
 
   @PostMapping("trips/{tripId}/grouppackings")
@@ -447,6 +467,8 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    listService.deleteItem(trip, itemId);
+    listService.checkIfItemIdHasTrip(itemId, trip);
+    listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
+    listService.deleteItem(itemId);
   }
 }
