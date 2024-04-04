@@ -335,6 +335,16 @@ public class TripController {
     listService.updateResponsible(itemId, selectedParticipant);
   }
 
+  @DeleteMapping("trips/{tripId}/todos/{itemId}/responsible")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+    listService.deleteResponsible(itemId, selectedParticipant);
+  }
+
   @PostMapping("trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
