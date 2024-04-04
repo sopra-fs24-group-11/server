@@ -4,6 +4,8 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class NullChecker {
@@ -20,6 +22,9 @@ public class NullChecker {
     }
     if (dto.getBirthday() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be null");
+    }
+    if (dto.getBirthday().isAfter(LocalDate.now())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be in the future");
     }
   }
   public static void userLoginPostDTOChecker (UserLoginPostDTO dto) {
@@ -68,6 +73,9 @@ public class NullChecker {
     if (dto.getMeetUpTime() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be null");
     }
+    if (dto.getMeetUpTime().isBefore(LocalDateTime.now())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be in the past");
+    }
     if (dto.getParticipants() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Participants list cannot be null");
     }
@@ -93,6 +101,9 @@ public class NullChecker {
     }
     if (dto.getMeetUpTime() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be null");
+    }
+    if (dto.getMeetUpTime().isBefore(LocalDateTime.now())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be in the past");
     }
     if (dto.getParticipants() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Participants list cannot be null");

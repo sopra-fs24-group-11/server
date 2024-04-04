@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -174,6 +176,21 @@ public class TripService {
     if (trip.isCompleted()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is finished, cannot make changes anymore!");
     }
+  }
+
+  @Scheduled(fixedRate = 60000) // Check every minute
+  public void markTripsAsCompleted() {
+    List<Trip> ongoingTrips = tripRepository.findByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.now());
+    for (Trip trip : ongoingTrips) {
+      trip.setCompleted(true);
+      tripRepository.save(trip);
+      notificationService.createTripNotification(trip, "The trip has finished!");
+      List<User> users = tripParticipantService.getTripUsers(trip);
+      for (User u : users) {
+        notificationService.createUserNotification(u, String.format("The trip %s has been completed", trip.getTripName()));
+      }
+    }
+    tripRepository.flush();
   }
 
 }
