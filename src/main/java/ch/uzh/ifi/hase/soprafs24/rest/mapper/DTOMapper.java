@@ -108,24 +108,24 @@ public interface DTOMapper {
   ConnectionDTO convertEntityToConnectionDTO(ParticipantConnection participantConnection);
 
   @Mapping(source = "item", target = "item")
-  Item convertToDoPostDTOToEntity(ToDoPostDTO toDoPostDTO);
+  Item convertToDoPostDTOToEntity(ItemPostDTO itemPostDTO);
 
   @Mapping(source = "item", target = "item")
-  ToDoPostDTO convertEntityToToDoPostDTO(Item item);
-
-  @Mapping(source = "item", target = "item")
-  @Mapping(source = "completed", target = "completed")
-  Item convertToDoPutDTOToEntity(ToDoPutDTO toDoPutDTO);
+  ItemPostDTO convertEntityToToDoPostDTO(Item item);
 
   @Mapping(source = "item", target = "item")
   @Mapping(source = "completed", target = "completed")
-  ToDoPutDTO convertEntityToToDoPutDTO(Item item);
+  Item convertToDoPutDTOToEntity(ItemPutDTO itemPutDTO);
+
+  @Mapping(source = "item", target = "item")
+  @Mapping(source = "completed", target = "completed")
+  ItemPutDTO convertEntityToToDoPutDTO(Item item);
 
   @Mapping(source = "item", target = "item")
   @Mapping(source = "completed", target = "completed")
   @Mapping(source = "id", target = "id")
   @Mapping(source = "participantId", target = "participantId")
-  ToDoGetDTO convertEntityToToDoGetDTO(Item item);
+  ItemGetDTO convertEntityToToDoGetDTO(Item item);
 
   @Mapping(source = "message", target = "message")
   @Mapping(source = "timeStamp", target = "timeStamp")

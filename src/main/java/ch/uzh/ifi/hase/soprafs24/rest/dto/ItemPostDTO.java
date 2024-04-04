@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-public class ToDoPostDTO {
+public class ItemPostDTO {
   private String item;
 
   public String getItem() {

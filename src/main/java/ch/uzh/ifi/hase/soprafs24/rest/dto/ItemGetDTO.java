@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-public class ToDoGetDTO {
+public class ItemGetDTO {
   private boolean completed;
 
   private String item;

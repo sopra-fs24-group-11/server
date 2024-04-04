@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
-
-public class ToDoPutDTO {
+public class ItemPutDTO {
   private boolean completed;
 
   private String item;
