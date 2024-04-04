@@ -49,7 +49,7 @@ public class ListService {
   }
 
   public void updateTodo(Trip trip, Long itemId, ToDoItem updatedToDoItem) {
-    ToDoItem existingToDo = toDoRepository.findByid(itemId);
+    ToDoItem existingToDo = getItemById(itemId);
     existingToDo.setCompleted(updatedToDoItem.isCompleted());
     existingToDo.setItem(updatedToDoItem.getItem());
     existingToDo = toDoRepository.save(existingToDo);
@@ -58,14 +58,14 @@ public class ListService {
 
   public void updateResponsible(Long itemId, TripParticipant participant) {
     //TODO: add possibility to remove a responsibility
-    ToDoItem existingToDo = toDoRepository.findByid(itemId);
+    ToDoItem existingToDo = getItemById(itemId);
     existingToDo.setParticipantId(participant.getId());
     existingToDo = toDoRepository.save(existingToDo);
     toDoRepository.flush();
   }
 
   public void deleteResponsible(Long itemId, TripParticipant participant) {
-    ToDoItem existingToDo = toDoRepository.findByid(itemId);
+    ToDoItem existingToDo = getItemById(itemId);
     existingToDo.setParticipantId(null);
     existingToDo = toDoRepository.save(existingToDo);
     toDoRepository.flush();
