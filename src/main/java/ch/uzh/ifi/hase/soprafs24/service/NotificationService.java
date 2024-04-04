@@ -70,7 +70,7 @@ public class NotificationService {
 
   public UserNotification reuseOldestUserNotificationIfTooMany(User user) {
     List<UserNotification> notes = getUserNotifications(user);
-    if (notes.size() > 10) {
+    if (notes.size() > 24) {
       notes.sort(Comparator.comparing(UserNotification::getTimeStamp));
       return notes.get(0);
     } else {
@@ -80,7 +80,7 @@ public class NotificationService {
 
   public TripNotification reuseOldestTripNotificationIfTooMany(Trip trip) {
     List<TripNotification> notes = getTripNotifications(trip);
-    if (notes.size() > 10) {
+    if (notes.size() > 24) {
       notes.sort(Comparator.comparing(TripNotification::getTimeStamp));
       return notes.get(0);
     } else {
