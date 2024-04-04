@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -330,22 +331,22 @@ public class TripController {
   @GetMapping("/trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<ToDoGetDTO> getTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+  public List<ItemGetDTO> getTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    return listService.getTodos(trip);
+    return listService.getItems(trip, ItemType.TODO);
   }
 
   @PutMapping("trips/{tripId}/todos/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void updateTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId, @RequestBody ToDoPutDTO toDoPutDTO) {
+  public void updateTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId, @RequestBody ItemPutDTO itemPutDTO) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    Item item = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(toDoPutDTO);
-    listService.updateTodo(trip, itemId, item);
+    Item item = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    listService.updateItem(trip, itemId, item);
   }
 
   @PutMapping("trips/{tripId}/todos/{itemId}/responsible")
@@ -373,12 +374,12 @@ public class TripController {
   @PostMapping("trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public String createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ToDoPostDTO toDoPostDTO) {
+  public String createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(toDoPostDTO);
-    return listService.addTodo(trip, item);
+    Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
+    return listService.addItem(trip, item, ItemType.TODO);
   }
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}")
@@ -388,6 +389,70 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    listService.deleteTodo(trip, itemId);
+    listService.deleteItem(trip, itemId);
+  }
+
+  @GetMapping("/trips/{tripId}/grouppackings")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<ItemGetDTO> getGroupPackings(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    return listService.getItems(trip, ItemType.GROUPPACKING);
+  }
+
+  @PutMapping("trips/{tripId}/grouppackings/{itemId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateGroupPackings(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId, @RequestBody ItemPutDTO itemPutDTO) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    Item item = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    listService.updateItem(trip, itemId, item);
+  }
+
+  @PutMapping("trips/{tripId}/grouppackings/{itemId}/responsible")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateGroupPackingsResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+    listService.updateResponsible(itemId, selectedParticipant);
+  }
+
+  @DeleteMapping("trips/{tripId}/grouppackings/{itemId}/responsible")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteGroupPackingsResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+    listService.deleteResponsible(itemId, selectedParticipant);
+  }
+
+  @PostMapping("trips/{tripId}/grouppackings")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public String createGroupPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
+    return listService.addItem(trip, item, ItemType.GROUPPACKING);
+  }
+
+  @DeleteMapping("trips/{tripId}/grouppackings/{itemId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteGroupPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    listService.deleteItem(trip, itemId);
   }
 }

@@ -7,7 +7,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ItemRepository;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.ToDoGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,50 +36,51 @@ public class ListService {
     this.individualPackingRepository = individualPackingRepository;
   }
 
-  public List<ToDoGetDTO> getTodos (Trip trip) {
-    List<Item> items = itemRepository.findAllByTrip(trip);
-    List<ToDoGetDTO> toDoGetDTOS = new ArrayList<>();
+  public List<ItemGetDTO> getItems (Trip trip, ItemType itemType) {
+    List<Item> items = itemRepository.findAllByTripAndItemType(trip, itemType);
+    List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
     for (Item item : items) {
-      ToDoGetDTO toDoGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
-      toDoGetDTOS.add(toDoGetDTO);
+      ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
+      itemGetDTOS.add(itemGetDTO);
     }
-    return toDoGetDTOS;
+    return itemGetDTOS;
   }
 
-  public void updateTodo(Trip trip, Long itemId, Item updatedItem) {
-    Item existingToDo = getItemById(itemId);
-    existingToDo.setCompleted(updatedItem.isCompleted());
-    existingToDo.setItem(updatedItem.getItem());
-    existingToDo = itemRepository.save(existingToDo);
+  public void updateItem(Trip trip, Long itemId, Item updatedItem) {
+    Item existingItem = getItemById(itemId);
+    existingItem.setCompleted(updatedItem.isCompleted());
+    existingItem.setItem(updatedItem.getItem());
+    existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
   public void updateResponsible(Long itemId, TripParticipant participant) {
     //TODO: add possibility to remove a responsibility
-    Item existingToDo = getItemById(itemId);
-    existingToDo.setParticipantId(participant.getId());
-    existingToDo = itemRepository.save(existingToDo);
+    Item existingItem = getItemById(itemId);
+    existingItem.setParticipantId(participant.getId());
+    existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
   public void deleteResponsible(Long itemId, TripParticipant participant) {
-    Item existingToDo = getItemById(itemId);
-    existingToDo.setParticipantId(null);
-    existingToDo = itemRepository.save(existingToDo);
+    Item existingItem = getItemById(itemId);
+    existingItem.setParticipantId(null);
+    existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
-  public String addTodo(Trip trip, Item newItem) {
+  public String addItem(Trip trip, Item newItem, ItemType itemType) {
     newItem.setTrip(trip);
     newItem.setCompleted(false);
-    newItem.setItemType(ItemType.TODO);
+    newItem.setItemType(itemType);
     newItem = itemRepository.save(newItem);
     itemRepository.flush();
 
     return newItem.getItem();
   }
 
-  public void deleteTodo(Trip trip, Long itemId) {
+  public void deleteItem(Trip trip, Long itemId) {
+    //TODO check if id exists
     itemRepository.deleteById(itemId);
     itemRepository.flush();
   }
