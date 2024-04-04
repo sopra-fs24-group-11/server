@@ -135,9 +135,7 @@ public class UserController {
   }
 
 
-
   // friends
-  // TO DO: notifications
   @GetMapping("/users/friends")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
@@ -201,6 +199,7 @@ public class UserController {
     User sender = userService.getUserByToken(token);
     User receiver = userService.getUserById(friendId);
     friendshipService.sendRequest(sender, receiver);
+    userService.increaseLevel(sender, 0.05);
   }
   @PutMapping("/users/friends/{friendId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -209,6 +208,7 @@ public class UserController {
     User acceptor = userService.getUserByToken(token);
     User requester = userService.getUserById(friendId);
     friendshipService.acceptRequest(acceptor, requester);
+    userService.increaseLevel(acceptor, 0.1);
   }
   @DeleteMapping("/users/friends/{friendId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -233,8 +233,5 @@ public class UserController {
     }
     return notificationGetDTOs;
   }
-
-
-
 
 }

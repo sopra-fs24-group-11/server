@@ -74,6 +74,7 @@ public class TripService {
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
     notificationService.createTripNotification(newTrip, String.format("%s created the trip '%s'", administrator.getUsername(), newTrip.getTripName()));
+    userService.increaseLevel(administrator, 0.1);
     return newTrip.getId();
   }
 
@@ -155,6 +156,7 @@ public class TripService {
     trip = tripRepository.save(trip);
     tripRepository.flush();
     notificationService.createTripNotification(trip, String.format("%s announced %s as the new Administrator", oldAdmin.getUsername(), newAdmin.getUsername()));
+    userService.increaseLevel(newAdmin, 0.05);
   }
 
   public void deleteTrip(Trip trip, User requester) {
@@ -188,6 +190,7 @@ public class TripService {
       List<User> users = tripParticipantService.getTripUsers(trip);
       for (User u : users) {
         notificationService.createUserNotification(u, String.format("The trip %s has been completed", trip.getTripName()));
+        userService.increaseLevel(u, (double)trip.getNumberOfParticipants()/10);
       }
     }
     tripRepository.flush();

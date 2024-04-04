@@ -77,7 +77,7 @@ public class UserService {
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
     newUser.setCreationDate(LocalDate.now());
-    newUser.setLevel(0.00);
+    newUser.setLevel(1.00);
 
     Image profileImage = new Image();
     profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
@@ -185,7 +185,11 @@ public class UserService {
   }
 
 
-
+  public void increaseLevel(User user, double plus) {
+    user.setLevel(user.getLevel()+plus);
+    userRepository.save(user);
+    userRepository.flush();
+  }
 
 
 
@@ -197,7 +201,7 @@ public class UserService {
    */
   public void saveProfilePicture(String token, MultipartFile imageFile) throws IOException {
     User user = getUserByToken(token);
-    // TO DO: compare tokens
+    increaseLevel(user, 0.1);
 
     byte[] imageData = imageFile.getBytes();
     Image profileImage = new Image();
@@ -209,7 +213,6 @@ public class UserService {
 
   public void deleteProfilePicture (String token){
     User user = getUserByToken(token);
-    // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();
     profileImage.setProfilePicture(generateDefaultImage(user.getUsername()));
@@ -221,7 +224,6 @@ public class UserService {
 
   public byte[] getProfilePicture(String token) {
     User user = getUserByToken(token);
-    // TO DO: compare tokens
 
     Image profileImage = user.getProfileImage();
     /*viewImageInFolder(profileImage.getProfilePicture());*/
