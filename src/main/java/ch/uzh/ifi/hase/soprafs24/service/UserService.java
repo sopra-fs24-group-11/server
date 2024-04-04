@@ -85,7 +85,6 @@ public class UserService {
 
     newUser = userRepository.save(newUser);
     userRepository.flush();
-    log.debug("Created Information for User: {}", newUser);
     notificationService.createUserNotification(newUser, String.format("Welcome to Get-Together %s!", newUser.getUsername()));
     return newUser;
   }
@@ -99,7 +98,6 @@ public class UserService {
     existingUser.setStatus(UserStatus.ONLINE);
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
-    log.debug("Updated UserStatus for User: {}", existingUser);
     return existingUser.getToken();
   }
 
@@ -119,18 +117,19 @@ public class UserService {
     // Save the updated user
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
-    log.debug("Updated Information for User: {}", existingUser);
+    notificationService.createUserNotification(existingUser, "You updated your profile");
   }
 
   public void deleteUser(String token) {
+    // user chose to delete their account -> delete everything with references to the user
     User user = getUserByToken(token);
-    // To DO: Delete all Friends and Trips!!!
+    // To Do: Delete / revert all List Items!!!
     friendshipService.deleteAllForAUser(user);
     tripParticipantService.deleteAllForAUser(user);
+    notificationService.deleteAllNotificationsForAUser(user);
 
     userRepository.deleteById(user.getId());
     userRepository.flush();
-    log.debug("Deleted User: {}", user);
   }
 
   public void logoutUser(String token) {
@@ -138,7 +137,6 @@ public class UserService {
     user.setStatus(UserStatus.OFFLINE);
     userRepository.save(user);
     userRepository.flush();
-    log.debug("User logged out: {}", user);
   }
 
   public List<User> getMatchingUsers(String token, String username) {
@@ -157,7 +155,7 @@ public class UserService {
     feedback.setMessage(message);
     feedbackRepository.save(feedback);
     feedbackRepository.flush();
-    log.debug("Gave Feedback: {}", feedback);
+    notificationService.createUserNotification(user, "Thank you for giving us feedback, we are happy to look at it!");
   }
 
   /**
@@ -207,7 +205,6 @@ public class UserService {
     user.setProfileImage(profileImage);
     userRepository.save(user);
     userRepository.flush();
-    log.debug("Profile picture saved for User: {}", user);
   }
 
   public void deleteProfilePicture (String token){
@@ -219,7 +216,6 @@ public class UserService {
     user.setProfileImage(profileImage);
     userRepository.save(user);
     userRepository.flush();
-    log.debug("Profile picture saved for User: {}", user);
   }
 
 

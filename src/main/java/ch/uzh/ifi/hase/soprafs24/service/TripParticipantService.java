@@ -29,12 +29,15 @@ public class TripParticipantService {
   private final TripRepository tripRepository;
   private final ConnectionService connectionService;
 
+  private final NotificationService notificationService;
+
 
   @Autowired
-  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository, ConnectionService connectionService) {
+  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository, ConnectionService connectionService, NotificationService notificationService) {
     this.tripParticipantRepository = tripParticipantRepository;
     this.tripRepository = tripRepository;
     this.connectionService = connectionService;
+    this.notificationService = notificationService;
   }
 
   public List<TripParticipant> getTripParticipants(Trip trip) {
@@ -47,40 +50,6 @@ public class TripParticipantService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip");
     }
     return participant;
-  }
-
-  public void storeParticipants(Trip trip, User administrator, List<User> invited) {
-    List<TripParticipant> newParticipants = new ArrayList<>();
-
-    TripParticipant admin = new TripParticipant();
-    admin.setUser(administrator);
-    admin.setInvitator(administrator);
-    admin.setTrip(trip);
-    admin.setStatus(InvitationStatus.ACCEPTED);
-    newParticipants.add(admin);
-
-    for(User user : invited) {
-      TripParticipant participant = new TripParticipant();
-      participant.setUser(user);
-      participant.setInvitator(administrator);
-      participant.setTrip(trip);
-      newParticipants.add(participant);
-    }
-    tripParticipantRepository.saveAll(newParticipants);
-    tripParticipantRepository.flush();
-    log.debug("Created Trip Participants: {}", newParticipants);
-  }
-
-  public void storeParticipant(Trip trip, User administrator, User user) {
-    TripParticipant newParticipant = new TripParticipant();
-
-    newParticipant.setUser(user);
-    newParticipant.setInvitator(administrator);
-    newParticipant.setTrip(trip);
-
-    tripParticipantRepository.save(newParticipant);
-    tripParticipantRepository.flush();
-    log.debug("Created Trip Participant: {}", newParticipant);
   }
 
   public List<User> getTripUsers(Trip trip) {
@@ -97,11 +66,48 @@ public class TripParticipantService {
     return tripParticipantRepository.findAllByUser(user);
   }
 
+  public void storeParticipants(Trip trip, User administrator, List<User> invited) {
+    List<TripParticipant> newParticipants = new ArrayList<>();
+
+    TripParticipant admin = new TripParticipant();
+    admin.setUser(administrator);
+    admin.setInvitator(administrator);
+    admin.setTrip(trip);
+    admin.setStatus(InvitationStatus.ACCEPTED);
+    newParticipants.add(admin);
+    notificationService.createUserNotification(administrator, String.format("You created the trip '%s'", trip.getTripName()));
+
+    for(User user : invited) {
+      TripParticipant participant = new TripParticipant();
+      participant.setUser(user);
+      participant.setInvitator(administrator);
+      participant.setTrip(trip);
+      newParticipants.add(participant);
+      notificationService.createUserNotification(user, String.format("You were invited to the trip '%s' by %s", trip.getTripName(), administrator.getUsername()));
+    }
+    tripParticipantRepository.saveAll(newParticipants);
+    tripParticipantRepository.flush();
+  }
+
+  public void storeParticipant(Trip trip, User administrator, User user) {
+    TripParticipant newParticipant = new TripParticipant();
+
+    newParticipant.setUser(user);
+    newParticipant.setInvitator(administrator);
+    newParticipant.setTrip(trip);
+
+    tripParticipantRepository.save(newParticipant);
+    tripParticipantRepository.flush();
+    notificationService.createUserNotification(user, String.format("You were invited to the trip '%s' by %s", trip.getTripName(), administrator.getUsername()));
+  }
+
+
   public void deleteAllForAUser(User user) {
+    // this is for a user who deletes his account
     // TO DO: delete / revert list items
     List<TripParticipant> tripAdmins = tripParticipantRepository.findAllByUserAndTripAdministrator(user, user);
     if (!tripAdmins.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete if you are an admin");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot delete your account if you are an admin");
     }
     List<TripParticipant> tripParticipants = getAllTripsOfAUser(user);
 
@@ -109,14 +115,13 @@ public class TripParticipantService {
       connectionService.deleteConnection(pa);
       Trip trip = pa.getTrip();
       trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
-      tripRepository.save(trip);
+      trip = tripRepository.save(trip);
       tripRepository.flush();
-      log.debug("One member less in trip: {}", trip);
+      notificationService.createTripNotification(trip, String.format("%s left the trip", user.getUsername()));
     }
 
     tripParticipantRepository.deleteAll(tripParticipants);
     tripParticipantRepository.flush();
-    log.debug("Deleted all friendships of user who chose to delete account");
   }
 
   public void isPartOfTripAndHasAccepted(User user, Trip trip) {
@@ -170,7 +175,6 @@ public class TripParticipantService {
     participant.setFavouriteTrip(!participant.isFavouriteTrip());
     tripParticipantRepository.save(participant);
     tripParticipantRepository.flush();
-    log.debug("Marked trip as favourite for participant {}", participant);
   }
 
 
@@ -184,7 +188,7 @@ public class TripParticipantService {
     participant.setStatus(InvitationStatus.ACCEPTED);
     tripParticipantRepository.save(participant);
     tripParticipantRepository.flush();
-    log.debug("Participant accepted trip invitation {}", participant);
+    notificationService.createTripNotification(trip, String.format("%s has accepted the trip invitation", user.getUsername()));
   }
   public void rejectInvitation(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
@@ -202,12 +206,12 @@ public class TripParticipantService {
     connectionService.deleteConnection(participant);
     tripParticipantRepository.deleteById(participant.getId());
     tripParticipantRepository.flush();
-    log.debug("Participant rejected trip invitation {}", participant);
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
-    tripRepository.save(trip);
+    trip = tripRepository.save(trip);
     tripRepository.flush();
-    log.debug("One member less in trip: {}", trip);
+
+    notificationService.createTripNotification(trip, String.format("%s has rejected the trip invitation", user.getUsername()));
   }
 
   public void leaveTrip(User leaver, Trip trip) {
@@ -226,12 +230,12 @@ public class TripParticipantService {
     connectionService.deleteConnection(participant);
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
-    log.debug("Participant rejected trip invitation {}", participant);
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
-    tripRepository.save(trip);
+    trip = tripRepository.save(trip);
     tripRepository.flush();
-    log.debug("One member less in trip: {}", trip);
+
+    notificationService.createTripNotification(trip, String.format("%s has left the trip", leaver.getUsername()));
   }
 
   public void removeMemberFromTrip(User userToBeRemoved, User requester, Trip trip) {
@@ -249,12 +253,11 @@ public class TripParticipantService {
     connectionService.deleteConnection(participant);
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
-    log.debug("Admin removed participant from trip {}", participant);
+    notificationService.createTripNotification(trip, String.format("%s removed %s from the trip", requester.getUsername(), userToBeRemoved.getUsername()));
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);
     tripRepository.flush();
-    log.debug("One member less in trip: {}", trip);
   }
 
 
@@ -266,7 +269,6 @@ public class TripParticipantService {
     }
     tripParticipantRepository.deleteAll(participants);
     tripParticipantRepository.flush();
-    log.debug("Deleted All Members of Trip: {}", trip);
     // to do:  delete / revert each list item
   }
 

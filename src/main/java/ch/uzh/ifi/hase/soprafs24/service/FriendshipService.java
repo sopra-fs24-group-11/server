@@ -27,16 +27,19 @@ public class FriendshipService {
 
   private final FriendshipRepository friendshipRepository;
 
+  private final NotificationService notificationService;
+
   @Autowired
-  public FriendshipService(@Qualifier("friendshipRepository") FriendshipRepository friendshipRepository) {
+  public FriendshipService(@Qualifier("friendshipRepository") FriendshipRepository friendshipRepository, NotificationService notificationService) {
     this.friendshipRepository = friendshipRepository;
+    this.notificationService = notificationService;
   }
 
   public void deleteAllForAUser(User user) {
+    // this is for a user who chose to delete their account
     List<Friendship> friendships = getAllFriendshipsOfAUser(user);
     friendshipRepository.deleteAll(friendships);
     friendshipRepository.flush();
-    log.debug("Deleted all friendships of user who chose to delete account");
   }
 
   public List<Friend> getAllReceivedFriendRequests(User user) {
@@ -146,7 +149,9 @@ public class FriendshipService {
     friendship.setPoints(0);
     friendshipRepository.save(friendship);
     friendshipRepository.flush();
-    log.debug("Created Friendship Request: {}", friendship);
+
+    notificationService.createUserNotification(sender, String.format("You sent a friend request to %s", receiver.getUsername()));
+    notificationService.createUserNotification(receiver, String.format("You received a friend request from %s", sender.getUsername()));
   }
 
   public void acceptRequest(User acceptor, User requester) {
@@ -157,7 +162,9 @@ public class FriendshipService {
     friendship.setStatus(FriendShipStatus.ACCEPTED);
     friendship = friendshipRepository.save(friendship);
     friendshipRepository.flush();
-    log.debug("Accepted Friendship: {}", friendship);
+
+    notificationService.createUserNotification(acceptor, String.format("You accepted the friend request from %s", requester.getUsername()));
+    notificationService.createUserNotification(requester, String.format("%s accepted your friend request", acceptor.getUsername()));
   }
 
 
@@ -173,22 +180,26 @@ public class FriendshipService {
     if (friendship1 == null) {
       if (friendship2.getStatus()==FriendShipStatus.PENDING) {
         // receiver rejects request
-        friendshipRepository.deleteById(friendship2.getId());
-        log.debug("Rejected Friendship: {}", friendship2);
+        friendshipRepository.delete(friendship2);
+        notificationService.createUserNotification(deleter, String.format("You rejected the friend request from %s", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s rejected your friend request", deleter.getUsername()));
       } else {
         // receiver deletes friendship
-        friendshipRepository.deleteById(friendship2.getId());
-        log.debug("Deleted Friendship: {}", friendship2);
+        friendshipRepository.delete(friendship2);
+        notificationService.createUserNotification(deleter, String.format("You deleted your friendship with %s", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s deleted your friendship", deleter.getUsername()));
       }
     } else if (friendship2 == null) {
       if (friendship1.getStatus()==FriendShipStatus.PENDING) {
         // requester withdraws request
-        friendshipRepository.deleteById(friendship1.getId());
-        log.debug("Rejected Friendship: {}", friendship1);
+        friendshipRepository.delete(friendship1);
+        notificationService.createUserNotification(deleter, String.format("You withdrew the friend request to %s", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s withdrew their friend request to you", deleter.getUsername()));
       } else {
         // requester deletes friendship
-        friendshipRepository.deleteById(friendship1.getId());
-        log.debug("Deleted Friendship: {}", friendship1);
+        friendshipRepository.delete(friendship1);
+        notificationService.createUserNotification(deleter, String.format("You deleted your friendship with %s", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s deleted your friendship", deleter.getUsername()));
       }
     }
   }
