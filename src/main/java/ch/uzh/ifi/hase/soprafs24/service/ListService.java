@@ -13,8 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,13 @@ public class ListService {
     toDoRepository.flush();
   }
 
+  public void deleteResponsible(Long itemId, TripParticipant participant) {
+    ToDoItem existingToDo = toDoRepository.findByid(itemId);
+    existingToDo.setParticipantId(null);
+    existingToDo = toDoRepository.save(existingToDo);
+    toDoRepository.flush();
+  }
+
   public String addTodo(Trip trip, ToDoItem newToDoItem) {
     newToDoItem.setTrip(trip);
     newToDoItem.setCompleted(false);
@@ -76,6 +85,14 @@ public class ListService {
     toDoRepository.flush();
   }
 
+  public ToDoItem getItemById(Long itemId) {
+    ToDoItem toDoItem = toDoRepository.findByid(itemId);
+    if (toDoItem == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
+    }
+    return toDoItem;
+  }
 
 
 }
+
