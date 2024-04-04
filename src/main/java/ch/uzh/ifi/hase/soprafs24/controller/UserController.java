@@ -2,9 +2,11 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.UserNotification;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
+import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -28,10 +30,12 @@ public class UserController {
 
   private final UserService userService;
   private final FriendshipService friendshipService;
+  private final NotificationService notificationService;
 
-  UserController(UserService userService, FriendshipService friendshipService) {
+  UserController(UserService userService, FriendshipService friendshipService, NotificationService notificationService) {
     this.userService = userService;
     this.friendshipService = friendshipService;
+    this.notificationService = notificationService;
   }
 
   @PostMapping("/users/register")
@@ -206,7 +210,6 @@ public class UserController {
     User requester = userService.getUserById(friendId);
     friendshipService.acceptRequest(acceptor, requester);
   }
-  // like this?:
   @DeleteMapping("/users/friends/{friendId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
@@ -215,6 +218,23 @@ public class UserController {
     User friend = userService.getUserById(friendId);
     friendshipService.deleteFriend(friend, deleter);
   }
+
+  @GetMapping("/users/notifications")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<NotificationGetDTO> getUserNotifications(@RequestHeader("Authorization") String token) {
+    User user = userService.getUserByToken(token);
+    List<UserNotification> notes = notificationService.getUserNotifications(user);
+
+    List<NotificationGetDTO> notificationGetDTOs = new ArrayList<>();
+
+    for (UserNotification note : notes) {
+      notificationGetDTOs.add(DTOMapper.INSTANCE.convertUserNotificationToNotificationGetDTO(note));
+    }
+    return notificationGetDTOs;
+  }
+
+
 
 
 }

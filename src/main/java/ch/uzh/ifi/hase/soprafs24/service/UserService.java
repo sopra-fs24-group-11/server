@@ -45,13 +45,15 @@ public class UserService {
   private final FeedbackRepository feedbackRepository;
   private final FriendshipService friendshipService;
   private final TripParticipantService tripParticipantService;
+  private final NotificationService notificationService;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService) {
     this.userRepository = userRepository;
     this.feedbackRepository = feedbackRepository;
     this.friendshipService = friendshipService;
     this.tripParticipantService = tripParticipantService;
+    this.notificationService = notificationService;
   }
 
   public User getUserByToken(String token) {
@@ -84,6 +86,7 @@ public class UserService {
     newUser = userRepository.save(newUser);
     userRepository.flush();
     log.debug("Created Information for User: {}", newUser);
+    notificationService.createUserNotification(newUser, String.format("Welcome to Get-Together %s!", newUser.getUsername()));
     return newUser;
   }
 

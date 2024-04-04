@@ -20,15 +20,17 @@ public class TripController {
   private final TripParticipantService tripParticipantService;
   private final ListService listService;
   private final ConnectionService connectionService;
+  private final NotificationService notificationService;
 
 
 
-  TripController(TripService tripService, UserService userService, TripParticipantService tripParticipantService, ListService listService, ConnectionService connectionService) {
+  TripController(TripService tripService, UserService userService, TripParticipantService tripParticipantService, ListService listService, ConnectionService connectionService, NotificationService notificationService) {
     this.tripService = tripService;
     this.userService = userService;
     this.tripParticipantService = tripParticipantService;
     this.listService = listService;
     this.connectionService = connectionService;
+    this.notificationService = notificationService;
   }
 
   @PostMapping("/trips/new")
@@ -306,6 +308,23 @@ public class TripController {
       dtos.add(dto);
     }
     return dtos;
+  }
+
+  @GetMapping("/trips/{tripId}/notifications")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<NotificationGetDTO> getTripNotifications(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    List<TripNotification> notes = notificationService.getTripNotifications(trip);
+
+    List<NotificationGetDTO> notificationGetDTOs = new ArrayList<>();
+
+    for (TripNotification note : notes) {
+      notificationGetDTOs.add(DTOMapper.INSTANCE.convertTripNotificationToNotificationGetDTO(note));
+    }
+    return notificationGetDTOs;
   }
 
   @GetMapping("/trips/{tripId}/todos")

@@ -127,4 +127,12 @@ public interface DTOMapper {
   @Mapping(source = "participantId", target = "participantId")
   ToDoGetDTO convertEntityToToDoGetDTO(ToDoItem toDoItem);
 
+  @Mapping(source = "message", target = "message")
+  @Mapping(source = "timeStamp", target = "timeStamp")
+  NotificationGetDTO convertUserNotificationToNotificationGetDTO(UserNotification userNotification);
+
+  @Mapping(source = "message", target = "message")
+  @Mapping(source = "timeStamp", target = "timeStamp")
+  NotificationGetDTO convertTripNotificationToNotificationGetDTO(TripNotification tripNotification);
+
 }
