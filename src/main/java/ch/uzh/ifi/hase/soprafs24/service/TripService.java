@@ -178,7 +178,7 @@ public class TripService {
     }
   }
 
-  @Scheduled(fixedRate = 60000) // Check every minute
+  @Scheduled(fixedRate = 15000) // Check every 15 seconds
   public void markTripsAsCompleted() {
     List<Trip> ongoingTrips = tripRepository.findByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.now());
     for (Trip trip : ongoingTrips) {
@@ -187,7 +187,7 @@ public class TripService {
       notificationService.createTripNotification(trip, "The trip has finished!");
       List<User> users = tripParticipantService.getTripUsers(trip);
       for (User u : users) {
-        notificationService.createUserNotification(u, String.format("The trip %s has been completed", trip.getTripName()));
+        notificationService.createUserNotification(u, String.format("The trip '%s' has been completed", trip.getTripName()));
         userService.increaseLevel(u, (double)trip.getNumberOfParticipants()/10);
       }
     }
