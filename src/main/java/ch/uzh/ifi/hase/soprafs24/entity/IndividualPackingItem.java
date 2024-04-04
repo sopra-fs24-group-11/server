@@ -1,15 +1,22 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import ch.uzh.ifi.hase.soprafs24.constant.Item;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class IndividualPackingItem extends Item implements Serializable {
+public class IndividualPackingItem implements Serializable {
+  private static final long serialVersionUID = 1L;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_sequence")
+  @SequenceGenerator(name = "item_sequence", sequenceName = "item_sequence", allocationSize = 1)
+  private Long id;
+
+  @Column(nullable = false)
+  private String item;
+
+
   @Column(nullable=false)
   private boolean completed;
 
@@ -31,5 +38,21 @@ public class IndividualPackingItem extends Item implements Serializable {
 
   public void setParticipant(TripParticipant participant) {
     this.participant = participant;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getItem() {
+    return item;
+  }
+
+  public void setItem(String item) {
+    this.item = item;
   }
 }

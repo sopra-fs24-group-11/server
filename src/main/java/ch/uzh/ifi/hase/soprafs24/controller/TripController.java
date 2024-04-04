@@ -344,8 +344,8 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    ToDoItem toDoItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(toDoPutDTO);
-    listService.updateTodo(trip, itemId, toDoItem);
+    Item item = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(toDoPutDTO);
+    listService.updateTodo(trip, itemId, item);
   }
 
   @PutMapping("trips/{tripId}/todos/{itemId}/responsible")
@@ -377,8 +377,8 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    ToDoItem toDoItem = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(toDoPostDTO);
-    return listService.addTodo(trip, toDoItem);
+    Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(toDoPostDTO);
+    return listService.addTodo(trip, item);
   }
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}")

@@ -1,12 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 
+import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
+import ch.uzh.ifi.hase.soprafs24.entity.Item;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
-import ch.uzh.ifi.hase.soprafs24.repository.GroupPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.ToDoRepository;
-import ch.uzh.ifi.hase.soprafs24.entity.ToDoItem;
+import ch.uzh.ifi.hase.soprafs24.repository.ItemRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ToDoGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import org.slf4j.Logger;
@@ -27,70 +27,69 @@ public class ListService {
 
   private final Logger log = LoggerFactory.getLogger(ListService.class);
 
-  private final ToDoRepository toDoRepository;
-  private final GroupPackingRepository groupPackingRepository;
+  private final ItemRepository itemRepository;
   private final IndividualPackingRepository individualPackingRepository;
 
   @Autowired
-  public ListService(@Qualifier("toDoRepository") ToDoRepository toDoRepository,@Qualifier("groupPackingRepository") GroupPackingRepository groupPackingRepository,@Qualifier("individualPackingRepository") IndividualPackingRepository individualPackingRepository) {
-    this.toDoRepository = toDoRepository;
-    this.groupPackingRepository = groupPackingRepository;
+  public ListService(@Qualifier("toDoRepository") ItemRepository itemRepository, @Qualifier("individualPackingRepository") IndividualPackingRepository individualPackingRepository) {
+    this.itemRepository = itemRepository;
     this.individualPackingRepository = individualPackingRepository;
   }
 
   public List<ToDoGetDTO> getTodos (Trip trip) {
-    List<ToDoItem> toDoItems = toDoRepository.findAllByTrip(trip);
+    List<Item> items = itemRepository.findAllByTrip(trip);
     List<ToDoGetDTO> toDoGetDTOS = new ArrayList<>();
-    for (ToDoItem toDoItem: toDoItems) {
-      ToDoGetDTO toDoGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(toDoItem);
+    for (Item item : items) {
+      ToDoGetDTO toDoGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
       toDoGetDTOS.add(toDoGetDTO);
     }
     return toDoGetDTOS;
   }
 
-  public void updateTodo(Trip trip, Long itemId, ToDoItem updatedToDoItem) {
-    ToDoItem existingToDo = getItemById(itemId);
-    existingToDo.setCompleted(updatedToDoItem.isCompleted());
-    existingToDo.setItem(updatedToDoItem.getItem());
-    existingToDo = toDoRepository.save(existingToDo);
-    toDoRepository.flush();
+  public void updateTodo(Trip trip, Long itemId, Item updatedItem) {
+    Item existingToDo = getItemById(itemId);
+    existingToDo.setCompleted(updatedItem.isCompleted());
+    existingToDo.setItem(updatedItem.getItem());
+    existingToDo = itemRepository.save(existingToDo);
+    itemRepository.flush();
   }
 
   public void updateResponsible(Long itemId, TripParticipant participant) {
     //TODO: add possibility to remove a responsibility
-    ToDoItem existingToDo = getItemById(itemId);
+    Item existingToDo = getItemById(itemId);
     existingToDo.setParticipantId(participant.getId());
-    existingToDo = toDoRepository.save(existingToDo);
-    toDoRepository.flush();
+    existingToDo = itemRepository.save(existingToDo);
+    itemRepository.flush();
   }
 
   public void deleteResponsible(Long itemId, TripParticipant participant) {
-    ToDoItem existingToDo = getItemById(itemId);
+    Item existingToDo = getItemById(itemId);
     existingToDo.setParticipantId(null);
-    existingToDo = toDoRepository.save(existingToDo);
-    toDoRepository.flush();
+    existingToDo = itemRepository.save(existingToDo);
+    itemRepository.flush();
   }
 
-  public String addTodo(Trip trip, ToDoItem newToDoItem) {
-    newToDoItem.setTrip(trip);
-    newToDoItem.setCompleted(false);
-    newToDoItem = toDoRepository.save(newToDoItem);
-    toDoRepository.flush();
+  public String addTodo(Trip trip, Item newItem) {
+    newItem.setTrip(trip);
+    newItem.setCompleted(false);
+    newItem.setItemType(ItemType.TODO);
+    newItem = itemRepository.save(newItem);
+    itemRepository.flush();
 
-    return newToDoItem.getItem();
+    return newItem.getItem();
   }
 
   public void deleteTodo(Trip trip, Long itemId) {
-    toDoRepository.deleteById(itemId);
-    toDoRepository.flush();
+    itemRepository.deleteById(itemId);
+    itemRepository.flush();
   }
 
-  public ToDoItem getItemById(Long itemId) {
-    ToDoItem toDoItem = toDoRepository.findByid(itemId);
-    if (toDoItem == null) {
+  public Item getItemById(Long itemId) {
+    Item item = itemRepository.findByid(itemId);
+    if (item == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
     }
-    return toDoItem;
+    return item;
   }
 
 

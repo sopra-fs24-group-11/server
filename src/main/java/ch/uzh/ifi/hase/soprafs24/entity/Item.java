@@ -1,12 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import ch.uzh.ifi.hase.soprafs24.constant.Item;
+import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class ToDoItem implements Serializable {
+public class Item implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -28,6 +28,9 @@ public class ToDoItem implements Serializable {
   @ManyToOne
   @JoinColumn(name = "trip_id", nullable = false)
   private Trip trip;
+
+  @Column (name = "itemType", nullable = false)
+  private ItemType itemType;
 
   public boolean isCompleted() {
     return completed;
@@ -67,4 +70,8 @@ public class ToDoItem implements Serializable {
   public void setItem(String item) {
     this.item = item;
   }
+
+  public ItemType getItemType() {return itemType; }
+
+  public void setItemType(ItemType itemType) {this.itemType = itemType; }
 }
