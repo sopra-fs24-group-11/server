@@ -44,19 +44,18 @@ public class FriendshipService {
 
   public List<Friend> getAllReceivedFriendRequests(User user) {
     List<Friend> result = new ArrayList<>();
-    List<Friendship> listOne = friendshipRepository.findAllByFriend2(user);
+    List<Friendship> listOne = friendshipRepository.findAllByFriend2AndStatus(user, FriendShipStatus.PENDING);
 
     for (Friendship friendship : listOne) {
-      if (friendship.getStatus() == FriendShipStatus.PENDING) {
-        User friend = friendship.getFriend1();
-        Friend newFriend = new Friend();
-        newFriend.setFriendId(friend.getId());
-        newFriend.setLevel(friend.getLevel());
-        newFriend.setUsername(friend.getUsername());
-        newFriend.setPoints(friendship.getPoints());
-        newFriend.setStatus(friendship.getStatus());
-        result.add(newFriend);
-      }
+      User friend = friendship.getFriend1();
+      Friend newFriend = new Friend();
+      newFriend.setFriendId(friend.getId());
+      newFriend.setLevel(friend.getLevel());
+      newFriend.setUsername(friend.getUsername());
+      newFriend.setPoints(friendship.getPoints());
+      newFriend.setStatus(friendship.getStatus());
+      result.add(newFriend);
+
     }
 
     return result;
@@ -64,19 +63,17 @@ public class FriendshipService {
 
   public List<Friend> getAllSentFriendRequests(User user) {
     List<Friend> result = new ArrayList<>();
-    List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
+    List<Friendship> listOne = friendshipRepository.findAllByFriend1AndStatus(user, FriendShipStatus.PENDING);
 
     for (Friendship friendship : listOne) {
-      if (friendship.getStatus() == FriendShipStatus.PENDING) {
-        User friend = friendship.getFriend2();
-        Friend newFriend = new Friend();
-        newFriend.setFriendId(friend.getId());
-        newFriend.setLevel(friend.getLevel());
-        newFriend.setUsername(friend.getUsername());
-        newFriend.setPoints(friendship.getPoints());
-        newFriend.setStatus(friendship.getStatus());
-        result.add(newFriend);
-      }
+      User friend = friendship.getFriend2();
+      Friend newFriend = new Friend();
+      newFriend.setFriendId(friend.getId());
+      newFriend.setLevel(friend.getLevel());
+      newFriend.setUsername(friend.getUsername());
+      newFriend.setPoints(friendship.getPoints());
+      newFriend.setStatus(friendship.getStatus());
+      result.add(newFriend);
     }
 
     return result;
@@ -103,33 +100,31 @@ public class FriendshipService {
 
   public List<Friend> getAllAcceptedFriends(User user) {
     List<Friend> result = new ArrayList<>();
-    List<Friendship> listOne = friendshipRepository.findAllByFriend1(user);
-    List<Friendship> listTwo = friendshipRepository.findAllByFriend2(user);
+    List<Friendship> listOne = friendshipRepository.findAllByFriend1AndStatus(user, FriendShipStatus.ACCEPTED);
+    List<Friendship> listTwo = friendshipRepository.findAllByFriend2AndStatus(user, FriendShipStatus.ACCEPTED);
 
     for (Friendship friendship : listOne) {
-      if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
-        User friend = friendship.getFriend2();
-        Friend newFriend = new Friend();
-        newFriend.setFriendId(friend.getId());
-        newFriend.setLevel(friend.getLevel());
-        newFriend.setUsername(friend.getUsername());
-        newFriend.setPoints(friendship.getPoints());
-        newFriend.setStatus(friendship.getStatus());
-        result.add(newFriend);
-      }
+      User friend = friendship.getFriend2();
+      Friend newFriend = new Friend();
+      newFriend.setFriendId(friend.getId());
+      newFriend.setLevel(friend.getLevel());
+      newFriend.setUsername(friend.getUsername());
+      newFriend.setPoints(friendship.getPoints());
+      newFriend.setStatus(friendship.getStatus());
+      result.add(newFriend);
+
     }
 
     for (Friendship friendship : listTwo) {
-      if (friendship.getStatus() == FriendShipStatus.ACCEPTED) {
-        User friend = friendship.getFriend1();
-        Friend newFriend = new Friend();
-        newFriend.setFriendId(friend.getId());
-        newFriend.setLevel(friend.getLevel());
-        newFriend.setUsername(friend.getUsername());
-        newFriend.setPoints(friendship.getPoints());
-        newFriend.setStatus(friendship.getStatus());
-        result.add(newFriend);
-      }
+      User friend = friendship.getFriend1();
+      Friend newFriend = new Friend();
+      newFriend.setFriendId(friend.getId());
+      newFriend.setLevel(friend.getLevel());
+      newFriend.setUsername(friend.getUsername());
+      newFriend.setPoints(friendship.getPoints());
+      newFriend.setStatus(friendship.getStatus());
+      result.add(newFriend);
+
     }
 
     return result;
@@ -163,7 +158,7 @@ public class FriendshipService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist");
     }
     friendship.setStatus(FriendShipStatus.ACCEPTED);
-    friendship = friendshipRepository.save(friendship);
+    friendshipRepository.save(friendship);
     friendshipRepository.flush();
 
     notificationService.createUserNotification(acceptor, String.format("You accepted the friend request from %s", requester.getUsername()));
