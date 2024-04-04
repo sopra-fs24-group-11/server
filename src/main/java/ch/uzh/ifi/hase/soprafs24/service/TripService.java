@@ -24,15 +24,15 @@ public class TripService {
 
   private final TripRepository tripRepository;
   private final UserService userService;
-
-
   private final TripParticipantService tripParticipantService;
+  private final NotificationService notificationService;
 
   @Autowired
-  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService) {
+  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService, NotificationService notificationService) {
     this.tripRepository = tripRepository;
     this.tripParticipantService = tripParticipantService;
     this.userService = userService;
+    this.notificationService = notificationService;
   }
 
   public Trip getTripById(Long id) {
@@ -65,9 +65,9 @@ public class TripService {
 
     tripRepository.save(newTrip);
     tripRepository.flush();
-    log.debug("Created Trip: {}", newTrip);
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
+    notificationService.createTripNotification(newTrip, String.format("%s created the trip '%s'", administrator.getUsername(), newTrip.getTripName()));
     return newTrip.getId();
   }
 
@@ -118,9 +118,13 @@ public class TripService {
     }
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()+toAdd.size());
-    tripRepository.save(trip);
+    trip = tripRepository.save(trip);
     tripRepository.flush();
-    log.debug("Updated Trip: {}", trip);
+    notificationService.createTripNotification(trip, String.format("%s updated the trip's details'", administrator.getUsername()));
+    List<User> users = tripParticipantService.getTripUsers(trip);
+    for (User user : users) {
+      notificationService.createUserNotification(user, String.format("The trip %s has been updated! Go take a look!", trip.getTripName()));
+    }
   }
 
   public boolean isAdmin(Long tripId, User requester) {
@@ -138,9 +142,9 @@ public class TripService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "New Admin you wanted to choose has not yet accepted the trip request");
     }
     trip.setAdministrator(newAdmin);
-    tripRepository.save(trip);
+    trip = tripRepository.save(trip);
     tripRepository.flush();
-    log.debug("New administrator for trip: {}", trip);
+    notificationService.createTripNotification(trip, String.format("%s announced %s as the new Administrator", oldAdmin.getUsername(), newAdmin.getUsername()));
   }
 
   public void deleteTrip(Long tripId, User requester) {
@@ -149,12 +153,14 @@ public class TripService {
     }
     Trip trip = getTripById(tripId);
 
+    List<User> users = tripParticipantService.getTripUsers(trip);
+    for (User user : users) {
+      notificationService.createUserNotification(user, String.format("The trip %s has been deleted", trip.getTripName()));
+    }
+    notificationService.deleteAllNotificationsForATrip(trip);
     tripParticipantService.deleteEverythingRelatedToATrip(trip);
-
     tripRepository.deleteById(tripId);
     tripRepository.flush();
-    log.debug("Deleted Trip: {}", trip);
-
   }
 
 

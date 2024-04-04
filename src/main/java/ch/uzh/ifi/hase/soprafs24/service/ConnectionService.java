@@ -36,10 +36,12 @@ public class ConnectionService {
 
   private final Logger log = LoggerFactory.getLogger(ConnectionService.class);
   private final ParticipantConnectionRepository participantConnectionRepository;
+  private final NotificationService notificationService;
 
   @Autowired
-  public ConnectionService(@Qualifier("participantConnectionRepository") ParticipantConnectionRepository participantConnectionRepository) {
+  public ConnectionService(@Qualifier("participantConnectionRepository") ParticipantConnectionRepository participantConnectionRepository, NotificationService notificationService) {
     this.participantConnectionRepository = participantConnectionRepository;
+    this.notificationService = notificationService;
   }
 
   public static List<Station> getLocationsName(String name) {
@@ -235,7 +237,6 @@ public class ConnectionService {
   public void deleteConnection(TripParticipant participant) {
     participantConnectionRepository.deleteAllByParticipant(participant);
     participantConnectionRepository.flush();
-    log.debug("Deleted connection for participant: {}", participant);
   }
 
   public void saveConnection(TripParticipant participant, List<ParticipantConnection> connections) {
@@ -248,7 +249,7 @@ public class ConnectionService {
     }
     participantConnectionRepository.saveAll(connections);
     participantConnectionRepository.flush();
-    log.debug("Created connection for participant: {}", participant);
+    notificationService.createTripNotification(participant.getTrip(), String.format("%s has chosen a connection", participant.getUser().getUsername()));
   }
 
   public void udpateConnection(TripParticipant participant, List<ParticipantConnection> newConnection) {
@@ -258,7 +259,6 @@ public class ConnectionService {
     deleteConnection(participant);
     participantConnectionRepository.saveAll(newConnection);
     participantConnectionRepository.flush();
-    log.debug("Updated connection for participant: {}", participant);
   }
 
 }
