@@ -52,7 +52,10 @@ public class TripController {
     List<Long> userIds = tripPutDTO.getParticipants();
     Trip updatedTrip = DTOMapper.INSTANCE.convertTripPutDTOtoEntity(tripPutDTO);
     User administrator = userService.getUserByToken(token);
-    tripService.updateTrip(tripId, updatedTrip, administrator, userIds);
+    Trip trip = tripService.getTripById(tripId);
+    tripParticipantService.isPartOfTripAndHasAccepted(administrator, trip);
+    tripService.isOngoing(trip);
+    tripService.updateTrip(trip, updatedTrip, administrator, userIds);
   }
   @GetMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.OK)
@@ -70,11 +73,13 @@ public class TripController {
   @ResponseBody
   public List<ParticipantGetDTO> getTripParticipants(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     Trip trip = tripService.getTripById(tripId);
-    List<User> users = tripParticipantService.getTripUsersWithoutAdmin(trip);
-    List<ParticipantGetDTO> participantGetDTOs = new ArrayList<>();
-    if (!users.contains(userService.getUserByToken(token))) {
+    User requester = userService.getUserByToken(token);
+    if (trip.getAdministrator()!=requester) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not part of this trip and you can't see its participants");
     }
+    List<User> users = tripParticipantService.getTripUsersWithoutAdmin(trip);
+    List<ParticipantGetDTO> participantGetDTOs = new ArrayList<>();
+
     for (User user : users) {
       participantGetDTOs.add(DTOMapper.INSTANCE.convertEntityToParticipantGetDTO(user));
     }
@@ -169,7 +174,6 @@ public class TripController {
     return ConnectionService.getConnectionsByCode(start, end, dateString, timeString, isLate);
   }
 
-
   @PutMapping("/trips/{tripId}/invitation")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
@@ -178,6 +182,7 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.acceptInvitation(user, trip);
   }
+
   @DeleteMapping("/trips/{tripId}/invitation")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
@@ -192,7 +197,8 @@ public class TripController {
   @ResponseBody
   public boolean isAdmin(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
-    return tripService.isAdmin(tripId, user);
+    Trip trip = tripService.getTripById(tripId);
+    return tripService.isAdmin(trip, user);
   }
   @PutMapping("/trips/{tripId}/admin/{adminId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -200,7 +206,8 @@ public class TripController {
   public void newAdmin(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("adminId") Long adminId) {
     User oldAdmin = userService.getUserByToken(token);
     User newAdmin = userService.getUserById(adminId);
-    tripService.newAdmin(tripId, oldAdmin, newAdmin);
+    Trip trip = tripService.getTripById(tripId);
+    tripService.newAdmin(trip, oldAdmin, newAdmin);
   }
   @DeleteMapping("/trips/{tripId}/exit")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -210,21 +217,14 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.leaveTrip(user, trip);
   }
-  @DeleteMapping("/trips/{tripId}/users/{userId}/kick")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public void removeMemberFromTrip(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("userId") Long userId) {
-    User userToBeRemoved = userService.getUserById(userId);
-    User requester = userService.getUserByToken(token);
-    Trip trip = tripService.getTripById(tripId);
-    tripParticipantService.removeMemberFromTrip(userToBeRemoved, requester, trip);
-  }
+
   @DeleteMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void deleteTrip(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User requester = userService.getUserByToken(token);
-    tripService.deleteTrip(tripId, requester);
+    Trip trip = tripService.getTripById(tripId);
+    tripService.deleteTrip(trip, requester);
   }
 
 
@@ -237,6 +237,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
 
     List<ParticipantConnection> connections = new ArrayList<>();
@@ -253,6 +254,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
 
     List<ParticipantConnection> connections = new ArrayList<>();
@@ -283,6 +285,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
     connectionService.deleteConnection(participant);
   }
@@ -345,6 +348,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.TODO);
     Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
@@ -358,6 +362,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
 
     listService.checkIfItemIdHasTrip(itemId, trip);
@@ -373,6 +378,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
 
     listService.checkIfItemIdHasTrip(itemId, trip);
@@ -388,6 +394,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
     return listService.addItem(trip, item, ItemType.TODO);
   }
@@ -399,6 +406,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.TODO);
     listService.deleteItem(itemId);
@@ -421,6 +429,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
     Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
@@ -434,6 +443,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
@@ -448,6 +458,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
@@ -462,6 +473,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
     return listService.addItem(trip, item, ItemType.GROUPPACKING);
   }
@@ -473,6 +485,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    tripService.isOngoing(trip);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
     listService.deleteItem(itemId);

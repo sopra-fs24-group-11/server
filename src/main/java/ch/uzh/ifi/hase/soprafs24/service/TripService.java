@@ -75,8 +75,8 @@ public class TripService {
     return newTrip.getId();
   }
 
-  public void updateTrip(Long tripId, Trip updatedTrip, User administrator, List<Long> userIds) {
-    if (!isAdmin(tripId, administrator)) {
+  public void updateTrip(Trip trip, Trip updatedTrip, User administrator, List<Long> userIds) {
+    if (!isAdmin(trip, administrator)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
     if (userIds.contains(administrator.getId())) {
@@ -90,7 +90,6 @@ public class TripService {
       }
     }
 
-    Trip trip = getTripById(tripId);
 
     trip.setTripName(updatedTrip.getTripName());
     trip.setTripDescription(updatedTrip.getTripDescription());
@@ -138,16 +137,14 @@ public class TripService {
     }
   }
 
-  public boolean isAdmin(Long tripId, User requester) {
-    Trip trip = getTripById(tripId);
+  public boolean isAdmin(Trip trip, User requester) {
     return Objects.equals(trip.getAdministrator().getId(), requester.getId());
   }
 
-  public void newAdmin(Long tripId, User oldAdmin, User newAdmin) {
-    if (!isAdmin(tripId, oldAdmin)) {
+  public void newAdmin(Trip trip, User oldAdmin, User newAdmin) {
+    if (!isAdmin(trip, oldAdmin)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
-    Trip trip = getTripById(tripId);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, newAdmin);
     if (participant.getStatus() == InvitationStatus.PENDING) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "New Admin you wanted to choose has not yet accepted the trip request");
@@ -158,11 +155,10 @@ public class TripService {
     notificationService.createTripNotification(trip, String.format("%s announced %s as the new Administrator", oldAdmin.getUsername(), newAdmin.getUsername()));
   }
 
-  public void deleteTrip(Long tripId, User requester) {
-    if (!isAdmin(tripId, requester)) {
+  public void deleteTrip(Trip trip, User requester) {
+    if (!isAdmin(trip, requester)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
     }
-    Trip trip = getTripById(tripId);
 
     List<User> users = tripParticipantService.getTripUsers(trip);
     for (User user : users) {
@@ -170,10 +166,14 @@ public class TripService {
     }
     notificationService.deleteAllNotificationsForATrip(trip);
     tripParticipantService.deleteEverythingRelatedToATrip(trip);
-    tripRepository.deleteById(tripId);
+    tripRepository.delete(trip);
     tripRepository.flush();
   }
 
-
+  public void isOngoing(Trip trip) {
+    if (trip.isCompleted()) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is finished, cannot make changes anymore!");
+    }
+  }
 
 }
