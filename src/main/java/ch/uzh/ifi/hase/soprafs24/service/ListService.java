@@ -56,17 +56,19 @@ public class ListService {
 
   public void updateResponsible(Long itemId, TripParticipant participant) {
     Item existingItem = getItemById(itemId);
-    if (existingItem.getParticipantId() != null) {
+    if (existingItem.getParticipant() != null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to select this item");
     }
-    existingItem.setParticipantId(participant.getId());
+    existingItem.setParticipant(participant);
+    existingItem.setUserId(participant.getUser().getId());
     existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
   public void deleteResponsible(Long itemId) {
     Item existingItem = getItemById(itemId);
-    existingItem.setParticipantId(null);
+    existingItem.setParticipant(null);
+    existingItem.setUserId(null);
     existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
@@ -97,9 +99,9 @@ public class ListService {
     }
   }
 
-  public void checkIfItemIdHasParticipant(Long itemId, Long participantId) {
+  public void checkIfItemIdHasParticipant(Long itemId, TripParticipant participant) {
     Item item = getItemById(itemId);
-    if (item.getParticipantId() != participantId) {
+    if (item.getParticipant() != participant) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to unselect this item");
     }
   }

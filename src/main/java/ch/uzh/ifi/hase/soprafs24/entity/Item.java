@@ -22,11 +22,15 @@ public class Item implements Serializable {
   @Column(nullable=false)
   private boolean completed;
 
-  @Column(name = "selectedParticipant", nullable = true)
-  private Long participantId;
+  @ManyToOne
+  @JoinColumn(name = "participant", nullable = true)
+  private TripParticipant participant;
+
+  @Column(name = "user_id", nullable = true)
+  private Long userId;
 
   @ManyToOne
-  @JoinColumn(name = "trip_id", nullable = false)
+  @JoinColumn(name = "trip", nullable = false)
   private Trip trip;
 
   @Column (name = "itemType", nullable = false)
@@ -40,14 +44,21 @@ public class Item implements Serializable {
     this.completed = completed;
   }
 
-  public Long getParticipantId() {
-    return participantId;
+  public TripParticipant getParticipant() {
+    return participant;
   }
 
-  public void setParticipantId(Long participantId) {
-    this.participantId = participantId;
+  public void setParticipant(TripParticipant participant) {
+    this.participant = participant;
+  }
+  // not sure if the userId can be handled like this
+  public Long getUserId() {
+    return userId;
   }
 
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
   public Trip getTrip() {
     return trip;
   }

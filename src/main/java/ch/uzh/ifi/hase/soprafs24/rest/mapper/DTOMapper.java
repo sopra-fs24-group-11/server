@@ -124,7 +124,7 @@ public interface DTOMapper {
   @Mapping(source = "item", target = "item")
   @Mapping(source = "completed", target = "completed")
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "participantId", target = "participantId")
+  @Mapping(source = "userId", target = "userId")
   ItemGetDTO convertEntityToToDoGetDTO(Item item);
 
   @Mapping(source = "message", target = "message")

@@ -6,7 +6,7 @@ public class ItemGetDTO {
   private String item;
 
   private Long id;
-  private Long participantId;
+  private Long userId;
 
   public String getItem() {
     return item;
@@ -31,11 +31,11 @@ public class ItemGetDTO {
     this.id = id;
   }
 
-  public Long getParticipantId() {
-    return participantId;
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setParticipantId(Long participantId) {
-    this.participantId = participantId;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 }
