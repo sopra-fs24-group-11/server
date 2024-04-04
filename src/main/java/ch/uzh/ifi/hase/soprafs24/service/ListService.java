@@ -36,15 +36,22 @@ public class ListService {
     this.individualPackingRepository = individualPackingRepository;
   }
 
-  public List<ItemGetDTO> getItems (Trip trip, ItemType itemType) {
-    List<Item> items = itemRepository.findAllByTripAndItemType(trip, itemType);
-    List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
-    for (Item item : items) {
-      ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
-      itemGetDTOS.add(itemGetDTO);
+  public List<ItemGetDTO> getItems (Trip trip, ItemType itemType, TripParticipant participant) {
+    List<Item> items;
+    if (itemType.equals(ItemType.INDIVIDUALPACKING)) {
+      items = itemRepository.findAllByTripAndItemTypeAndTripParticipant(trip, itemType, participant);
+    } else {
+      items = itemRepository.findAllByTripAndItemType(trip, itemType);
     }
-    return itemGetDTOS;
+      List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
+      for (Item item : items) {
+        ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
+        itemGetDTOS.add(itemGetDTO);
+      }
+      return itemGetDTOS;
+
   }
+
 
   public void updateItem(Long itemId, Item updatedItem) {
     Item existingItem = getItemById(itemId);
@@ -73,10 +80,14 @@ public class ListService {
     itemRepository.flush();
   }
 
-  public String addItem(Trip trip, Item newItem, ItemType itemType) {
+  public String addItem(Trip trip, Item newItem, ItemType itemType, TripParticipant participant) {
     newItem.setTrip(trip);
     newItem.setCompleted(false);
     newItem.setItemType(itemType);
+    if (itemType.equals(ItemType.INDIVIDUALPACKING)) {
+      newItem.setParticipant(participant);
+      newItem.setUserId(participant.getId());
+    }
     newItem = itemRepository.save(newItem);
     itemRepository.flush();
 
@@ -102,7 +113,7 @@ public class ListService {
   public void checkIfItemIdHasParticipant(Long itemId, TripParticipant participant) {
     Item item = getItemById(itemId);
     if (item.getParticipant() != participant) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to unselect this item");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change this item");
     }
   }
 
