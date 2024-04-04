@@ -109,7 +109,9 @@ public class UserController {
   @ResponseBody
   public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessagePostDTO messagePostDTO) {
     NullChecker.messagePostDTOChecker(messagePostDTO);
-    userService.giveFeedback(token, messagePostDTO.getMessage());
+    User user = userService.getUserByToken(token);
+    userService.giveFeedback(user, messagePostDTO.getMessage());
+    userService.increaseLevel(user, 0.5);
   }
 
 
@@ -119,19 +121,23 @@ public class UserController {
   @ResponseBody
   public void saveProfilePicture(@RequestHeader("Authorization") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
     // TO DO: Check for file size and type
-    userService.saveProfilePicture(token, imageFile);
+    User user = userService.getUserByToken(token);
+    userService.saveProfilePicture(user, imageFile);
+    userService.increaseLevel(user, 0.1);
   }
   @GetMapping("/users/image")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public byte[] getProfilePicture(@RequestHeader("Authorization") String token) {
-    return userService.getProfilePicture(token);
+    User user = userService.getUserByToken(token);
+    return userService.getProfilePicture(user);
   }
   @DeleteMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void deleteProfilePicture(@RequestHeader("Authorization") String token) {
-    userService.deleteProfilePicture(token);
+    User user = userService.getUserByToken(token);
+    userService.deleteProfilePicture(user);
   }
 
 

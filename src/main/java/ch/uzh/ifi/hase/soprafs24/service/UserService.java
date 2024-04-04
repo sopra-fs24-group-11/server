@@ -148,8 +148,7 @@ public class UserService {
     return matchingUsers;
   }
 
-  public void giveFeedback(String token, String message) {
-    User user = getUserByToken(token);
+  public void giveFeedback(User user, String message) {
     Feedback feedback = new Feedback();
     feedback.setUserId(user.getId());
     feedback.setMessage(message);
@@ -199,10 +198,7 @@ public class UserService {
   /**
    * Image Service
    */
-  public void saveProfilePicture(String token, MultipartFile imageFile) throws IOException {
-    User user = getUserByToken(token);
-    increaseLevel(user, 0.1);
-
+  public void saveProfilePicture(User user, MultipartFile imageFile) throws IOException {
     byte[] imageData = imageFile.getBytes();
     Image profileImage = new Image();
     profileImage.setProfilePicture(imageData);
@@ -211,9 +207,7 @@ public class UserService {
     userRepository.flush();
   }
 
-  public void deleteProfilePicture (String token){
-    User user = getUserByToken(token);
-
+  public void deleteProfilePicture (User user){
     Image profileImage = user.getProfileImage();
     profileImage.setProfilePicture(generateDefaultImage(user.getUsername()));
     user.setProfileImage(profileImage);
@@ -222,9 +216,7 @@ public class UserService {
   }
 
 
-  public byte[] getProfilePicture(String token) {
-    User user = getUserByToken(token);
-
+  public byte[] getProfilePicture(User user) {
     Image profileImage = user.getProfileImage();
     /*viewImageInFolder(profileImage.getProfilePicture());*/
     return profileImage.getProfilePicture();

@@ -43,7 +43,9 @@ public class TripController {
     List<Long> userIds = tripPostDTO.getParticipants();
     Trip tripInput = DTOMapper.INSTANCE.convertTripPostDTOtoEntity(tripPostDTO);
     User administrator = userService.getUserByToken(token);
-    return tripService.createTrip(tripInput, administrator, userIds);
+    Long tripId = tripService.createTrip(tripInput, administrator, userIds);
+    userService.increaseLevel(administrator, 0.2);
+    return tripId;
   }
   @PutMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -182,6 +184,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.acceptInvitation(user, trip);
+    userService.increaseLevel(user, 0.1);
   }
 
   @DeleteMapping("/trips/{tripId}/invitation")
@@ -209,6 +212,7 @@ public class TripController {
     User newAdmin = userService.getUserById(adminId);
     Trip trip = tripService.getTripById(tripId);
     tripService.newAdmin(trip, oldAdmin, newAdmin);
+    userService.increaseLevel(newAdmin, 0.05);
   }
   @DeleteMapping("/trips/{tripId}/exit")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -263,6 +267,7 @@ public class TripController {
       connections.add(DTOMapper.INSTANCE.convertConnectionDTOToEntity(dto));
     }
     connectionService.saveConnection(participant, connections);
+    userService.increaseLevel(user, 0.2);
   }
   @PutMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.NO_CONTENT)
