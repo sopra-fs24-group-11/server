@@ -70,7 +70,7 @@ public class TripController {
   @ResponseBody
   public List<ParticipantGetDTO> getTripParticipants(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     Trip trip = tripService.getTripById(tripId);
-    List<User> users = tripParticipantService.getTripUsers(trip);
+    List<User> users = tripParticipantService.getTripUsersWithoutAdmin(trip);
     List<ParticipantGetDTO> participantGetDTOs = new ArrayList<>();
     if (!users.contains(userService.getUserByToken(token))) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not part of this trip and you can't see its participants");

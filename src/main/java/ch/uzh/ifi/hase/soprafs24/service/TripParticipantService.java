@@ -61,6 +61,17 @@ public class TripParticipantService {
     return users;
   }
 
+  public List<User> getTripUsersWithoutAdmin(Trip trip) {
+    List<TripParticipant> participants = getTripParticipants(trip);
+    List<User> users = new ArrayList<>();
+    for (TripParticipant participant : participants) {
+      if (!Objects.equals(participant.getUser().getId(), trip.getAdministrator().getId())) {
+        users.add(participant.getUser());
+      }
+    }
+    return users;
+  }
+
 
   public List<TripParticipant> getAllTripsOfAUser(User user) {
     return tripParticipantRepository.findAllByUser(user);
@@ -254,6 +265,7 @@ public class TripParticipantService {
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
     notificationService.createTripNotification(trip, String.format("%s removed %s from the trip", requester.getUsername(), userToBeRemoved.getUsername()));
+    notificationService.createUserNotification(userToBeRemoved, String.format("%s removed you from the trip", requester.getUsername()));
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);
