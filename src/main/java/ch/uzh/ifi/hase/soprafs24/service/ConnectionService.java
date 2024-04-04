@@ -26,7 +26,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,9 +84,11 @@ public class ConnectionService {
   public static Station getLocationsCoord(String x, String y) {
     try {
       // Http request to transport.opendata
+      String encodedX = URLEncoder.encode(x, StandardCharsets.UTF_8);
+      String encodedY = URLEncoder.encode(y, StandardCharsets.UTF_8);
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(String.format("http://transport.opendata.ch/v1/locations?x=%s&y=%s", x, y)))
+            .uri(URI.create(String.format("http://transport.opendata.ch/v1/locations?x=%s&y=%s", encodedX, encodedY)))
             .version(HttpClient.Version.HTTP_2)
             .GET()
             .build();
@@ -108,14 +112,25 @@ public class ConnectionService {
     }
   }
 
-  public static List<List<Connection>> getConnectionsByCode(String from, String to) {
+  public static List<List<Connection>> getConnectionsByCode(String from, String to, String dateString, String timeString, boolean isLate) {
     try {
+      String encodedFrom = URLEncoder.encode(from, StandardCharsets.UTF_8);
+      String encodedTo = URLEncoder.encode(to, StandardCharsets.UTF_8);
       HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder()
-              .uri(URI.create(String.format("http://transport.opendata.ch/v1/connections?from=%s&to=%s&limit=5", from, to)))
-              .version(HttpClient.Version.HTTP_2)
-              .GET()
-              .build();
+      HttpRequest request;
+      if (isLate) {
+        request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format("http://transport.opendata.ch/v1/connections?from=%s&to=%s&limit=5", encodedFrom, encodedTo, dateString, timeString)))
+                .version(HttpClient.Version.HTTP_2)
+                .GET()
+                .build();
+      } else {
+        request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format("http://transport.opendata.ch/v1/connections?from=%s&to=%s&date=%s&time=%s&isArrivalTime=1&limit=5", encodedFrom, encodedTo, dateString, timeString)))
+                .version(HttpClient.Version.HTTP_2)
+                .GET()
+                .build();
+      }
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
       // parse string to JSON object & create empty list of lists of connections
@@ -252,13 +267,23 @@ public class ConnectionService {
     notificationService.createTripNotification(participant.getTrip(), String.format("%s has chosen a connection", participant.getUser().getUsername()));
   }
 
-  public void udpateConnection(TripParticipant participant, List<ParticipantConnection> newConnection) {
+  public void updateConnection(TripParticipant participant, List<ParticipantConnection> newConnection) {
     for (ParticipantConnection connection : newConnection) {
       connection.setParticipant(participant);
     }
     deleteConnection(participant);
     participantConnectionRepository.saveAll(newConnection);
     participantConnectionRepository.flush();
+  }
+
+  public String getDateString(LocalDateTime localDateTime) {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    return localDateTime.format(dateFormatter);
+  }
+
+  public String getTimeString(LocalDateTime localDateTime) {
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
+    return localDateTime.format(timeFormatter);
   }
 
 }

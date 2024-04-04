@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,20 +149,24 @@ public class TripController {
   @GetMapping("/trips/{tripId}/startPoint")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<List<Connection>> getConnectionsByCode (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam String start) {
+  public List<List<Connection>> getConnectionsByCode (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("start") String start, @RequestParam("isLate") boolean isLate) {
     Trip trip = tripService.getTripById(tripId);
     String end = trip.getMeetUpPlace().getStationCode();
-    return ConnectionService.getConnectionsByCode(start, end);
+    String dateString = connectionService.getDateString(trip.getMeetUpTime());
+    String timeString = connectionService.getTimeString(trip.getMeetUpTime());
+    return ConnectionService.getConnectionsByCode(start, end, dateString, timeString, isLate);
   }
 
   @GetMapping("/trips/{tripId}/geoLocation")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<List<Connection>> getConnectionsByLocation (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y) {
+  public List<List<Connection>> getConnectionsByLocation (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y, @RequestParam("isLate") boolean isLate) {
     Trip trip = tripService.getTripById(tripId);
     String end = trip.getMeetUpPlace().getStationCode();
     String start = ConnectionService.getLocationsCoord(x, y).getStationCode();
-    return ConnectionService.getConnectionsByCode(start, end);
+    String dateString = connectionService.getDateString(trip.getMeetUpTime());
+    String timeString = connectionService.getTimeString(trip.getMeetUpTime());
+    return ConnectionService.getConnectionsByCode(start, end, dateString, timeString, isLate);
   }
 
 
@@ -253,7 +259,7 @@ public class TripController {
     for (ConnectionDTO dto : connectionDTOS) {
       connections.add(DTOMapper.INSTANCE.convertConnectionDTOToEntity(dto));
     }
-    connectionService.udpateConnection(participant, connections);
+    connectionService.updateConnection(participant, connections);
   }
   @GetMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.OK)
