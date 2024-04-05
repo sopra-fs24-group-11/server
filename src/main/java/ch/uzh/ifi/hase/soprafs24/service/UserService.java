@@ -59,7 +59,8 @@ public class UserService {
   public User getUserByToken(String token) {
     User user = userRepository.findByToken(token);
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+      System.out.println("User not found with token: " + token);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with token");
     }
     return user;
   }
