@@ -58,12 +58,12 @@ public class NotificationService {
     tripNotificationRepository.flush();
   }
 
-  public void deleteAllNotificationsForATrip(Trip trip) {
+  public void deleteAllForATrip(Trip trip) {
     tripNotificationRepository.deleteAllByTrip(trip);
     userNotificationRepository.flush();
   }
 
-  public void deleteAllNotificationsForAUser(User user) {
+  public void deleteAllForAUser(User user) {
     userNotificationRepository.deleteAllByUser(user);
     userNotificationRepository.flush();
   }

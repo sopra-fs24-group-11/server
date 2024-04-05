@@ -26,14 +26,16 @@ public class TripService {
   private final TripParticipantService tripParticipantService;
   private final NotificationService notificationService;
   private final FriendshipService friendshipService;
+  private final ListService listService;
 
   @Autowired
-  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService, NotificationService notificationService, FriendshipService friendshipService) {
+  public TripService(@Qualifier("tripRepository") TripRepository tripRepository, TripParticipantService tripParticipantService, UserService userService, NotificationService notificationService, FriendshipService friendshipService, ListService listService) {
     this.tripRepository = tripRepository;
     this.tripParticipantService = tripParticipantService;
     this.userService = userService;
     this.notificationService = notificationService;
     this.friendshipService = friendshipService;
+    this.listService = listService;
   }
 
   public Trip getTripById(Long id) {
@@ -53,6 +55,11 @@ public class TripService {
         invited.add(userService.getUserById(id));
       }
     }
+    // check trip size
+    int maximum = 10+(int)Math.floor(administrator.getLevel());
+    if (maximum < invited.size() + 1) { // invited plus administrator
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d", maximum));
+    }
     // check if everyone invited is a friend
     List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
     for (User invite : invited) {
@@ -61,15 +68,10 @@ public class TripService {
       }
     }
     newTrip.setAdministrator(administrator);
-    int maximum = 10+(int)Math.floor(administrator.getLevel());
-    if (maximum < invited.size() + 1) { // invited plus administrator
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d", maximum));
-    }
     newTrip.setMaxParticipants(maximum);
     newTrip.setNumberOfParticipants(invited.size() + 1);
 
-
-    tripRepository.save(newTrip);
+    newTrip = tripRepository.save(newTrip);
     tripRepository.flush();
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
@@ -113,6 +115,10 @@ public class TripService {
       if (!participants.contains(user)) {
         toAdd.add(user);
       }
+    }
+    // check trip size
+    if (trip.getMaxParticipants() < trip.getNumberOfParticipants()-toDelete.size()+toAdd.size()) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d", trip.getMaxParticipants()));
     }
     // check if everyone invited is a friend
     List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
@@ -166,7 +172,8 @@ public class TripService {
     for (User user : users) {
       notificationService.createUserNotification(user, String.format("The trip '%s' has been deleted", trip.getTripName()));
     }
-    notificationService.deleteAllNotificationsForATrip(trip);
+    listService.deleteAllForATrip(trip);
+    notificationService.deleteAllForATrip(trip);
     tripParticipantService.deleteEverythingRelatedToATrip(trip);
     tripRepository.delete(trip);
     tripRepository.flush();

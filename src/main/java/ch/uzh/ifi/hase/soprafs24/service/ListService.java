@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.entity.Item;
 import ch.uzh.ifi.hase.soprafs24.entity.Trip;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ItemRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemGetDTO;
@@ -55,7 +56,9 @@ public class ListService {
 
   public void updateItem(Long itemId, Item updatedItem) {
     Item existingItem = getItemById(itemId);
-    existingItem.setCompleted(updatedItem.isCompleted());
+    if (existingItem.getParticipant() != null) {
+      existingItem.setCompleted(updatedItem.isCompleted()); // first select --> then complete
+    }
     existingItem.setItem(updatedItem.getItem());
     existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
@@ -76,6 +79,7 @@ public class ListService {
     Item existingItem = getItemById(itemId);
     existingItem.setParticipant(null);
     existingItem.setUserId(null);
+    existingItem.setCompleted(false);
     existingItem = itemRepository.save(existingItem);
     itemRepository.flush();
   }
@@ -86,7 +90,7 @@ public class ListService {
     newItem.setItemType(itemType);
     if (itemType.equals(ItemType.INDIVIDUALPACKING)) {
       newItem.setParticipant(participant);
-      newItem.setUserId(participant.getId());
+      newItem.setUserId(participant.getUser().getId());
     }
     newItem = itemRepository.save(newItem);
     itemRepository.flush();
@@ -124,7 +128,55 @@ public class ListService {
     }
   }
 
+  public void checkIfItemIdHasParticipantOrNone(Long itemId, TripParticipant participant) {
+    Item item = getItemById(itemId);
+    if (item.getParticipant() != null && item.getParticipant() != participant) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change this item");
+    }
+  }
 
+  public void checkIfItemIdHasNoParticipant(Long itemId) {
+    Item item = getItemById(itemId);
+    if (item.getParticipant() != null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change this item");
+    }
+  }
+
+  public void revertAllForAParticipant(TripParticipant participant) {
+    List<Item> items = itemRepository.findAllByParticipant(participant);
+    for (Item item : items) {
+      item.setCompleted(false);
+      item.setUserId(null);
+      item.setParticipant(null);
+    }
+    itemRepository.saveAll(items);
+    itemRepository.flush();
+  }
+  public void deleteAllForAParticipant(TripParticipant participant) {
+    itemRepository.deleteAllByParticipantAndItemType(participant, ItemType.INDIVIDUALPACKING);
+    itemRepository.flush();
+  }
+
+  public void revertAllForAUser(Long userId) {
+    List<Item> items = itemRepository.findAllByUserId(userId);
+    for (Item item : items) {
+      item.setCompleted(false);
+      item.setUserId(null);
+      item.setParticipant(null);
+    }
+    itemRepository.saveAll(items);
+    itemRepository.flush();
+  }
+
+  public void deleteAllForAUser(Long userId) {
+    itemRepository.deleteAllByUserIdAndItemType(userId, ItemType.INDIVIDUALPACKING);
+    itemRepository.flush();
+  }
+
+  public void deleteAllForATrip(Trip trip) {
+    itemRepository.deleteAllByTrip(trip);
+    itemRepository.flush();
+  }
 
 }
 

@@ -142,4 +142,10 @@ public class NullChecker {
       }
     }
   }
+  public static void itemPostDTOChecker(ItemPostDTO dto) {
+    if (dto.getItem() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Item cannot be null");
+    }
+  }
+
 }

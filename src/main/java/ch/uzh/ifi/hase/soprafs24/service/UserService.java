@@ -46,21 +46,22 @@ public class UserService {
   private final FriendshipService friendshipService;
   private final TripParticipantService tripParticipantService;
   private final NotificationService notificationService;
+  private final ListService listService;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService, ListService listService) {
     this.userRepository = userRepository;
     this.feedbackRepository = feedbackRepository;
     this.friendshipService = friendshipService;
     this.tripParticipantService = tripParticipantService;
     this.notificationService = notificationService;
+    this.listService = listService;
   }
 
   public User getUserByToken(String token) {
     User user = userRepository.findByToken(token);
     if (user == null) {
-      System.out.println("User not found with token: " + token);
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with token");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Requester not found");
     }
     return user;
   }
@@ -124,10 +125,12 @@ public class UserService {
   public void deleteUser(String token) {
     // user chose to delete their account -> delete everything with references to the user
     User user = getUserByToken(token);
-    // To Do: Delete / revert all List Items!!!
+
+    listService.deleteAllForAUser(user.getId());
+    listService.revertAllForAUser(user.getId());
     friendshipService.deleteAllForAUser(user);
     tripParticipantService.deleteAllForAUser(user);
-    notificationService.deleteAllNotificationsForAUser(user);
+    notificationService.deleteAllForAUser(user);
 
     userRepository.deleteById(user.getId());
     userRepository.flush();

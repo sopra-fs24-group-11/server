@@ -29,13 +29,15 @@ public class TripParticipantService {
   private final TripRepository tripRepository;
   private final ConnectionService connectionService;
   private final NotificationService notificationService;
+  private final ListService listService;
 
   @Autowired
-  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository, ConnectionService connectionService, NotificationService notificationService) {
+  public TripParticipantService(@Qualifier("tripParticipantRepository") TripParticipantRepository tripParticipantRepository, TripRepository tripRepository, ConnectionService connectionService, NotificationService notificationService, ListService listService) {
     this.tripParticipantRepository = tripParticipantRepository;
     this.tripRepository = tripRepository;
     this.connectionService = connectionService;
     this.notificationService = notificationService;
+    this.listService = listService;
   }
 
   public List<TripParticipant> getTripParticipants(Trip trip) {
@@ -214,7 +216,7 @@ public class TripParticipantService {
 
     // to do: revert / delete list items -> even if there shouldn't be any, it could happen (via postman) and a 500 error would be thrown
     connectionService.deleteConnection(participant);
-    tripParticipantRepository.deleteById(participant.getId());
+    tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
@@ -236,7 +238,8 @@ public class TripParticipantService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot leave a trip that hasn't been accepted yet - You have to reject the invitation instead");
     }
 
-    // to do: revert / delete list items
+    listService.deleteAllForAParticipant(participant);
+    listService.revertAllForAParticipant(participant);
     connectionService.deleteConnection(participant);
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
@@ -246,6 +249,7 @@ public class TripParticipantService {
     tripRepository.flush();
 
     notificationService.createTripNotification(trip, String.format("%s has left the trip", leaver.getUsername()));
+    notificationService.createUserNotification(leaver, String.format("You left the trip '%s'", trip.getTripName()));
   }
 
   public void removeMemberFromTrip(User userToBeRemoved, User requester, Trip trip) {
@@ -259,7 +263,9 @@ public class TripParticipantService {
     if (participant == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be removed is not part of this trip");
     }
-    // to do: revert / delete list items
+
+    listService.deleteAllForAParticipant(participant);
+    listService.revertAllForAParticipant(participant);
     connectionService.deleteConnection(participant);
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
@@ -280,7 +286,6 @@ public class TripParticipantService {
     }
     tripParticipantRepository.deleteAll(participants);
     tripParticipantRepository.flush();
-    // to do:  delete / revert each list item
   }
 
 }
