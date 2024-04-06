@@ -2,10 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 
 import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
-import ch.uzh.ifi.hase.soprafs24.entity.Item;
-import ch.uzh.ifi.hase.soprafs24.entity.Trip;
-import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ItemRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemGetDTO;
@@ -27,7 +24,6 @@ import java.util.List;
 public class ListService {
 
   private final Logger log = LoggerFactory.getLogger(ListService.class);
-
   private final ItemRepository itemRepository;
   private final IndividualPackingRepository individualPackingRepository;
 
@@ -176,6 +172,14 @@ public class ListService {
   public void deleteAllForATrip(Trip trip) {
     itemRepository.deleteAllByTrip(trip);
     itemRepository.flush();
+  }
+
+  public void transferList(Trip trip, User user, TripParticipant participant, List<TemplatePackingItem> items) {
+    for (TemplatePackingItem item : items) {
+      Item newItem = new Item();
+      newItem.setItem(item.getItem());
+      addItem(trip, newItem, ItemType.INDIVIDUALPACKING, participant);
+    }
   }
 
 }

@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
+import ch.uzh.ifi.hase.soprafs24.entity.TemplatePackingItem;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.entity.UserNotification;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
@@ -241,4 +242,38 @@ public class UserController {
     return notificationGetDTOs;
   }
 
+
+
+  @GetMapping("/users/packings")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<TemplatePackingItem> getItems(@RequestHeader("Authorization") String token) {
+    User user = userService.getUserByToken(token);
+    List<TemplatePackingItem> items = userService.getItems(user);
+    return items;
+    // TO DO: GetDTO
+  }
+  @PostMapping("/users/packings")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public void addItem(@RequestHeader("Authorization") String token, @RequestBody String itemName) {
+    User user = userService.getUserByToken(token);
+    userService.addItem(user, itemName);
+    // TO DO: PostDTO
+  }
+  @PutMapping("/users/packings/{itemId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId, @RequestBody String itemName) {
+    User user = userService.getUserByToken(token);
+    userService.updateItem(user, itemId, itemName);
+    // TO DO: PutDTO
+  }
+  @DeleteMapping("/users/packings/{itemId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void deleteItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId) {
+    User user = userService.getUserByToken(token);
+    userService.deleteItem(user, itemId);
+  }
 }

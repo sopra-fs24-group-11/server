@@ -590,4 +590,16 @@ public class TripController {
     listService.checkIfItemIdHasParticipant(itemId, selectedParticipant);
     listService.deleteItem(itemId);
   }
+
+  @PostMapping("/trips/{tripId}/transfer/packings")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public void addItem(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
+    User user = userService.getUserByToken(token);
+    Trip trip = tripService.getTripById(tripId);
+    tripService.isOngoing(trip);
+    tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
+    TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
+    listService.transferList(trip, user, selectedParticipant, userService.getItems(user));
+  }
 }

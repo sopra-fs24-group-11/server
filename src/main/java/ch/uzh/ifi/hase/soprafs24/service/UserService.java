@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.entity.Image;
 import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.TemplatePackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,15 +48,17 @@ public class UserService {
   private final TripParticipantService tripParticipantService;
   private final NotificationService notificationService;
   private final ListService listService;
+  private final TemplatePackingRepository templatePackingRepository;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService, ListService listService) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService, ListService listService, TemplatePackingRepository templatePackingRepository) {
     this.userRepository = userRepository;
     this.feedbackRepository = feedbackRepository;
     this.friendshipService = friendshipService;
     this.tripParticipantService = tripParticipantService;
     this.notificationService = notificationService;
     this.listService = listService;
+    this.templatePackingRepository = templatePackingRepository;
   }
 
   public User getUserByToken(String token) {
@@ -126,6 +129,7 @@ public class UserService {
     // user chose to delete their account -> delete everything with references to the user
     User user = getUserByToken(token);
 
+    deleteAllItemsForAUser(user);
     listService.deleteAllForAUser(user.getId());
     listService.revertAllForAUser(user.getId());
     friendshipService.deleteAllForAUser(user);
@@ -195,6 +199,42 @@ public class UserService {
   }
 
 
+  public List<TemplatePackingItem> getItems(User user) {
+    return templatePackingRepository.findAllByUser(user);
+  }
+  public TemplatePackingItem getItem(Long itemId) {
+    return templatePackingRepository.findById(itemId).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+  }
+  public void addItem(User user, String itemName) {
+    TemplatePackingItem item = new TemplatePackingItem();
+    item.setItem(itemName);
+    item.setUser(user);
+    templatePackingRepository.save(item);
+    templatePackingRepository.flush();
+  }
+  public void deleteItem(User user, Long itemId) {
+    checkIfItemExistsAndHasUser(user, itemId);
+    templatePackingRepository.deleteById(itemId);
+    templatePackingRepository.flush();
+  }
+  public void updateItem(User user, Long itemId, String newItem) {
+    checkIfItemExistsAndHasUser(user, itemId);
+    TemplatePackingItem item = getItem(itemId);
+    item.setItem(newItem);
+    templatePackingRepository.save(item);
+    templatePackingRepository.flush();
+  }
+  public void deleteAllItemsForAUser(User user) {
+    templatePackingRepository.deleteAllByUser(user);
+    templatePackingRepository.flush();
+  }
+  public void checkIfItemExistsAndHasUser(User user, Long itemId) {
+    TemplatePackingItem item = templatePackingRepository.findByIdAndUser(itemId, user);
+    if (item == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
+    }
+  }
 
 
 
