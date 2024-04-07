@@ -23,14 +23,14 @@ public class Item implements Serializable {
   private boolean completed;
 
   @ManyToOne
-  @JoinColumn(name = "participant", nullable = true)
+  @JoinColumn(name = "participant_id", nullable = true)
   private TripParticipant participant;
 
   @Column(name = "user_id", nullable = true)
   private Long userId;
 
   @ManyToOne
-  @JoinColumn(name = "trip", nullable = false)
+  @JoinColumn(name = "trip_id", nullable = false)
   private Trip trip;
 
   @Column (name = "itemType", nullable = false)

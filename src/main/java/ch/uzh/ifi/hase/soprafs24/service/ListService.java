@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
-import ch.uzh.ifi.hase.soprafs24.repository.IndividualPackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ItemRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -25,12 +24,10 @@ public class ListService {
 
   private final Logger log = LoggerFactory.getLogger(ListService.class);
   private final ItemRepository itemRepository;
-  private final IndividualPackingRepository individualPackingRepository;
 
   @Autowired
-  public ListService(@Qualifier("itemRepository") ItemRepository itemRepository, @Qualifier("individualPackingRepository") IndividualPackingRepository individualPackingRepository) {
+  public ListService(@Qualifier("itemRepository") ItemRepository itemRepository) {
     this.itemRepository = itemRepository;
-    this.individualPackingRepository = individualPackingRepository;
   }
 
   public List<ItemGetDTO> getItems (Trip trip, ItemType itemType, TripParticipant participant) {

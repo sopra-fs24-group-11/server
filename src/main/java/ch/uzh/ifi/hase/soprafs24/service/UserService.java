@@ -206,9 +206,7 @@ public class UserService {
     return templatePackingRepository.findById(itemId).orElseThrow(() ->
             new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
   }
-  public void addItem(User user, String itemName) {
-    TemplatePackingItem item = new TemplatePackingItem();
-    item.setItem(itemName);
+  public void addItem(User user, TemplatePackingItem item) {
     item.setUser(user);
     templatePackingRepository.save(item);
     templatePackingRepository.flush();
@@ -218,10 +216,10 @@ public class UserService {
     templatePackingRepository.deleteById(itemId);
     templatePackingRepository.flush();
   }
-  public void updateItem(User user, Long itemId, String newItem) {
+  public void updateItem(User user, Long itemId, TemplatePackingItem updatedItem) {
     checkIfItemExistsAndHasUser(user, itemId);
     TemplatePackingItem item = getItem(itemId);
-    item.setItem(newItem);
+    item.setItem(updatedItem.getItem());
     templatePackingRepository.save(item);
     templatePackingRepository.flush();
   }

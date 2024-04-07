@@ -10,6 +10,7 @@ import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import org.hibernate.sql.Template;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -247,27 +248,33 @@ public class UserController {
   @GetMapping("/users/packings")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<TemplatePackingItem> getItems(@RequestHeader("Authorization") String token) {
+  public List<TemplateDTO> getItems(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TemplatePackingItem> items = userService.getItems(user);
-    return items;
-    // TO DO: GetDTO
+    List<TemplateDTO> templateGetDTOS = new ArrayList<>();
+
+    for (TemplatePackingItem item : items) {
+      templateGetDTOS.add(DTOMapper.INSTANCE.convertEntityToTemplateDTO(item));
+    }
+    return templateGetDTOS;
   }
   @PostMapping("/users/packings")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public void addItem(@RequestHeader("Authorization") String token, @RequestBody String itemName) {
+  public void addItem(@RequestHeader("Authorization") String token, @RequestBody TemplateDTO templateDTO) {
+    NullChecker.templateDTOChecker(templateDTO);
     User user = userService.getUserByToken(token);
-    userService.addItem(user, itemName);
-    // TO DO: PostDTO
+    TemplatePackingItem item = DTOMapper.INSTANCE.convertTemplateDTOToEntity(templateDTO);
+    userService.addItem(user, item);
   }
   @PutMapping("/users/packings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void updateItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId, @RequestBody String itemName) {
+  public void updateItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId, @RequestBody TemplateDTO templateDTO) {
+    NullChecker.templateDTOChecker(templateDTO);
     User user = userService.getUserByToken(token);
-    userService.updateItem(user, itemId, itemName);
-    // TO DO: PutDTO
+    TemplatePackingItem item = DTOMapper.INSTANCE.convertTemplateDTOToEntity(templateDTO);
+    userService.updateItem(user, itemId, item);
   }
   @DeleteMapping("/users/packings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)

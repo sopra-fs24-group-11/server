@@ -9,8 +9,8 @@ public class TemplatePackingItem implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_sequence")
-  @SequenceGenerator(name = "item_sequence", sequenceName = "item_sequence", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "template_item_sequence")
+  @SequenceGenerator(name = "template_item_sequence", sequenceName = "template_item_sequence", allocationSize = 1)
   private Long id;
 
   @Column(nullable = false)

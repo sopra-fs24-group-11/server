@@ -139,4 +139,10 @@ public interface DTOMapper {
   @Mapping(source = "username", target = "username")
   @Mapping(source = "profileImage.profilePicture", target = "profilePicture")
   MemberGetDTO convertEntityToMemberGetDTO(User user);
+
+  @Mapping(source = "item", target = "item")
+  TemplatePackingItem convertTemplateDTOToEntity(TemplateDTO templateDTO);
+
+  @Mapping(source = "item", target = "item")
+  TemplateDTO convertEntityToTemplateDTO(TemplatePackingItem templatePackingItem);
 }
