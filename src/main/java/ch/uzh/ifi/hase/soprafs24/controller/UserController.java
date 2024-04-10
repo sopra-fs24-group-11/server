@@ -260,11 +260,11 @@ public class UserController {
   @PostMapping("/users/packings")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public void addItem(@RequestHeader("Authorization") String token, @RequestBody TemplateDTO templateDTO) {
+  public TemplateGetDTO addItem(@RequestHeader("Authorization") String token, @RequestBody TemplateDTO templateDTO) {
     NullChecker.templateDTOChecker(templateDTO);
     User user = userService.getUserByToken(token);
     TemplatePackingItem item = DTOMapper.INSTANCE.convertTemplateDTOToEntity(templateDTO);
-    userService.addItem(user, item);
+    return(DTOMapper.INSTANCE.convertEntityToTemplateGetDTO(userService.addItem(user, item)));
   }
   @PutMapping("/users/packings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
