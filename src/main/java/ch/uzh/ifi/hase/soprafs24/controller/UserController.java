@@ -10,7 +10,6 @@ import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
-import org.hibernate.sql.Template;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -248,13 +247,13 @@ public class UserController {
   @GetMapping("/users/packings")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<TemplateDTO> getItems(@RequestHeader("Authorization") String token) {
+  public List<TemplateGetDTO> getItems(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TemplatePackingItem> items = userService.getItems(user);
-    List<TemplateDTO> templateGetDTOS = new ArrayList<>();
+    List<TemplateGetDTO> templateGetDTOS = new ArrayList<>();
 
     for (TemplatePackingItem item : items) {
-      templateGetDTOS.add(DTOMapper.INSTANCE.convertEntityToTemplateDTO(item));
+      templateGetDTOS.add(DTOMapper.INSTANCE.convertEntityToTemplateGetDTO(item));
     }
     return templateGetDTOS;
   }

@@ -143,6 +143,7 @@ public interface DTOMapper {
   @Mapping(source = "item", target = "item")
   TemplatePackingItem convertTemplateDTOToEntity(TemplateDTO templateDTO);
 
+  @Mapping(source = "id", target = "id")
   @Mapping(source = "item", target = "item")
-  TemplateDTO convertEntityToTemplateDTO(TemplatePackingItem templatePackingItem);
+  TemplateGetDTO convertEntityToTemplateGetDTO(TemplatePackingItem templatePackingItem);
 }
