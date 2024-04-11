@@ -43,6 +43,9 @@ public class TripParticipantService {
   public List<TripParticipant> getTripParticipants(Trip trip) {
     return tripParticipantRepository.findAllByTrip(trip);
   }
+  public List<TripParticipant> getTripParticipantsWhoHaveAccepted(Trip trip) {
+    return tripParticipantRepository.findAllByTripAndStatus(trip, InvitationStatus.ACCEPTED);
+  }
 
   public TripParticipant getTripParticipant(Trip trip, User user) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
