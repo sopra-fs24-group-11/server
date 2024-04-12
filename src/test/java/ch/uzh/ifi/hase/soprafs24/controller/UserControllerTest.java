@@ -55,8 +55,8 @@ public class UserControllerTest {
   @MockBean
   private NullChecker nullChecker;
 
-
- @Test
+  // POST REQUESTS -------------------------------------------------------------
+  @Test // POST 1
   public void createUser_validInput_userCreated() throws Exception {
     // given
     User user = new User();
@@ -85,6 +85,36 @@ public class UserControllerTest {
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
         .andExpect(content().string(containsString(user.getToken())));
+  }
+
+  @Test // POST 2
+  public void createUser_invalidInput_userCreated() throws Exception {
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("u");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setPassword("Test User");
+    userPostDTO.setUsername("u");
+    userPostDTO.setBirthday(LocalDate.of(2003, 1, 14));
+    userPostDTO.setEmail("user@test.ch");
+
+    given(userService.createUser(Mockito.any())).willThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/users/register")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isConflict());
   }
 
   /**
