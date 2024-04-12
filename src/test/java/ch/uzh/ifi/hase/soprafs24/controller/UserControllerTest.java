@@ -3,10 +3,16 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
+import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
+import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,16 +23,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * UserControllerTest
@@ -42,51 +48,71 @@ public class UserControllerTest {
 
   @MockBean
   private UserService userService;
+  @MockBean
+  private FriendshipService friendshipService;
+  @MockBean
+  private NotificationService notificationService;
+  @MockBean
+  private NullChecker nullChecker;
 
 
-/*  @Test
+ @Test
   public void createUser_validInput_userCreated() throws Exception {
     // given
     User user = new User();
     user.setId(1L);
     user.setPassword("Test User");
     user.setUsername("testUsername");
-    user.setToken("1");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
     user.setStatus(UserStatus.ONLINE);
 
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("Test User");
     userPostDTO.setUsername("testUsername");
+    userPostDTO.setBirthday(LocalDate.of(2003, 1, 14));
+    userPostDTO.setEmail("user@test.ch");
 
     given(userService.createUser(Mockito.any())).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/users")
+    MockHttpServletRequestBuilder postRequest = post("/users/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(asJsonString(userPostDTO));
 
     // then
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id", is(user.getId().intValue())))
-        .andExpect(jsonPath("$.username", is(user.getUsername())))
-        .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
-  }*/
+        .andExpect(content().string(containsString(user.getToken())));
+  }
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
    * can be processed
    * Input will look like this: {"name": "Test User", "username": "testUsername"}
-   * 
+   *
    * @param object
    * @return string
    */
   private String asJsonString(final Object object) {
     try {
-      return new ObjectMapper().writeValueAsString(object);
+      // Create ObjectMapper instance
+      ObjectMapper objectMapper = new ObjectMapper();
+
+      // Configure ObjectMapper to use the desired date format
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      objectMapper.setDateFormat(dateFormat);
+
+      // Register JavaTimeModule for LocalDate serialization
+      objectMapper.registerModule(new JavaTimeModule());
+
+      // Convert object to JSON string
+      return objectMapper.writeValueAsString(object);
     } catch (JsonProcessingException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format("The request body could not be created.%s", e.toString()));
+              String.format("The request body could not be created.%s", e.toString()));
     }
   }
+
 }
