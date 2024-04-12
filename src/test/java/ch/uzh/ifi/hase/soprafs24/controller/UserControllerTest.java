@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
@@ -54,6 +55,43 @@ public class UserControllerTest {
   private NotificationService notificationService;
   @MockBean
   private NullChecker nullChecker;
+
+  // GET REQUESTS --------------------------------------------------------------
+  @Test // GET 1
+  // given
+  public void getUser_validInput_userCreated() throws Exception {
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    UserGetDTO userGetDTO = new UserGetDTO();
+    userGetDTO.setId(1L);
+    userGetDTO.setPassword("Test User");
+    userGetDTO.setUsername("testUsername");
+    userGetDTO.setEmail("user@test.ch");
+    userGetDTO.setBirthday(LocalDate.of(2000, 1, 1));
+    userGetDTO.setStatus(UserStatus.ONLINE);
+
+    given(userService.getUserByToken(user.getToken())).willReturn(user);
+
+    MockHttpServletRequestBuilder getRequest = get("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization","1d");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+            .andExpect(jsonPath("$.password", is(user.getPassword())))
+            .andExpect(jsonPath("$.username", is(user.getUsername())))
+            .andExpect(jsonPath("$.email", is(user.getEmail())))
+            .andExpect(jsonPath("$.birthday", is(user.getBirthday().toString())))
+            .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+  }
 
   // POST REQUESTS -------------------------------------------------------------
   @Test // POST 1
