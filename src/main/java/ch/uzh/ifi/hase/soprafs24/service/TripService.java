@@ -139,7 +139,7 @@ public class TripService {
     trip = tripRepository.save(trip);
     tripRepository.flush();
     notificationService.createTripNotification(trip, String.format("%s updated the trip's details'", administrator.getUsername()));
-    List<User> users = tripParticipantService.getTripUsers(trip);
+    List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
     for (User user : users) {
       notificationService.createUserNotification(user, String.format("The trip '%s' has been updated", trip.getTripName()));
     }
@@ -192,7 +192,8 @@ public class TripService {
       trip.setCompleted(true);
       tripRepository.save(trip);
       notificationService.createTripNotification(trip, "The trip has finished!");
-      List<User> users = tripParticipantService.getTripUsers(trip);
+      List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
+      friendshipService.increasePoints(users);
       for (User u : users) {
         notificationService.createUserNotification(u, String.format("The trip '%s' has been completed", trip.getTripName()));
         userService.increaseLevel(u, (double)trip.getNumberOfParticipants()/10);

@@ -243,6 +243,7 @@ public class UserService {
    */
   public void saveProfilePicture(User user, MultipartFile imageFile) throws IOException {
     byte[] imageData = imageFile.getBytes();
+
     Image profileImage = new Image();
     profileImage.setProfilePicture(imageData);
     user.setProfileImage(profileImage);

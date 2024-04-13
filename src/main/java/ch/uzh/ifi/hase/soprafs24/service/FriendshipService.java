@@ -247,4 +247,23 @@ public class FriendshipService {
     }
     return result;
   }
+
+  public void increasePoints(List<User> users) {
+    if (users.size()<2) {
+      return;
+    }
+    for (User friend1 : users) {
+      for (User friend2 : users) {
+        Friendship friendship = friendshipRepository.findByFriend1AndFriend2(friend1, friend2);
+        if (friendship == null) {
+          continue;
+        } else {
+          friendship.setPoints(friendship.getPoints()+60);
+          friendshipRepository.save(friendship);
+          friendshipRepository.flush();
+        }
+      }
+
+    }
+  }
 }

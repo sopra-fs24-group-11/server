@@ -239,7 +239,7 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    List<User> users = tripParticipantService.getTripUsers(trip);
+    List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
 
     List<MemberGetDTO> memberGetDTOs = new ArrayList<>();
 

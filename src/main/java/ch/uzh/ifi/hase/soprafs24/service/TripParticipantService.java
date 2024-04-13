@@ -64,6 +64,15 @@ public class TripParticipantService {
     return users;
   }
 
+  public List<User> getTripUsersWhoHaveAccepted(Trip trip) {
+    List<TripParticipant> participants = getTripParticipantsWhoHaveAccepted(trip);
+    List<User> users = new ArrayList<>();
+    for (TripParticipant participant : participants) {
+      users.add(participant.getUser());
+    }
+    return users;
+  }
+
   public List<User> getTripUsersWithoutAdmin(Trip trip) {
     List<TripParticipant> participants = getTripParticipants(trip);
     List<User> users = new ArrayList<>();
