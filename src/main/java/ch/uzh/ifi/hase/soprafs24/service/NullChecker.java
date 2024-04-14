@@ -162,7 +162,7 @@ public class NullChecker {
     if (!Objects.equals(type, "image/png") && !Objects.equals(type, "image/jpeg")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image of type png or jpg/jpeg/jpe/jfif");
     }
-    long maxSizeInBytes = 100 * 1024 * 1024; // 100 MB (adjust as needed)
+    long maxSizeInBytes = 3 * 1024 * 1024; // 3 MB (adjust as needed) - not really necessary, see application.properties
     if (image.getSize() > maxSizeInBytes) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size.");
     }

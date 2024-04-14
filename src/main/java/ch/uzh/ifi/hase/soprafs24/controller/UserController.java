@@ -122,6 +122,10 @@ public class UserController {
   @ResponseBody
   public void saveProfilePicture(@RequestHeader("Authorization") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
     // TO DO: Check for file size and type
+    System.out.println("HELLLOOO\n\n\n");
+    System.out.println(imageFile.getSize());
+
+    System.out.println("\n\n\nBYYEEE");
     NullChecker.imageChecker(imageFile);
     User user = userService.getUserByToken(token);
     userService.saveProfilePicture(user, imageFile);
