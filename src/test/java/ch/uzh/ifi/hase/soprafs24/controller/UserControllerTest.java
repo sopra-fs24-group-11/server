@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
@@ -32,6 +33,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -205,6 +209,69 @@ public class UserControllerTest {
     // then
     mockMvc.perform(postRequest)
             .andExpect(status().isConflict());
+  }
+
+  // PUT REQUESTS -------------------------------------------------------------
+  @Test // PUT 1: update user
+  public void updateUser_validInput_userUpdated() throws Exception {
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    UserPutDTO userPutDTO = new UserPutDTO();
+    userPutDTO.setPassword("Test User");
+    userPutDTO.setUsername("testUsername");
+    userPutDTO.setEmail("user@test.ch");
+    userPutDTO.setBirthday(LocalDate.of(2000, 1, 1));
+
+    doNothing().when(userService).updateUser(user.getToken(), user);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPutDTO))
+            .header("Authorization",user.getToken());
+
+    // then
+    mockMvc.perform(putRequest)
+            .andExpect(status().isNoContent());
+  }
+
+  @Test // PUT 2: update user
+  public void updateUser_invalidInput_userNotUpdated() throws Exception {
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    UserPutDTO userPutDTO = new UserPutDTO();
+    userPutDTO.setPassword("Test User");
+    userPutDTO.setUsername("testUsername");
+    userPutDTO.setEmail("user@test.ch");
+    userPutDTO.setBirthday(LocalDate.of(2000, 1, 1));
+
+    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(userService).updateUser(Mockito.any(), Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPutDTO))
+            .header("Authorization",user.getToken());
+
+    // then
+    mockMvc.perform(putRequest)
+            .andExpect(status().isNotFound());
   }
 
   /**
