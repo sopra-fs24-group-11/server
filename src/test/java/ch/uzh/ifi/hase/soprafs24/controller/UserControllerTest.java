@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
@@ -57,9 +58,9 @@ public class UserControllerTest {
   private NullChecker nullChecker;
 
   // GET REQUESTS --------------------------------------------------------------
-  @Test // GET 1
+  @Test // GET 1: getting one user
   // given
-  public void getUser_validInput_userCreated() throws Exception {
+  public void getUser_validInput_userReturned() throws Exception {
     User user = new User();
     user.setId(1L);
     user.setPassword("Test User");
@@ -69,19 +70,12 @@ public class UserControllerTest {
     user.setToken("1d");
     user.setStatus(UserStatus.ONLINE);
 
-    UserGetDTO userGetDTO = new UserGetDTO();
-    userGetDTO.setId(1L);
-    userGetDTO.setPassword("Test User");
-    userGetDTO.setUsername("testUsername");
-    userGetDTO.setEmail("user@test.ch");
-    userGetDTO.setBirthday(LocalDate.of(2000, 1, 1));
-    userGetDTO.setStatus(UserStatus.ONLINE);
-
     given(userService.getUserByToken(user.getToken())).willReturn(user);
 
+    // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest = get("/users")
             .contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization","1d");
+            .header("Authorization",user.getToken());
 
     // then
     mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -93,8 +87,26 @@ public class UserControllerTest {
             .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
   }
 
+  @Test // GET 2: getting one user
+  // given
+  public void getUser_invalidInput_userNotReturned() throws Exception {
+    User user = new User();
+    user.setToken("1db");
+
+
+    given(userService.getUserByToken(user.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",user.getToken());
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isNotFound());
+  }
+
   // POST REQUESTS -------------------------------------------------------------
-  @Test // POST 1
+  @Test // POST 1: register
   public void createUser_validInput_userCreated() throws Exception {
     // given
     User user = new User();
@@ -125,17 +137,9 @@ public class UserControllerTest {
         .andExpect(content().string(containsString(user.getToken())));
   }
 
-  @Test // POST 2
+  @Test // POST 2: register
   public void createUser_invalidInput_userCreated() throws Exception {
     // given
-    User user = new User();
-    user.setId(1L);
-    user.setPassword("Test User");
-    user.setUsername("u");
-    user.setEmail("user@test.ch");
-    user.setBirthday(LocalDate.of(2000, 1, 1));
-    user.setToken("1d");
-    user.setStatus(UserStatus.ONLINE);
 
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("Test User");
@@ -149,6 +153,54 @@ public class UserControllerTest {
     MockHttpServletRequestBuilder postRequest = post("/users/register")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isConflict());
+  }
+
+  @Test // POST 3: login
+  public void loginUser_validInput_userLoggedIn() throws Exception {
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
+    userLoginPostDTO.setPassword("Test User");
+    userLoginPostDTO.setUsername("testUsername");
+
+    given(userService.loginUser(Mockito.any())).willReturn(user.getToken());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userLoginPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated())
+            .andExpect(content().string(containsString(user.getToken())));
+  }
+
+  @Test // POST 4: login
+  public void loginUser_invalidInput_userNotLoggedIn() throws Exception {
+    // given
+    UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
+    userLoginPostDTO.setPassword("wrong Test User");
+    userLoginPostDTO.setUsername("testUsername");
+
+    given(userService.loginUser(Mockito.any())).willThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userLoginPostDTO));
 
     // then
     mockMvc.perform(postRequest)
