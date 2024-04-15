@@ -77,7 +77,7 @@ public class ListService {
     itemRepository.flush();
   }
 
-  public String addItem(Trip trip, Item newItem, ItemType itemType, TripParticipant participant) {
+  public Item addItem(Trip trip, Item newItem, ItemType itemType, TripParticipant participant) {
     newItem.setTrip(trip);
     newItem.setCompleted(false);
     newItem.setItemType(itemType);
@@ -88,7 +88,7 @@ public class ListService {
     newItem = itemRepository.save(newItem);
     itemRepository.flush();
 
-    return newItem.getItem();
+    return newItem;
   }
 
   public void deleteItem(Long itemId) {

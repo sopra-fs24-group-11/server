@@ -421,7 +421,7 @@ public class TripController {
   @PostMapping("trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public String createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
+  public ItemGetDTO createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     NullChecker.itemPostDTOChecker(itemPostDTO);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -429,7 +429,8 @@ public class TripController {
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip,user);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
-    return listService.addItem(trip, item, ItemType.TODO, participant);
+    item = listService.addItem(trip, item, ItemType.TODO, participant);
+    return DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
   }
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}")
@@ -508,7 +509,7 @@ public class TripController {
   @PostMapping("trips/{tripId}/groupPackings")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public String createGroupPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
+  public ItemGetDTO createGroupPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     NullChecker.itemPostDTOChecker(itemPostDTO);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -516,7 +517,8 @@ public class TripController {
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant participant = tripParticipantService.getTripParticipant(trip,user);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
-    return listService.addItem(trip, item, ItemType.GROUPPACKING, participant);
+    item = listService.addItem(trip, item, ItemType.GROUPPACKING, participant);
+    return DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
   }
 
   @DeleteMapping("trips/{tripId}/groupPackings/{itemId}")
@@ -565,7 +567,7 @@ public class TripController {
   @PostMapping("trips/{tripId}/individualPackings")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public String createIndividualPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
+  public ItemGetDTO createIndividualPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     NullChecker.itemPostDTOChecker(itemPostDTO);
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -573,7 +575,8 @@ public class TripController {
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
-    return listService.addItem(trip, item, ItemType.INDIVIDUALPACKING, selectedParticipant);
+    item = listService.addItem(trip, item, ItemType.INDIVIDUALPACKING, selectedParticipant);
+    return DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
   }
 
   @DeleteMapping("trips/{tripId}/individualPackings/{itemId}")
