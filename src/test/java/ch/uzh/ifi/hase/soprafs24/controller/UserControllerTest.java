@@ -301,5 +301,4 @@ public class UserControllerTest {
               String.format("The request body could not be created.%s", e.toString()));
     }
   }
-
 }
