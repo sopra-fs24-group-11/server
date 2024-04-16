@@ -243,7 +243,7 @@ public class UserControllerTest {
             .andExpect(status().isNoContent());
   }
 
-  @Test // PUT 2: update user
+  @Test // PUT 2: update user with invalid input
   public void updateUser_invalidInput_userNotUpdated() throws Exception {
     // given
     User user = new User();
