@@ -37,10 +37,6 @@ public interface DTOMapper {
   @Mapping(source = "level", target = "level")
   UserGetDTO convertEntityToUserGetDTO(User user);
 
-  @Mapping(source = "id", target = "id")
-  @Mapping(source = "token", target = "token")
-  UserLoginGetDTO convertEntityToUserLoginGetDTO(User user);
-
   @Mapping(source = "password", target = "password")
   @Mapping(source = "username", target = "username")
   User convertUserLoginPostDTOtoEntity(UserLoginPostDTO userLoginPostDTO);
@@ -111,21 +107,14 @@ public interface DTOMapper {
   Item convertToDoPostDTOToEntity(ItemPostDTO itemPostDTO);
 
   @Mapping(source = "item", target = "item")
-  ItemPostDTO convertEntityToToDoPostDTO(Item item);
-
-  @Mapping(source = "item", target = "item")
   @Mapping(source = "completed", target = "completed")
-  Item convertToDoPutDTOToEntity(ItemPutDTO itemPutDTO);
-
-  @Mapping(source = "item", target = "item")
-  @Mapping(source = "completed", target = "completed")
-  ItemPutDTO convertEntityToToDoPutDTO(Item item);
+  Item convertItemPutDTOToEntity(ItemPutDTO itemPutDTO);
 
   @Mapping(source = "item", target = "item")
   @Mapping(source = "completed", target = "completed")
   @Mapping(source = "id", target = "id")
   @Mapping(source = "userId", target = "userId")
-  ItemGetDTO convertEntityToToDoGetDTO(Item item);
+  ItemGetDTO convertEntityToItemGetDTO(Item item);
 
   @Mapping(source = "message", target = "message")
   @Mapping(source = "timeStamp", target = "timeStamp")
@@ -133,7 +122,7 @@ public interface DTOMapper {
 
   @Mapping(source = "message", target = "message")
   @Mapping(source = "timeStamp", target = "timeStamp")
-  NotificationGetDTO convertTripNotificationToNotificationGetDTO(TripNotification tripNotification);
+  NotificationGetDTO convertEntityToNotificationGetDTO(TripNotification tripNotification);
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "username", target = "username")

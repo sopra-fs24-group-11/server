@@ -9,9 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Member;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -351,7 +348,7 @@ public class TripController {
     List<NotificationGetDTO> notificationGetDTOs = new ArrayList<>();
 
     for (TripNotification note : notes) {
-      notificationGetDTOs.add(DTOMapper.INSTANCE.convertTripNotificationToNotificationGetDTO(note));
+      notificationGetDTOs.add(DTOMapper.INSTANCE.convertEntityToNotificationGetDTO(note));
     }
     return notificationGetDTOs;
   }
@@ -383,7 +380,7 @@ public class TripController {
     listService.checkIfItemIdHasType(itemId, ItemType.TODO);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     listService.checkIfItemIdHasParticipantOrNone(itemId, selectedParticipant); // responsible person updates the item or item is open and anybody can adjust it
-    Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    Item updatedItem = DTOMapper.INSTANCE.convertItemPutDTOToEntity(itemPutDTO);
     listService.updateItem(itemId, updatedItem);
   }
 
@@ -432,7 +429,7 @@ public class TripController {
     TripParticipant participant = tripParticipantService.getTripParticipant(trip,user);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
     item = listService.addItem(trip, item, ItemType.TODO, participant);
-    return DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
+    return DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
   }
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}")
@@ -471,7 +468,7 @@ public class TripController {
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.GROUPPACKING);
-    Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    Item updatedItem = DTOMapper.INSTANCE.convertItemPutDTOToEntity(itemPutDTO);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     listService.checkIfItemIdHasParticipantOrNone(itemId, selectedParticipant); // responsible person updates the item or item is open and anybody can adjust it
     listService.updateItem(itemId, updatedItem);
@@ -520,7 +517,7 @@ public class TripController {
     TripParticipant participant = tripParticipantService.getTripParticipant(trip,user);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
     item = listService.addItem(trip, item, ItemType.GROUPPACKING, participant);
-    return DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
+    return DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
   }
 
   @DeleteMapping("trips/{tripId}/groupPackings/{itemId}")
@@ -561,7 +558,7 @@ public class TripController {
     listService.checkIfItemIdHasTrip(itemId, trip);
     listService.checkIfItemIdHasType(itemId, ItemType.INDIVIDUALPACKING);
     listService.checkIfItemIdHasParticipant(itemId, selectedParticipant);
-    Item updatedItem = DTOMapper.INSTANCE.convertToDoPutDTOToEntity(itemPutDTO);
+    Item updatedItem = DTOMapper.INSTANCE.convertItemPutDTOToEntity(itemPutDTO);
     listService.updateItem(itemId, updatedItem);
   }
 
@@ -578,7 +575,7 @@ public class TripController {
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
     Item item = DTOMapper.INSTANCE.convertToDoPostDTOToEntity(itemPostDTO);
     item = listService.addItem(trip, item, ItemType.INDIVIDUALPACKING, selectedParticipant);
-    return DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
+    return DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
   }
 
   @DeleteMapping("trips/{tripId}/individualPackings/{itemId}")

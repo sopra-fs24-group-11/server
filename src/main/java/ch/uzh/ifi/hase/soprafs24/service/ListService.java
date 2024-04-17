@@ -39,7 +39,7 @@ public class ListService {
     }
       List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
       for (Item item : items) {
-        ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToToDoGetDTO(item);
+        ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
         itemGetDTOS.add(itemGetDTO);
       }
       return itemGetDTOS;
