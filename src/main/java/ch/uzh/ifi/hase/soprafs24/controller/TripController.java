@@ -67,8 +67,10 @@ public class TripController {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    return (DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
-
+    TripParticipant participant = tripParticipantService.getTripParticipant(trip, user);
+    BasicTripInfoGetDTO dto = DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip);
+    dto.setFavourite(participant.isFavouriteTrip());
+    return dto;
   }
 
   @GetMapping("/trips/{tripId}/participants")

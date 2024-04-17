@@ -20,6 +20,8 @@ public class BasicTripInfoGetDTO {
 
   private int rating;
 
+  private boolean favourite;
+
   public Long getId() {
     return id;
   }
@@ -84,4 +86,8 @@ public class BasicTripInfoGetDTO {
   public void setRating(int rating) {
     this.rating = rating;
   }
+
+  public void setFavourite(boolean favourite) {this.favourite = favourite;}
+
+  public boolean isFavourite() {return favourite;}
 }
