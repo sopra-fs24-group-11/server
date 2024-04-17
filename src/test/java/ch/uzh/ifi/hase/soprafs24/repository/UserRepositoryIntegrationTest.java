@@ -23,8 +23,8 @@ public class UserRepositoryIntegrationTest {
 
   private User createUserDummy(String un, String to) {
     User user = new User();
-    user.setPassword("Firstname Lastname");
     user.setUsername(un);
+    user.setPassword("Firstname Lastname");
     user.setStatus(UserStatus.ONLINE);
     user.setToken(to);
     user.setCreationDate(LocalDate.of(2020,11,11));
