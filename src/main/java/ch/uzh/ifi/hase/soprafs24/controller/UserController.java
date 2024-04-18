@@ -39,7 +39,7 @@ public class UserController {
     this.notificationService = notificationService;
   }
 
-  @PostMapping("/users/register")
+  @PostMapping("/users/register") // test exists
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public String createUser(@RequestBody UserPostDTO userPostDTO) {
@@ -49,7 +49,7 @@ public class UserController {
     return user.getToken();
   }
 
-  @PostMapping("/users/login")
+  @PostMapping("/users/login") // test exists
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public String loginUser(@RequestBody UserLoginPostDTO userLoginPostDTO) {
@@ -57,14 +57,14 @@ public class UserController {
     User userInput = DTOMapper.INSTANCE.convertUserLoginPostDTOtoEntity(userLoginPostDTO);
     return userService.loginUser(userInput);
   }
-  @PutMapping("/users/logout")
+  @PutMapping("/users/logout") // test not really needed
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void logoutUser(@RequestHeader ("Authorization") String token) {
     userService.logoutUser(token);
   }
 
-  @GetMapping("/users")
+  @GetMapping("/users") // test exists
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO getUser(@RequestHeader ("Authorization") String token) {
@@ -72,7 +72,7 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
 
-  @PutMapping("/users")
+  @PutMapping("/users") // test exists
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateUser(@RequestHeader ("Authorization") String token, @RequestBody UserPutDTO userPutDTO) {
@@ -81,7 +81,7 @@ public class UserController {
     userService.updateUser(token, user);
   }
 
-  @DeleteMapping("/users")
+  @DeleteMapping("/users") // test exists
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void deleteUser(@RequestHeader ("Authorization") String token) {
@@ -89,7 +89,7 @@ public class UserController {
   }
 
 
-  @GetMapping("/users/search")
+  @GetMapping("/users/search") // test exists
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<MatchingUserGetDTO> getMatchingUsers(@RequestHeader("Authorization") String token, @RequestParam("name") String name) {

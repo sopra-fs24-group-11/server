@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.constant.FriendshipStatusSearch;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
@@ -14,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.aspectj.bridge.Message;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +38,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -92,11 +93,10 @@ public class UserControllerTest {
   }
 
   @Test // GET 2: getting one user
-  // given
   public void getUser_invalidInput_userNotReturned() throws Exception {
+    // given
     User user = new User();
     user.setToken("1db");
-
 
     given(userService.getUserByToken(user.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -107,6 +107,72 @@ public class UserControllerTest {
 
     // then
     mockMvc.perform(getRequest).andExpect(status().isNotFound());
+  }
+
+  @Test // GET 3: search with valid input
+  public void searchUser_validInput_userListReturned() throws Exception {
+    // given
+    User user = new User();
+    user.setToken("1db");
+
+    User user1 = new User();
+    user1.setId(1L);
+    user1.setPassword("Test User");
+    user1.setUsername("testUsername");
+    user1.setEmail("user@test.ch");
+    user1.setBirthday(LocalDate.of(2000, 1, 1));
+    user1.setToken("1d");
+    user1.setLevel(1.0D);
+    user1.setStatus(UserStatus.ONLINE);
+
+    User user2 = new User();
+    user2.setId(1L);
+    user2.setPassword("Test User");
+    user2.setUsername("testUsername");
+    user2.setEmail("user@test.ch");
+    user2.setBirthday(LocalDate.of(2000, 1, 1));
+    user2.setToken("1d");
+    user2.setLevel(1.0D);
+    user2.setStatus(UserStatus.ONLINE);
+
+    List<User> users = new ArrayList<User>();
+    users.add(user1);
+    users.add(user2);
+
+    given(userService.getMatchingUsers(user.getToken(), "test")).willReturn(users);
+    given(friendshipService.findFriendStatusSearch(Mockito.eq(user), Mockito.any())).willReturn(FriendshipStatusSearch.SENT);
+    given(userService.getUserByToken(Mockito.any())).willReturn(user);
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/users/search?name=test")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id", is(user1.getId().intValue())))
+            .andExpect(jsonPath("$[0].username", is(user1.getUsername())))
+            .andExpect(jsonPath("$[0].level", is(user1.getLevel())))
+            .andExpect(jsonPath("$[0].status", is("SENT")));
+  }
+
+  @Test // GET 4: search with invalid input
+  public void searchUser_invalidInput_userListReturned() throws Exception {
+    // given
+    User user = new User();
+    user.setToken("1db");
+
+    given(userService.getMatchingUsers(user.getToken(), "test")).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/users/search?name=test")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
   }
 
   // POST REQUESTS -------------------------------------------------------------
@@ -211,6 +277,60 @@ public class UserControllerTest {
             .andExpect(status().isConflict());
   }
 
+  @Test // POST 5: feedback
+  public void giveFeedback_validInput_feedbackSaved() throws Exception {
+    MessagePostDTO messagePostDTO = new MessagePostDTO();
+    messagePostDTO.setMessage("Ich bin sehr zufrieden mit GetTogether");
+
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    given(userService.getUserByToken(user.getToken())).willReturn(user);
+    doNothing().when(userService).giveFeedback(user, messagePostDTO.getMessage());
+    doNothing().when(userService).increaseLevel(user, 0.5D);
+
+    MockHttpServletRequestBuilder postRequest = post("/users/feedback")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(messagePostDTO))
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated());
+
+  }
+
+  @Test // POST 6: feedback
+  public void giveFeedback_invalidInput_feedbackSaved() throws Exception {
+    MessagePostDTO messagePostDTO = new MessagePostDTO();
+    messagePostDTO.setMessage("Ich bin sehr zufrieden mit GetTogether");
+
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    given(userService.getUserByToken(user.getToken())).willThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+    MockHttpServletRequestBuilder postRequest = post("/users/feedback")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(messagePostDTO))
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isConflict());
+
+  }
+
   // PUT REQUESTS -------------------------------------------------------------
   @Test // PUT 1: update user
   public void updateUser_validInput_userUpdated() throws Exception {
@@ -273,6 +393,44 @@ public class UserControllerTest {
     mockMvc.perform(putRequest)
             .andExpect(status().isNotFound());
   }
+
+  // DELETE REQUESTS -------------------------------------------------------------
+  @Test // DELETE 1: delete user with valid input
+  public void deleteUser_validInput_userDeleted() throws Exception {
+    // given
+    User user = new User();
+    user.setToken("1d");
+
+    doNothing().when(userService).deleteUser(user.getToken());
+
+    // when/then
+    MockHttpServletRequestBuilder deleteRequest = delete("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",user.getToken());
+
+    // then
+    mockMvc.perform(deleteRequest)
+            .andExpect(status().isNoContent());
+  }
+
+  @Test // DELETE 2: delete user with invalid input
+  public void deleteUser_invalidInput_userDeleted() throws Exception {
+    // given
+    User user = new User();
+    user.setToken("1d");
+
+    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(userService).deleteUser(user.getToken());
+
+    // when/then
+    MockHttpServletRequestBuilder deleteRequest = delete("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",user.getToken());
+
+    // tests
+    mockMvc.perform(deleteRequest)
+            .andExpect(status().isNotFound());
+  }
+
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
