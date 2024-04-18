@@ -105,7 +105,7 @@ public class UserController {
     return userGetDTOs;
   }
 
-  @PostMapping("/users/feedback")
+  @PostMapping("/users/feedback") // test exists
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessagePostDTO messagePostDTO) {
