@@ -3,10 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.constant.FriendshipStatusSearch;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import ch.uzh.ifi.hase.soprafs24.service.NullChecker;
@@ -15,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.aspectj.bridge.Message;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -159,6 +157,24 @@ public class UserControllerTest {
             .andExpect(jsonPath("$[0].status", is("SENT")));
   }
 
+  @Test // GET 4: search with invalid input
+  public void searchUser_invalidInput_userListReturned() throws Exception {
+    // given
+    User user = new User();
+    user.setToken("1db");
+
+    given(userService.getMatchingUsers(user.getToken(), "test")).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/users/search?name=test")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
+  }
+
   // POST REQUESTS -------------------------------------------------------------
   @Test // POST 1: register
   public void createUser_validInput_userCreated() throws Exception {
@@ -259,6 +275,60 @@ public class UserControllerTest {
     // then
     mockMvc.perform(postRequest)
             .andExpect(status().isConflict());
+  }
+
+  @Test // POST 5: feedback
+  public void giveFeedback_validInput_feedbackSaved() throws Exception {
+    MessagePostDTO messagePostDTO = new MessagePostDTO();
+    messagePostDTO.setMessage("Ich bin sehr zufrieden mit GetTogether");
+
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    given(userService.getUserByToken(user.getToken())).willReturn(user);
+    doNothing().when(userService).giveFeedback(user, messagePostDTO.getMessage());
+    doNothing().when(userService).increaseLevel(user, 0.5D);
+
+    MockHttpServletRequestBuilder postRequest = post("/users/feedback")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(messagePostDTO))
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated());
+
+  }
+
+  @Test // POST 6: feedback
+  public void giveFeedback_invalidInput_feedbackSaved() throws Exception {
+    MessagePostDTO messagePostDTO = new MessagePostDTO();
+    messagePostDTO.setMessage("Ich bin sehr zufrieden mit GetTogether");
+
+    User user = new User();
+    user.setId(1L);
+    user.setPassword("Test User");
+    user.setUsername("testUsername");
+    user.setEmail("user@test.ch");
+    user.setBirthday(LocalDate.of(2000, 1, 1));
+    user.setToken("1d");
+    user.setStatus(UserStatus.ONLINE);
+
+    given(userService.getUserByToken(user.getToken())).willThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+    MockHttpServletRequestBuilder postRequest = post("/users/feedback")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(messagePostDTO))
+            .header("Authorization",user.getToken());
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isConflict());
+
   }
 
   // PUT REQUESTS -------------------------------------------------------------

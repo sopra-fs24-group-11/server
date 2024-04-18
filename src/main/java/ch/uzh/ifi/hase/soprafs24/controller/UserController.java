@@ -89,7 +89,7 @@ public class UserController {
   }
 
 
-  @GetMapping("/users/search")
+  @GetMapping("/users/search") // test exists
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<MatchingUserGetDTO> getMatchingUsers(@RequestHeader("Authorization") String token, @RequestParam("name") String name) {
