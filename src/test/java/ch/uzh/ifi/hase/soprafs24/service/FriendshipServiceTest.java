@@ -64,7 +64,6 @@ public class FriendshipServiceTest {
   public void testSendRequest_success() {
     // when
     friendshipService.sendRequest(testUser1, testUser2);
-
     // then
     Mockito.verify(friendshipRepository, Mockito.times(1)).save(Mockito.any());
     Mockito.verify(notificationService, Mockito.times(1))
