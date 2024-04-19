@@ -199,7 +199,7 @@ public class UserController {
   }
 
 
-  @PostMapping("/users/friends/{friendId}")
+  @PostMapping("/users/friends/{friendId}") // test: POST 7, 8
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public void makeRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
