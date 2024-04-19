@@ -187,7 +187,7 @@ public class TripService {
 
   @Scheduled(fixedRate = 15000) // Check every 15 seconds
   public void markTripsAsCompleted() {
-    List<Trip> ongoingTrips = tripRepository.findByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.now());
+    List<Trip> ongoingTrips = tripRepository.findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.now());
     for (Trip trip : ongoingTrips) {
       trip.setCompleted(true);
       tripRepository.save(trip);

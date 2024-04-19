@@ -19,6 +19,12 @@ public class NullChecker {
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null");
     }
+    if (dto.getUsername().length() > 30) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username cannot exceed 30 characters.");
+    }
+    if (dto.getUsername().length() < 2) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username must have at least 2 characters.");
+    }
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null");
     }
@@ -45,11 +51,20 @@ public class NullChecker {
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null");
     }
+    if (dto.getUsername().length() > 30) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username cannot exceed 30 characters.");
+    }
+    if (dto.getUsername().length() < 2) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username must have at least 2 characters.");
+    }
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null");
     }
     if (dto.getBirthday() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be null");
+    }
+    if (dto.getBirthday().isAfter(LocalDate.now())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be in the future");
     }
   }
 
@@ -162,9 +177,9 @@ public class NullChecker {
     if (!Objects.equals(type, "image/png") && !Objects.equals(type, "image/jpeg")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image of type png or jpg/jpeg/jpe/jfif");
     }
-    long maxSizeInBytes = 3 * 1024 * 1024; // 3 MB (adjust as needed) - not really necessary, see application.properties
+    long maxSizeInBytes = 3 * 1024 * 1024; // 3 MB (adjust as needed) - 10MB is internal server maximum - we only allow 3 MB
     if (image.getSize() > maxSizeInBytes) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size of 3MB.");
     }
   }
 

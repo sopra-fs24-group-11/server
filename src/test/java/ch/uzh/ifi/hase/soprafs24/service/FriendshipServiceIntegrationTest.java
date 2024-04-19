@@ -18,6 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,7 @@ public class FriendshipServiceIntegrationTest {
     testUser1.setBirthday(LocalDate.of(2020,11,11));
     testUser1.setEmail("firstname.lastname@something.com");
     testUser1.setLevel(1.00);
+    testUser1.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
 
     testUser2 = new User();
     testUser2.setId(2L);
@@ -72,6 +74,7 @@ public class FriendshipServiceIntegrationTest {
     testUser2.setBirthday(LocalDate.of(2020,11,11));
     testUser2.setEmail("firstname.lastname@something.com");
     testUser2.setLevel(1.00);
+    testUser2.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
 
     testUser3 = new User();
     testUser3.setId(3L);
@@ -83,6 +86,7 @@ public class FriendshipServiceIntegrationTest {
     testUser3.setBirthday(LocalDate.of(2020,11,11));
     testUser3.setEmail("firstname.lastname@something.com");
     testUser3.setLevel(1.00);
+    testUser3.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
 
     testUser1 = userRepository.save(testUser1);
     testUser2 = userRepository.save(testUser2);

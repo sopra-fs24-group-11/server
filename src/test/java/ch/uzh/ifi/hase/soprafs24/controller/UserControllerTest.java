@@ -36,6 +36,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +83,7 @@ public class UserControllerTest {
     testUser.setBirthday(LocalDate.of(2000, 1, 1));
     testUser.setToken("1d");
     testUser.setStatus(UserStatus.ONLINE);
+    testUser.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
 
     testFriend = new Friend();
     testFriend.setFriendId(2L);
