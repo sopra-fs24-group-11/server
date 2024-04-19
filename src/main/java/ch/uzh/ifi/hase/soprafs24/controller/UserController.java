@@ -171,7 +171,7 @@ public class UserController {
     }
     return friendGetDTOs;
   }
-  @GetMapping("/users/friends/pending")
+  @GetMapping("/users/friends/pending") // test: GET 9, 10
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<FriendGetDTO> getAllPendingFriendRequests(@RequestHeader("Authorization") String token) {
@@ -184,7 +184,7 @@ public class UserController {
     }
     return friendGetDTOs;
   }
-  @GetMapping("/users/friends/sent")
+  @GetMapping("/users/friends/sent") // test: GET 11, 12
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<FriendGetDTO> getAllSentFriendRequests(@RequestHeader("Authorization") String token) {
