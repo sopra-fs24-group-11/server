@@ -14,8 +14,8 @@
 | 1    | Patrik  | #5    | Done        |
 | 2    | Marc    | #     | Done        |
 | 2    | Marc    | #     | Done        |
-| 2    | Gabriel | #     | Done        |
-| 2    | Gabriel | #     | Done        |
+| 2    | Gabriel | #30   | Done        |
+| 2    | Gabriel | #32   | Done        |
 | 2    | Jan     | #     | Done        |
 | 2    | Jan     | #     | Done        |
 | 2    | Livio   | #     | Done        |
