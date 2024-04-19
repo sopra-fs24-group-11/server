@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
 import ch.uzh.ifi.hase.soprafs24.constant.FriendshipStatusSearch;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Friend;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
@@ -40,8 +42,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -67,6 +68,7 @@ public class UserControllerTest {
   private NullChecker nullChecker;
 
   private User testUser;
+  private Friend testFriend;
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
@@ -80,6 +82,14 @@ public class UserControllerTest {
     testUser.setBirthday(LocalDate.of(2000, 1, 1));
     testUser.setToken("1d");
     testUser.setStatus(UserStatus.ONLINE);
+
+    testFriend = new Friend();
+    testFriend.setFriendId(2L);
+    testFriend.setUsername("testFriend");
+    testFriend.setStatus(FriendShipStatus.ACCEPTED);
+    testFriend.setLevel(3.0D);
+    testFriend.setPoints(5);
+
 
     // when -> any object is being save in the userRepository -> return the dummy
     // testUser
@@ -180,6 +190,33 @@ public class UserControllerTest {
 
     mockMvc.perform(getRequest)
             .andExpect(status().isNotFound());
+  }
+
+  @Test // GET 5: get friends with valid input
+  public void getFriends_validInput_friendListReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+
+    User userMock = mock(User.class);
+    List<Friend> friends = new ArrayList<Friend>();
+    friends.add(testFriend);
+    given(friendshipService.getAllAcceptedFriends(testUser)).willReturn(friends);
+    given(userService.getUserById(Mockito.any())).willReturn(testUser); // should return the User object for the friend, not the user
+    given(userMock.getStatus()).willReturn(UserStatus.ONLINE);
+
+    // when/then
+    MockHttpServletRequestBuilder getRequest = get("/users/friends")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].friendId", is(testFriend.getFriendId().intValue())))
+            .andExpect(jsonPath("$[0].username", is(testFriend.getUsername())))
+            .andExpect(jsonPath("$[0].level", is(testFriend.getLevel())))
+            .andExpect(jsonPath("$[0].status", is("ONLINE")))
+            .andExpect(jsonPath("$[0].points", is(testFriend.getPoints())));
   }
 
   // POST REQUESTS -------------------------------------------------------------
