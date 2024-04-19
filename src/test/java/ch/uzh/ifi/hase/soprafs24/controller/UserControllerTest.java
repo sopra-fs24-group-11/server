@@ -219,6 +219,59 @@ public class UserControllerTest {
             .andExpect(jsonPath("$[0].points", is(testFriend.getPoints())));
   }
 
+  @Test // GET 6: get friends with invalid input
+  public void getFriends_invalidInput_friendListReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/friends")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
+  }
+
+  @Test // GET 7: get friend requests
+  public void getFriendRequests_validInput_friendListReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+
+    User userMock = mock(User.class);
+    List<Friend> friends = new ArrayList<Friend>();
+    friends.add(testFriend);
+    given(friendshipService.getAllReceivedFriendRequests(testUser)).willReturn(friends);
+
+    // when/then
+    MockHttpServletRequestBuilder getRequest = get("/users/friends/requests")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].friendId", is(testFriend.getFriendId().intValue())))
+            .andExpect(jsonPath("$[0].username", is(testFriend.getUsername())))
+            .andExpect(jsonPath("$[0].level", is(testFriend.getLevel())))
+            .andExpect(jsonPath("$[0].points", is(testFriend.getPoints())));
+  }
+
+  @Test // GET 8: get friend requests
+  public void getFriendRequests_invalidInput_friendListReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/friends/requests")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
+  }
   // POST REQUESTS -------------------------------------------------------------
   @Test // POST 1: register
   public void createUser_validInput_userCreated() throws Exception {

@@ -39,7 +39,7 @@ public class UserController {
     this.notificationService = notificationService;
   }
 
-  @PostMapping("/users/register") // test exists
+  @PostMapping("/users/register") // test: POST 1,2
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public String createUser(@RequestBody UserPostDTO userPostDTO) {
@@ -49,7 +49,7 @@ public class UserController {
     return user.getToken();
   }
 
-  @PostMapping("/users/login") // test exists
+  @PostMapping("/users/login") // test: POST 3,4
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public String loginUser(@RequestBody UserLoginPostDTO userLoginPostDTO) {
@@ -64,7 +64,7 @@ public class UserController {
     userService.logoutUser(token);
   }
 
-  @GetMapping("/users") // test exists
+  @GetMapping("/users") // test: GET 1,2
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO getUser(@RequestHeader ("Authorization") String token) {
@@ -72,7 +72,7 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
 
-  @PutMapping("/users") // test exists
+  @PutMapping("/users") // test: PUT 1,2
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateUser(@RequestHeader ("Authorization") String token, @RequestBody UserPutDTO userPutDTO) {
@@ -81,7 +81,7 @@ public class UserController {
     userService.updateUser(token, user);
   }
 
-  @DeleteMapping("/users") // test exists
+  @DeleteMapping("/users") // test: DELETE 1,2
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void deleteUser(@RequestHeader ("Authorization") String token) {
@@ -89,7 +89,7 @@ public class UserController {
   }
 
 
-  @GetMapping("/users/search") // test exists
+  @GetMapping("/users/search") // test: GET 3,4
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<MatchingUserGetDTO> getMatchingUsers(@RequestHeader("Authorization") String token, @RequestParam("name") String name) {
@@ -105,7 +105,7 @@ public class UserController {
     return userGetDTOs;
   }
 
-  @PostMapping("/users/feedback") // test exists
+  @PostMapping("/users/feedback") // test: POST 5,6
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessagePostDTO messagePostDTO) {
@@ -143,7 +143,7 @@ public class UserController {
 
 
   // friends
-  @GetMapping("/users/friends")
+  @GetMapping("/users/friends") // test: GET 5,6
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<FriendGetDTO> getAllAcceptedFriends(@RequestHeader("Authorization") String token) {
@@ -158,7 +158,7 @@ public class UserController {
     }
     return friendGetDTOs;
   }
-  @GetMapping("/users/friends/requests")
+  @GetMapping("/users/friends/requests") // test: GET 7,8
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<FriendGetDTO> getAllReceivedFriendRequests(@RequestHeader("Authorization") String token) {
