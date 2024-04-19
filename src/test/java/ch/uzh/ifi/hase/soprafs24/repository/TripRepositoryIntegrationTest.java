@@ -33,6 +33,7 @@ public class TripRepositoryIntegrationTest {
     user.setBirthday(LocalDate.of(2020,11,11));
     user.setEmail("firstname.lastname@something.com");
     user.setLevel(1.00);
+    user.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
     return user;
   }
 
@@ -53,7 +54,7 @@ public class TripRepositoryIntegrationTest {
   }
 
   @Test
-  public void findByCompletedFalseAndMeetUpTimeBefore_success() {
+  public void findAllByCompletedFalseAndMeetUpTimeBefore_success() {
     // given
     User user =  createUserDummy();
     entityManager.persist(user);
@@ -64,7 +65,7 @@ public class TripRepositoryIntegrationTest {
     entityManager.flush();
 
     // when
-    List<Trip> found = tripRepository.findByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.of(2024,11,11,11,11));
+    List<Trip> found = tripRepository.findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.of(2024,11,11,11,11));
 
     // then
     assertEquals(found.size(), 1);

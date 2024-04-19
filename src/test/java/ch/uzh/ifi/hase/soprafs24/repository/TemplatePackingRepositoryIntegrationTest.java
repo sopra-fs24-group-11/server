@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +34,7 @@ public class TemplatePackingRepositoryIntegrationTest {
     user.setBirthday(LocalDate.of(2020,11,11));
     user.setEmail("firstname.lastname@something.com");
     user.setLevel(1.00);
+    user.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
     return user;
   }
 

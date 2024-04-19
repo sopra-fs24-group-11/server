@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,26 +50,14 @@ public class User implements Serializable {
   private LocalDate creationDate;
 
   @Column(nullable = false)
+  private LocalDateTime lastOnline;
+
+  @Column(nullable = false)
   private Double level;
 
   @Column(nullable = false)
   private String email;
 
-  /*@ManyToMany
-  @JoinTable(
-          name = "user_friends",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "friend_id")
-  )
-  private Set<User> friends = new HashSet<>();
-
-  public Set<User> getFriends() {
-    return friends;
-  }
-
-  public void setFriends(Set<User> friends) {
-    this.friends = friends;
-  }*/
   @Embedded
   @Column(nullable = false)
   private Image profileImage;
@@ -121,8 +110,6 @@ public class User implements Serializable {
     this.email = email;
   }
 
-
-
   public LocalDate getBirthday() {
     return birthday;
   }
@@ -151,5 +138,11 @@ public class User implements Serializable {
 
   public void setProfileImage(Image profileImage) {
     this.profileImage = profileImage;
+  }
+
+  public LocalDateTime getLastOnline() {return lastOnline;}
+
+  public void setLastOnline(LocalDateTime lastOnline) {
+    this.lastOnline = lastOnline;
   }
 }

@@ -3,7 +3,7 @@ name: SonarQube Analysis on Tests Branch
 on:
   push:
     branches:
-      - tests   # Trigger on pushes to the tests branch
+      - branch-tests   # Trigger on pushes to the branch-tests branch
 
   # run the workflow manually from the Actions tab
   workflow_dispatch:

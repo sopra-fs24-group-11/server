@@ -35,6 +35,7 @@ public class TripParticipantRepositoryIntegrationTest {
     user.setBirthday(LocalDate.of(2020,11,11));
     user.setEmail("firstname.lastname@something.com");
     user.setLevel(1.00);
+    user.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
     return user;
   }
 

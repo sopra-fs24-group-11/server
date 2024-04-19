@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository("tripRepository")
 public interface TripRepository extends JpaRepository<Trip, Long> {
-  List<Trip> findByCompletedFalseAndMeetUpTimeBefore(LocalDateTime time);
+  List<Trip> findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime time);
 }

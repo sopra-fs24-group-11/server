@@ -11,13 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -25,7 +26,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.io.File;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +66,10 @@ public class UserService {
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Requester not found");
     }
+    user.setLastOnline(LocalDateTime.now());
+    user.setStatus(UserStatus.ONLINE);
+    user = userRepository.save(user);
+    userRepository.flush();
     return user;
   }
 
@@ -82,6 +86,7 @@ public class UserService {
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
     newUser.setCreationDate(LocalDate.now());
+    newUser.setLastOnline(LocalDateTime.now());
     newUser.setLevel(1.00);
 
     Image profileImage = new Image();
@@ -98,7 +103,7 @@ public class UserService {
     User existingUser = userRepository.findByUsername(loginUser.getUsername());
     if (existingUser == null || !Objects.equals(loginUser.getPassword(), existingUser.getPassword())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT,
-              "The username and/or password provided are wrong. Please try again to log in!");
+              "The Username or password are wrong.");
     }
     existingUser.setStatus(UserStatus.ONLINE);
     existingUser = userRepository.save(existingUser);
@@ -178,15 +183,15 @@ public class UserService {
   private void checkIfUserNameExists(User userToBe) {
     User userByUsername = userRepository.findByUsername(userToBe.getUsername());
 
-    String baseErrorMessage = "The username provided is not unique. Therefore, the user could not be created!";
+    String baseErrorMessage = "Username already taken.";
     if (userByUsername != null) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
     }
   }
   private void checkIfUserNameIsValid(User userToBe) {
     String un = userToBe.getUsername();
-    String baseErrorMessage = "The username should have at least two characters, no spaces, and only contain letters, numbers or '-._'!";
-    if (un.length()<2 || un.isBlank() || un.contains(" ") || !un.matches("^[a-zA-Z0-9\\-._]+$")) {
+    String baseErrorMessage = "The username should have no spaces and should only contain letters, numbers or '-._'!";
+    if (un.length()<2 ||un.length()>30 || un.isBlank() || un.contains(" ") || !un.matches("^[a-zA-Z0-9\\-._]+$")) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
     }
   }
@@ -262,7 +267,6 @@ public class UserService {
 
   public byte[] getProfilePicture(User user) {
     Image profileImage = user.getProfileImage();
-    /*viewImageInFolder(profileImage.getProfilePicture());*/
     return profileImage.getProfilePicture();
   }
 
@@ -307,14 +311,11 @@ public class UserService {
     }
   }
 
-  private void viewImageInFolder(byte[] imageData) {
-    String fileName = "default_image.jpg";
-    try {
-      File file = new File(fileName);
-      ImageIO.write(ImageIO.read(new ByteArrayInputStream(imageData)), "jpg", file);
-    } catch (IOException e) {
-      return;
+  @Scheduled(fixedRate = 300000) // Check every 5 seconds
+  public void markUsersAsOffline() {
+    List<User> users = userRepository.findAllByStatusAndLastOnlineBefore(UserStatus.ONLINE, LocalDateTime.now().minusMinutes(5));
+    for (User user : users) {
+      user.setStatus(UserStatus.OFFLINE);
     }
   }
-
 }
