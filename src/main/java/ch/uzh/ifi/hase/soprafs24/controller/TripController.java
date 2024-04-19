@@ -93,10 +93,12 @@ public class TripController {
   @ResponseBody
   public List<BasicTripInfoGetDTO> getTripHistory(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
-    List<Trip> trips = tripParticipantService.getTripHistory(user);
+    List<TripParticipant> participants = tripParticipantService.getTripHistory(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : trips) {
-      basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
+    for (TripParticipant participant : participants) {
+      BasicTripInfoGetDTO dto = DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(participant.getTrip());
+      dto.setFavourite(participant.isFavouriteTrip());
+      basics.add(dto);
     }
     return basics;
   }
@@ -105,10 +107,12 @@ public class TripController {
   @ResponseBody
   public List<BasicTripInfoGetDTO> getCurrentTrips(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
-    List<Trip> trips = tripParticipantService.getCurrentTrips(user);
+    List<TripParticipant> participants = tripParticipantService.getCurrentTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : trips) {
-      basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
+    for (TripParticipant participant : participants) {
+      BasicTripInfoGetDTO dto = DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(participant.getTrip());
+      dto.setFavourite(participant.isFavouriteTrip());
+      basics.add(dto);
     }
     return basics;
   }
@@ -117,10 +121,12 @@ public class TripController {
   @ResponseBody
   public List<BasicTripInfoGetDTO> getUnansweredTrips(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
-    List<Trip> trips = tripParticipantService.getUnansweredTrips(user);
+    List<TripParticipant> participants = tripParticipantService.getUnansweredTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : trips) {
-      basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
+    for (TripParticipant participant : participants) {
+      BasicTripInfoGetDTO dto = DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(participant.getTrip());
+      dto.setFavourite(participant.isFavouriteTrip());
+      basics.add(dto);
     }
     return basics;
   }
@@ -129,10 +135,12 @@ public class TripController {
   @ResponseBody
   public List<BasicTripInfoGetDTO> getFavoriteTrips(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
-    List<Trip> trips = tripParticipantService.getFavoriteTrips(user);
+    List<TripParticipant> participants = tripParticipantService.getFavoriteTrips(user);
     List<BasicTripInfoGetDTO> basics = new ArrayList<>();
-    for (Trip trip : trips) {
-      basics.add(DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(trip));
+    for (TripParticipant participant : participants) {
+      BasicTripInfoGetDTO dto = DTOMapper.INSTANCE.convertEntityToBasicTripInfoGetDTO(participant.getTrip());
+      dto.setFavourite(participant.isFavouriteTrip());
+      basics.add(dto);
     }
     return basics;
   }

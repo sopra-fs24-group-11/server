@@ -155,40 +155,20 @@ public class TripParticipantService {
     }
   }
 
-  public List<Trip> getTripHistory(User user) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompleted(user, true);
-    List<Trip> trips = new ArrayList<>();
-    for (TripParticipant participant : participants) {
-      trips.add(participant.getTrip());
-    }
-    return trips;
+  public List<TripParticipant> getTripHistory(User user) {
+    return tripParticipantRepository.findAllByUserAndTripCompleted(user, true);
   }
 
-  public List<Trip> getFavoriteTrips(User user) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndFavouriteTrip(user, true);
-    List<Trip> trips = new ArrayList<>();
-    for (TripParticipant participant : participants) {
-      trips.add(participant.getTrip());
-    }
-    return trips;
+  public List<TripParticipant> getFavoriteTrips(User user) {
+    return tripParticipantRepository.findAllByUserAndFavouriteTrip(user, true);
   }
 
-  public List<Trip> getCurrentTrips(User user) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.ACCEPTED);
-    List<Trip> trips = new ArrayList<>();
-    for (TripParticipant participant : participants) {
-      trips.add(participant.getTrip());
-    }
-    return trips;
+  public List<TripParticipant> getCurrentTrips(User user) {
+    return tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.ACCEPTED);
   }
 
-  public List<Trip> getUnansweredTrips(User user) {
-    List<TripParticipant> participants = tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.PENDING);
-    List<Trip> trips = new ArrayList<>();
-    for (TripParticipant participant : participants) {
-      trips.add(participant.getTrip());
-    }
-    return trips;
+  public List<TripParticipant> getUnansweredTrips(User user) {
+    return tripParticipantRepository.findAllByUserAndTripCompletedAndStatus(user, false, InvitationStatus.PENDING);
   }
 
   public void markTripAsFavorite(User user, Trip trip) {
