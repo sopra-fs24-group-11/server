@@ -5,7 +5,6 @@ import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import java.time.LocalDate;
 
 public class UserGetDTO {
-
   private Long id;
   private String password;
   private String username;
