@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @WebAppConfiguration
 @SpringBootTest
 public class FriendshipServiceIntegrationTest {
-
   @Autowired
   private FriendshipService friendshipService;
 
