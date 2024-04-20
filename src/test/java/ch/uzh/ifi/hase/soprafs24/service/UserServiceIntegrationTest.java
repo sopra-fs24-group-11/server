@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ public class UserServiceIntegrationTest {
   @Qualifier("userRepository")
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private NotificationService notificationService;
 
   @Autowired
   private UserService userService;
@@ -287,5 +291,19 @@ public class UserServiceIntegrationTest {
 
     assertEquals(matchingUsers.size(), 0);
     assertNotNull(matchingUsers);
+  }
+
+  @Test
+  public void giveFeedback_success() {
+    userService.giveFeedback(testUser1, "this is a test feedback");
+
+    assertEquals(notificationService.getUserNotifications(testUser1).get(0).getMessage(), "Thank you for giving us feedback, we are happy to look at it!");
+  }
+
+  @Test
+  public void increaseLevel_levelIncreased_success() {
+    userService.increaseLevel(testUser1, 5.0D);
+
+    assertEquals(testUser1.getLevel(), 6.0D);
   }
 }
