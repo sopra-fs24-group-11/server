@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -23,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @WebAppConfiguration
 @SpringBootTest
+@Transactional
+@Rollback
 public class UserServiceIntegrationTest {
 
   @Qualifier("userRepository")
@@ -78,7 +82,7 @@ public class UserServiceIntegrationTest {
     assertEquals(UserStatus.ONLINE, createdUser.getStatus());
   }
 
-  /*@Test
+  @Test
   public void createUser_duplicateUsername_throwsException() {
     assertNull(userRepository.findByUsername("testUsername"));
 
@@ -100,5 +104,5 @@ public class UserServiceIntegrationTest {
 
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
-  }*/
+  }
 }
