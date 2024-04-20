@@ -388,4 +388,16 @@ public class UserServiceIntegrationTest {
 
     assertThrows(ResponseStatusException.class, () -> userService.getItem(1L));
   }
+
+  @Test
+  public void updateItem_itemUpdated_success() {
+    TemplatePackingItem updatedItem = new TemplatePackingItem();
+    updatedItem.setItem("test item");
+    updatedItem.setUser(testUser1);
+
+    userService.updateItem(testUser1, 1L, updatedItem);
+
+    assertEquals(testItem.getItem(), updatedItem.getItem());
+    assertEquals(testItem.getUser(), updatedItem.getUser());
+  }
 }
