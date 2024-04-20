@@ -12,6 +12,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,12 +32,32 @@ public class UserServiceIntegrationTest {
   @Autowired
   private UserService userService;
 
+  private User testUser1;
+
   @BeforeEach
   public void setup() {
+    // Clear any existing data in the repositories
     userRepository.deleteAll();
+    userRepository.flush();
+
+    // Create test user
+    testUser1 = new User();
+    testUser1.setId(1L);
+    testUser1.setUsername("user1");
+    testUser1.setPassword("Firstname Lastname");
+    testUser1.setStatus(UserStatus.ONLINE);
+    testUser1.setToken("abc");
+    testUser1.setCreationDate(LocalDate.of(2020,11,11));
+    testUser1.setBirthday(LocalDate.of(2020,11,11));
+    testUser1.setEmail("firstname.lastname@something.com");
+    testUser1.setLevel(1.00);
+    testUser1.setLastOnline(LocalDateTime.of(2030,11,11,11,11));
+
+    testUser1 = userRepository.save(testUser1);
+    userRepository.flush();
   }
 
-  /*@Test
+  @Test
   public void createUser_validInputs_success() {
     // given
     assertNull(userRepository.findByUsername("testUsername"));
@@ -79,5 +100,5 @@ public class UserServiceIntegrationTest {
 
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
-  }*/
+  }
 }
