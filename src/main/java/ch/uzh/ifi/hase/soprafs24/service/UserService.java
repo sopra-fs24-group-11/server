@@ -64,7 +64,7 @@ public class UserService {
   public User getUserByToken(String token) {
     User user = userRepository.findByToken(token);
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Requester not found");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Requester not found. Try to log out and log in again.");
     }
     user.setLastOnline(LocalDateTime.now());
     user.setStatus(UserStatus.ONLINE);
@@ -75,7 +75,7 @@ public class UserService {
 
   public User getUserById(Long id) {
     return userRepository.findById(id).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
   }
 
 
