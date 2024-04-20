@@ -20,8 +20,8 @@
 | 2    | Jan     | #16 - client   | Done        |
 | 2    | Livio   | #7 - client    | Done        |
 | 2    | Livio   | #9 - client    | Done        |
-| 2    | Patrik  | # - client     | Done        |
-| 2    | Patrik  | # - client     | Done        |
+| 2    | Patrik  | #19 - client     | Done        |
+| 2    | Patrik  | #20 - client     | Done        |
 | x    | x       | #     |             |
 | x    | x       | #     |             |
 | x    | x       | #     |             |
