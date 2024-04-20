@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -228,5 +229,63 @@ public class UserServiceIntegrationTest {
   public void deleteUser_userNonExistant_throwsException() {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser("ab"));
+  }
+
+  @Test
+  public void logoutUser_userExists_success() {
+    userService.logoutUser("abc");
+
+    // then
+    assertEquals(UserStatus.OFFLINE, testUser1.getStatus());
+  }
+
+  @Test
+  public void logoutUser_userNonExistant_throwsException() {
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.logoutUser("ab"));
+  }
+
+  @Test
+  public void getMatchingUsers_NameExists_success() {
+
+    // given
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setPassword("testName");
+    testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
+
+    // when
+    User createdUser = userService.createUser(testUser);
+
+    List<User> matchingUsers = userService.getMatchingUsers("abc", "test");
+
+    assertEquals(matchingUsers.get(0).getId(), createdUser.getId());
+    assertEquals(matchingUsers.get(0).getUsername(), createdUser.getUsername());
+    assertEquals(matchingUsers.get(0).getEmail(), createdUser.getEmail());
+    assertNotNull(matchingUsers.get(0).getToken());
+  }
+
+  @Test
+  public void getMatchingUsers_NameNonExistent_emptyList() {
+
+    // given
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setPassword("testName");
+    testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
+
+    // when
+    User createdUser = userService.createUser(testUser);
+
+    List<User> matchingUsers = userService.getMatchingUsers("abc", "xyz");
+
+    assertEquals(matchingUsers.size(), 0);
+    assertNotNull(matchingUsers);
   }
 }
