@@ -222,7 +222,7 @@ public class TripServiceIntegrationTest {
   }
   @Test
   public void testUpdateTrip_notAdmin_throwsError() {
-    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser1, asList(testUser1.getId())));
+    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser2, asList(testUser1.getId())));
   }
   @Test
   public void testIsAdmin_success() {
@@ -267,6 +267,15 @@ public class TripServiceIntegrationTest {
     tripService.deleteTrip(testTrip1, testUser1);
 
     assertThrows(ResponseStatusException.class, () -> tripService.getTripById(testTrip1.getId()));
+
+  }
+  @Test
+  public void testMarkTripsAsCompleted_success() {
+    tripService.markTripsAsCompleted();
+
+    List<Trip> ongoingTrips = tripRepository.findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.of(2020,11,11,11,11));
+
+    assertEquals(0, ongoingTrips.size());
 
   }
 }
