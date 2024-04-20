@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +34,9 @@ public class UserServiceIntegrationTest {
   @Qualifier("userRepository")
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private NotificationService notificationService;
 
   @Autowired
   private UserService userService;
@@ -197,5 +202,108 @@ public class UserServiceIntegrationTest {
 
     // then
     assertThrows(ResponseStatusException.class, () -> userService.updateUser("ab", testUser));
+  }
+
+  @Test
+  public void deleteUser_userExists_success() {
+    // given
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setPassword("testName");
+    testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
+
+    // when
+    User createdUser = userService.createUser(testUser);
+
+    assertEquals(testUser.getId(), createdUser.getId());
+    assertEquals(testUser.getUsername(), createdUser.getUsername());
+    assertNotNull(createdUser.getToken());
+    assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+
+    userService.deleteUser(createdUser.getToken());
+
+    // then
+    assertNull(userRepository.findByUsername("testUsername"));
+  }
+
+  @Test
+  public void deleteUser_userNonExistant_throwsException() {
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.deleteUser("ab"));
+  }
+
+  @Test
+  public void logoutUser_userExists_success() {
+    userService.logoutUser("abc");
+
+    // then
+    assertEquals(UserStatus.OFFLINE, testUser1.getStatus());
+  }
+
+  @Test
+  public void logoutUser_userNonExistant_throwsException() {
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.logoutUser("ab"));
+  }
+
+  @Test
+  public void getMatchingUsers_NameExists_success() {
+
+    // given
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setPassword("testName");
+    testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
+
+    // when
+    User createdUser = userService.createUser(testUser);
+
+    List<User> matchingUsers = userService.getMatchingUsers("abc", "test");
+
+    assertEquals(matchingUsers.get(0).getId(), createdUser.getId());
+    assertEquals(matchingUsers.get(0).getUsername(), createdUser.getUsername());
+    assertEquals(matchingUsers.get(0).getEmail(), createdUser.getEmail());
+    assertNotNull(matchingUsers.get(0).getToken());
+  }
+
+  @Test
+  public void getMatchingUsers_NameNonExistent_emptyList() {
+
+    // given
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setPassword("testName");
+    testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
+
+    // when
+    User createdUser = userService.createUser(testUser);
+
+    List<User> matchingUsers = userService.getMatchingUsers("abc", "xyz");
+
+    assertEquals(matchingUsers.size(), 0);
+    assertNotNull(matchingUsers);
+  }
+
+  @Test
+  public void giveFeedback_success() {
+    userService.giveFeedback(testUser1, "this is a test feedback");
+
+    assertEquals(notificationService.getUserNotifications(testUser1).get(0).getMessage(), "Thank you for giving us feedback, we are happy to look at it!");
+  }
+
+  @Test
+  public void increaseLevel_levelIncreased_success() {
+    userService.increaseLevel(testUser1, 5.0D);
+
+    assertEquals(testUser1.getLevel(), 6.0D);
   }
 }
