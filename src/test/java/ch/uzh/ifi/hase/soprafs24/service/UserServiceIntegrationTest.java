@@ -198,4 +198,35 @@ public class UserServiceIntegrationTest {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.updateUser("ab", testUser));
   }
+
+  @Test
+  public void deleteUser_userExists_success() {
+    // given
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setPassword("testName");
+    testUser.setUsername("testUsername");
+    testUser.setEmail("testUser@gmail.com");
+    testUser.setBirthday(LocalDate.of(2024, 11, 11));
+
+    // when
+    User createdUser = userService.createUser(testUser);
+
+    assertEquals(testUser.getId(), createdUser.getId());
+    assertEquals(testUser.getUsername(), createdUser.getUsername());
+    assertNotNull(createdUser.getToken());
+    assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+
+    userService.deleteUser(createdUser.getToken());
+
+    // then
+    assertNull(userRepository.findByUsername("testUsername"));
+  }
+
+  @Test
+  public void deleteUser_userNonExistant_throwsException() {
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.deleteUser("ab"));
+  }
 }
