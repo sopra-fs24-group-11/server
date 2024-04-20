@@ -268,7 +268,7 @@ public class TripServiceIntegrationTest {
     Trip trip = tripService.getTripById(id);
     tripService.deleteTrip(trip, testUser1);
 
-    assertThrows(ResponseStatusException.class, () -> tripService.getTripById(testTrip1.getId()));
+    assertThrows(ResponseStatusException.class, () -> tripService.getTripById(trip.getId()));
 
   }
   @Test
