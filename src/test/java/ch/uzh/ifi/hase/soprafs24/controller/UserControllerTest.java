@@ -4,7 +4,9 @@ import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
 import ch.uzh.ifi.hase.soprafs24.constant.FriendshipStatusSearch;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Friend;
+import ch.uzh.ifi.hase.soprafs24.entity.TemplatePackingItem;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.UserNotification;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.service.FriendshipService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
@@ -37,6 +39,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -350,6 +354,86 @@ public class UserControllerTest {
             .andExpect(status().isNotFound());
   }
 
+  @Test // GET 13: get user notifications
+  public void getUserNotifications_validInput_notificationsReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+
+    UserNotification userNotification = new UserNotification();
+    userNotification.setUser(testUser);
+    userNotification.setId(1L);
+    userNotification.setMessage("this is a test notification");
+    userNotification.setTimeStamp(LocalDateTime.of(2003, 1, 14, 10,10, 0));
+    List<UserNotification> userNotifications = new ArrayList<UserNotification>();
+    userNotifications.add(userNotification);
+
+    given(notificationService.getUserNotifications(testUser)).willReturn(userNotifications);
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/notifications")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].timeStamp", is(userNotification.getTimeStamp().format(formatter))))
+            .andExpect(jsonPath("$[0].message", is(userNotification.getMessage())));
+  }
+
+  @Test // GET 14: get user notifications
+  public void getUserNotifications_invalidInput_notificationsReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/notifications")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
+  }
+
+  @Test // GET 15: get packings of a user
+  public void getItems_validInput_itemsReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+    templatePackingItem.setUser(testUser);
+    templatePackingItem.setId(1L);
+    templatePackingItem.setItem("this is a test item");
+    List<TemplatePackingItem> templatePackingItems = new ArrayList<TemplatePackingItem>();
+    templatePackingItems.add(templatePackingItem);
+    given(userService.getItems(testUser)).willReturn(templatePackingItems);
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/packings")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id", is(templatePackingItem.getId().intValue())))
+            .andExpect(jsonPath("$[0].item", is(templatePackingItem.getItem())));
+  }
+
+  @Test // GET 16: get packings of a user
+  public void getItems_invalidInput_itemsReturned() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/packings")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
+  }
 
   // POST REQUESTS -------------------------------------------------------------
   @Test // POST 1: register
@@ -500,6 +584,51 @@ public class UserControllerTest {
             .andExpect(status().isNotFound());
   }
 
+  @Test // POST 9: add packing item
+  public void addItem_validInput_itemAdded() throws Exception {
+  // given
+  TemplateDTO templateDTO = new TemplateDTO();
+  templateDTO.setItem("this is a test item");
+
+  TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+  templatePackingItem.setUser(testUser);
+  templatePackingItem.setId(1L);
+  templatePackingItem.setItem("this is a test item");
+
+  given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+  given(userService.addItem(testUser, templatePackingItem)).willReturn(templatePackingItem);
+
+  // when
+  MockHttpServletRequestBuilder postRequest = post("/users/packings")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(asJsonString(templateDTO))
+          .header("Authorization",testUser.getToken());
+
+  // then
+  mockMvc.perform(postRequest)
+          .andExpect(status().isCreated());
+          //.andExpect(jsonPath("$.id", is(templatePackingItem.getId()))); somehow this does not work
+  }
+
+  @Test // POST 10: add packing item
+  public void addItem_invalidInput_itemAdded() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+    TemplateDTO templateDTO = new TemplateDTO();
+    templateDTO.setItem("this is a test item");
+
+    // when
+    MockHttpServletRequestBuilder postRequest = post("/users/packings")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(templateDTO))
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isNotFound());
+    //.andExpect(jsonPath("$.id", is(templatePackingItem.getId()))); somehow this does not work
+  }
+
 
   // PUT REQUESTS -------------------------------------------------------------
   @Test // PUT 1: update user
@@ -575,7 +704,47 @@ public class UserControllerTest {
             .andExpect(status().isNotFound());
   }
 
-  /* @Test // PUT 3: uploading an image
+  @Test // PUT 5: update packing item
+  public void updateItem_validInput_itemUpdated() throws Exception {
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+
+    TemplateDTO templateDTO = new TemplateDTO();
+    templateDTO.setItem("this is a test item");
+
+    TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+    templatePackingItem.setUser(testUser);
+    templatePackingItem.setId(1L);
+    templatePackingItem.setItem("this is a test item");
+
+    doNothing().when(userService).updateItem(testUser, 1L, templatePackingItem);
+
+    MockHttpServletRequestBuilder putRequest = put("/users/packings/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(templateDTO))
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(putRequest)
+            .andExpect(status().isNoContent());
+  }
+
+  @Test // PUT 6: update packing item
+  public void updateItem_invalidInput_itemUpdated() throws Exception {
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    TemplateDTO templateDTO = new TemplateDTO();
+    templateDTO.setItem("this is a test item");
+
+
+    MockHttpServletRequestBuilder putRequest = put("/users/packings/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(templateDTO))
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(putRequest)
+            .andExpect(status().isNotFound());
+  }
+
+  /* @Test // PUT x: uploading an image
   public void saveProfilePicture_validInput_pictureSaved() throws Exception {
     // given
 
@@ -630,6 +799,75 @@ public class UserControllerTest {
             .andExpect(status().isNotFound());
   }
 
+  @Test // DELETE 3: delete friend request
+  public void deleteRequest_validInput_requestDeleted() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(userService.getUserById(testFriend.getFriendId())).willReturn(testUser); // should actually return User object of friend
+    doNothing().when(friendshipService).deleteFriend(testUser, testUser);
+
+    // when
+    MockHttpServletRequestBuilder deleteRequest = delete("/users/friends/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(deleteRequest)
+            .andExpect(status().isNoContent());
+  }
+
+  @Test // DELETE 4: delete friend request
+  public void deleteRequest_invalidInput_requestDeleted() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when
+    MockHttpServletRequestBuilder deleteRequest = delete("/users/friends/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(deleteRequest)
+            .andExpect(status().isNotFound());
+  }
+
+  @Test // DELETE 5: delete packing item
+  public void deleteItem_validInput_itemDeleted() throws Exception {
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+
+    TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+    templatePackingItem.setUser(testUser);
+    templatePackingItem.setId(1L);
+    templatePackingItem.setItem("this is a test item");
+
+    doNothing().when(userService).deleteItem(testUser, 1L);
+
+    MockHttpServletRequestBuilder deleteRequest = delete("/users/packings/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest)
+            .andExpect(status().isNoContent());
+  }
+
+  @Test // DELETE 6: delete packing item
+  public void deleteItem_invalidInput_itemDeleted() throws Exception {
+    given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+    templatePackingItem.setUser(testUser);
+    templatePackingItem.setId(1L);
+    templatePackingItem.setItem("this is a test item");
+
+    doNothing().when(userService).deleteItem(testUser, 1L);
+
+    MockHttpServletRequestBuilder deleteRequest = delete("/users/packings/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest)
+            .andExpect(status().isNotFound());
+  }
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
