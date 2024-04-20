@@ -152,6 +152,14 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPostDTOChecker_NullTripName_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName(null);
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -159,6 +167,13 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_ShortTripName_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripName("A");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -166,6 +181,13 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_LongTripName_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripName("ThisIsAReallyLongTripNameThatExceedsTheMaximumLengthAllowed");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -173,6 +195,13 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_BlankTripName_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripName("    ");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -180,12 +209,27 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_InvalidTripName_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripName("Trip@Name");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
   @Test
   public void tripPostDTOChecker_NullTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripDescription(null);
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -193,13 +237,27 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_ShortTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripDescription("A");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
   @Test
   public void tripPostDTOChecker_LongTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
-    dto.setTripDescription("ThisIsAReallyLongTripDescriptionThatExceedsTheMaximumLengthAllowed");
+    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 50 characters.");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -207,6 +265,13 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_BlankTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripDescription("    ");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
@@ -214,18 +279,34 @@ public class NullCheckerIntegrationTest {
   public void tripPostDTOChecker_InvalidTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
     dto.setTripDescription("Description@123");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
   @Test
   public void tripPostDTOChecker_NullMeetUpPlace_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setMeetUpPlace(null);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
   @Test
   public void tripPostDTOChecker_NullMeetUpPlaceInfo_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setMeetUpTime(LocalDateTime.now());
     Station station = new Station();
     station.setStationName(null);
     station.setStationCode(null);
@@ -236,6 +317,10 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPostDTOChecker_BlankMeetUpPlaceInfo_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setMeetUpTime(LocalDateTime.now());
     Station station = new Station();
     station.setStationName("");
     station.setStationCode("");
@@ -246,12 +331,27 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPostDTOChecker_NullMeetUpTime_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(null);
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
   @Test
   public void tripPostDTOChecker_PastMeetUpTime_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
     dto.setMeetUpTime(LocalDateTime.now().minusDays(1));
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
@@ -259,12 +359,29 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPostDTOChecker_NullParticipantsList_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setParticipants(null);
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPostDTOChecker(dto));
   }
 
   @Test
   public void tripPostDTOChecker_NullParticipantId_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     List<Long> participants = new ArrayList<>();
     participants.add(null);
     dto.setParticipants(participants);
@@ -274,6 +391,14 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPutDTOChecker_NullTripName_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName(null);
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
@@ -281,6 +406,13 @@ public class NullCheckerIntegrationTest {
   public void tripPutDTOChecker_ShortTripName_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
     dto.setTripName("A");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
@@ -288,6 +420,13 @@ public class NullCheckerIntegrationTest {
   public void tripPutDTOChecker_LongTripName_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
     dto.setTripName("ThisIsAReallyLongTripNameThatExceedsTheMaximumLengthAllowed");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
@@ -295,6 +434,13 @@ public class NullCheckerIntegrationTest {
   public void tripPutDTOChecker_BlankTripName_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
     dto.setTripName("    ");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
@@ -302,18 +448,40 @@ public class NullCheckerIntegrationTest {
   public void tripPutDTOChecker_InvalidTripName_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
     dto.setTripName("Trip@Name");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
   @Test
   public void tripPutDTOChecker_NullTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripDescription(null);
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
   @Test
   public void tripPutDTOChecker_ShortTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
-    dto.setTripDescription("a");
+    dto.setTripDescription("A");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
@@ -321,13 +489,27 @@ public class NullCheckerIntegrationTest {
   public void tripPutDTOChecker_LongTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
     dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 50 characters.");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
   @Test
   public void tripPutDTOChecker_BlankTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
-    dto.setTripDescription("");
+    dto.setTripDescription("    ");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
@@ -335,21 +517,37 @@ public class NullCheckerIntegrationTest {
   public void tripPutDTOChecker_InvalidCharactersInTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
     dto.setTripDescription("!@#");
+    dto.setTripName("Holidays");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
   @Test
   public void tripPutDTOChecker_NullMeetUpPlace_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setMeetUpPlace(null);
+    dto.setMeetUpTime(LocalDateTime.now());
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
   @Test
   public void tripPutDTOChecker_NullMeetUpPlaceInfo_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setMeetUpTime(LocalDateTime.now());
     Station station = new Station();
-    station.setStationName("");
-    station.setStationCode("");
+    station.setStationName(null);
+    station.setStationCode(null);
     dto.setMeetUpPlace(station);
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
@@ -357,6 +555,10 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPutDTOChecker_BlankMeetUpPlaceInfo_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setMeetUpTime(LocalDateTime.now());
     Station station = new Station();
     station.setStationName("");
     station.setStationCode("");
@@ -367,12 +569,27 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPutDTOChecker_NullMeetUpTime_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(null);
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
   @Test
   public void tripPutDTOChecker_PastMeetUpTime_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
     dto.setMeetUpTime(LocalDateTime.now().minusDays(1));
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
@@ -380,12 +597,29 @@ public class NullCheckerIntegrationTest {
   @Test
   public void tripPutDTOChecker_NullParticipantsList_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
+    dto.setParticipants(null);
     assertThrows(ResponseStatusException.class, () -> NullChecker.tripPutDTOChecker(dto));
   }
 
   @Test
   public void tripPutDTOChecker_NullParticipantId_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
+    dto.setTripName("Holidays");
+    dto.setTripDescription("Description");
+    dto.setMeetUpTime(LocalDateTime.now());
+    Station station = new Station();
+    station.setStationName("Station Name");
+    station.setStationCode("ABC");
+    dto.setMeetUpPlace(station);
+    dto.setMeetUpTime(LocalDateTime.now());
     List<Long> participants = new ArrayList<>();
     participants.add(null);
     dto.setParticipants(participants);
@@ -472,6 +706,7 @@ public class NullCheckerIntegrationTest {
     station.setStationCode("ABC");
     dto.setDeparturePoint(station);
     dto.setArrivalTime(LocalDateTime.now().plusHours(1));
+    dto.setArrivalPoint(null);
     assertThrows(ResponseStatusException.class, () -> NullChecker.connectionDTOsChecker(Collections.singletonList(dto)));
   }
 
@@ -486,9 +721,10 @@ public class NullCheckerIntegrationTest {
     station.setStationCode("ABC");
     dto.setDeparturePoint(station);
     dto.setArrivalTime(LocalDateTime.now().plusHours(1));
-    station.setStationName(null);
-    station.setStationCode("XYZ");
-    dto.setArrivalPoint(station);
+    Station station2 = new Station();
+    station2.setStationName(null);
+    station2.setStationCode("XYZ");
+    dto.setArrivalPoint(station2);
     assertThrows(ResponseStatusException.class, () -> NullChecker.connectionDTOsChecker(Collections.singletonList(dto)));
   }
 
@@ -503,8 +739,10 @@ public class NullCheckerIntegrationTest {
     station.setStationCode("ABC");
     dto.setDeparturePoint(station);
     dto.setArrivalTime(LocalDateTime.now().plusHours(1));
-    station.setStationCode(null);
-    dto.setArrivalPoint(station);
+    Station station2 = new Station();
+    station2.setStationName("Station Name");
+    station2.setStationCode(null);
+    dto.setArrivalPoint(station2);
     assertThrows(ResponseStatusException.class, () -> NullChecker.connectionDTOsChecker(Collections.singletonList(dto)));
   }
 
