@@ -264,13 +264,16 @@ public class TripServiceIntegrationTest {
   }
   @Test
   public void testDeleteTrip_success() {
-    tripService.deleteTrip(testTrip1, testUser1);
+    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
+    Trip trip = tripService.getTripById(id);
+    tripService.deleteTrip(trip, testUser1);
 
     assertThrows(ResponseStatusException.class, () -> tripService.getTripById(testTrip1.getId()));
 
   }
   @Test
   public void testMarkTripsAsCompleted_success() {
+    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
     tripService.markTripsAsCompleted();
 
     List<Trip> ongoingTrips = tripRepository.findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.of(2020,11,11,11,11));
