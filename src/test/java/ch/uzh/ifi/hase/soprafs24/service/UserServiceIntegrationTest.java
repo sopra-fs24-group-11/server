@@ -1,14 +1,17 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.TemplatePackingItem;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.TemplatePackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,11 +32,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class UserServiceIntegrationTest {
 
   @Qualifier("userRepository")
   @Autowired
   private UserRepository userRepository;
+
+  @Qualifier("templatePackingRepository")
+  @Autowired
+  private TemplatePackingRepository templatePackingRepository;
 
   @Autowired
   private NotificationService notificationService;
@@ -43,11 +51,15 @@ public class UserServiceIntegrationTest {
 
   private User testUser1;
 
+  private TemplatePackingItem testItem;
+
   @BeforeEach
   public void setup() {
     // Clear any existing data in the repositories
     userRepository.deleteAll();
     userRepository.flush();
+    templatePackingRepository.deleteAll();
+    templatePackingRepository.flush();
 
     // Create test user
     testUser1 = new User();
@@ -64,7 +76,18 @@ public class UserServiceIntegrationTest {
 
     testUser1 = userRepository.save(testUser1);
     userRepository.flush();
+
+    // Create test item
+    testItem = new TemplatePackingItem();
+    testItem.setItem("test item");
+    testItem.setUser(testUser1);
+    testItem.setId(1L);
+
+    testItem = templatePackingRepository.save(testItem);
+    templatePackingRepository.flush();
+
   }
+
 
   @Test
   public void createUser_validInputs_success() {
@@ -305,5 +328,64 @@ public class UserServiceIntegrationTest {
     userService.increaseLevel(testUser1, 5.0D);
 
     assertEquals(testUser1.getLevel(), 6.0D);
+  }
+  @Test
+  public void getItems_itemsReturned_success() {
+
+    List<TemplatePackingItem> returnedItems = userService.getItems(testUser1);
+
+    assertEquals(returnedItems.get(0).getItem(), testItem.getItem());
+    assertEquals(returnedItems.get(0).getUser(), testItem.getUser());
+    assertEquals(returnedItems.get(0).getId(), testItem.getId());
+  }
+
+  @Test
+  public void getItem_itemReturned_success() {
+
+    TemplatePackingItem savedItem = userService.addItem(testUser1, testItem);
+
+    TemplatePackingItem returnedItem = userService.getItem(testItem.getId());
+
+    assertEquals(returnedItem.getItem(), testItem.getItem());
+    assertEquals(returnedItem.getUser(), testItem.getUser());
+    assertEquals(returnedItem.getId(), testItem.getId());
+  }
+
+  @Test
+  public void getItem_itemNonExistant_throwsException() {
+
+    assertThrows(ResponseStatusException.class, () -> userService.getItem(2L));
+  }
+
+  @Test
+  public void addItem_itemAdded_success() {
+    TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+    templatePackingItem.setItem("test item");
+    templatePackingItem.setUser(testUser1);
+    templatePackingItem.setId(1L);
+
+    TemplatePackingItem savedItem = userService.addItem(testUser1, templatePackingItem);
+
+    assertEquals(templatePackingItem.getItem(), savedItem.getItem());
+    assertEquals(templatePackingItem.getUser(), savedItem.getUser());
+    assertEquals(templatePackingItem.getId(), savedItem.getId());
+  }
+
+  @Test
+  public void deleteItem_itemDeleted_success() {
+    TemplatePackingItem templatePackingItem = new TemplatePackingItem();
+    templatePackingItem.setItem("test item");
+    templatePackingItem.setUser(testUser1);
+    templatePackingItem.setId(1L);
+
+    TemplatePackingItem savedItem = userService.addItem(testUser1, templatePackingItem);
+
+    assertEquals(templatePackingItem.getItem(), savedItem.getItem());
+    assertEquals(templatePackingItem.getUser(), savedItem.getUser());
+    assertEquals(templatePackingItem.getId(), savedItem.getId());
+
+    userService.deleteItem(testUser1, 1L);
+
+    assertThrows(ResponseStatusException.class, () -> userService.getItem(1L));
   }
 }
