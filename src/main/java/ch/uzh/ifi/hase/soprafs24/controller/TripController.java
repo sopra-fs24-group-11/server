@@ -293,6 +293,7 @@ public class TripController {
     }
     connectionService.updateConnection(participant, connections);
   }
+
   @GetMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody

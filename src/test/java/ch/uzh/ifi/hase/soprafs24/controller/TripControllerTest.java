@@ -5,10 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
 import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.ConnectionDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TripPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,8 +38,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TripController.class)
@@ -584,7 +580,7 @@ public class TripControllerTest {
             .andExpect(content().string(containsString(testTrip.getId().toString())));
   }
 
-  /*@Test
+  @Test
   public void saveConnection_success() throws Exception {
     // given
     ConnectionDTO connectionDTO = new ConnectionDTO();
@@ -598,15 +594,12 @@ public class TripControllerTest {
     connectionDTO.setArrivalPoint(arrivalPoint);
     List<ConnectionDTO> connectionDTOS = new ArrayList<>(); connectionDTOS.add(connectionDTO);
 
-
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
     given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
 
-
-
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/connection}", testTrip.getId())
+    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/connection", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(connectionDTOS))
             .accept(MediaType.APPLICATION_JSON)
@@ -614,7 +607,7 @@ public class TripControllerTest {
 
     // then
     mockMvc.perform(postRequest).andExpect(status().isCreated());
-  }*/
+  }
 
   @Test
   public void createTodo_success() throws Exception {
@@ -712,6 +705,263 @@ public class TripControllerTest {
     mockMvc.perform(postRequest).andExpect(status().isCreated());
   }
 
+// PUT REQUESTS ----------------------------------------------------------------------------------------------------------------
+@Test
+public void updateTrip_success() throws Exception {
+  // given
+  TripPutDTO tripPutDTO = new TripPutDTO();
+  tripPutDTO.setParticipants(new ArrayList<>());
+  tripPutDTO.setTripDescription("Wir gehen in die Ferien");
+  tripPutDTO.setTripName("Ferien");
+  tripPutDTO.setMeetUpTime(LocalDateTime.of(2040,11,11,11,11));
+  Station station = new Station(); station.setStationCode("8503633"); station.setStationName("Uster, See");
+  tripPutDTO.setMeetUpPlace(station);
+
+  // when/then -> do the request + validate the result
+  MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}", testTrip.getId())
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(asJsonString(tripPutDTO))
+          .accept(MediaType.APPLICATION_JSON)
+          .header("Authorization",testUser.getToken());
+
+  // then
+  mockMvc.perform(putRequest).andExpect(status().isNoContent());
+}
+
+  @Test
+  public void markTripAsFavorite_success() throws Exception {
+
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/favorites", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void acceptInvitation_success() throws Exception {
+
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/invitation", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void newAdmin_success() throws Exception {
+
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/admin/{adminId}", testTrip.getId(), testUser.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void updateConnection_success() throws Exception {
+    // given
+    ConnectionDTO connectionDTO = new ConnectionDTO();
+    connectionDTO.setDepartureTime(LocalDateTime.of(2024, 11, 11, 11, 11));
+    connectionDTO.setArrivalTime(LocalDateTime.of(2024, 11, 11, 11, 15));
+    connectionDTO.setConnectionType(ConnectionType.BUS);
+    connectionDTO.setConnectionName("B 817");
+    Station departurePoint = new Station();
+    departurePoint.setStationCode("8503633");
+    departurePoint.setStationName("Uster, See");
+    connectionDTO.setDeparturePoint(departurePoint);
+    Station arrivalPoint = new Station();
+    arrivalPoint.setStationCode("8573504");
+    arrivalPoint.setStationName("Uster, Bahnhof");
+    connectionDTO.setArrivalPoint(arrivalPoint);
+    List<ConnectionDTO> connectionDTOS = new ArrayList<>();
+    connectionDTOS.add(connectionDTO);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/connection", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(connectionDTOS))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+
+
+  @Test
+  public void updateTodos_success() throws Exception {
+    // given
+    ItemPutDTO itemPutDTO = new ItemPutDTO();
+    itemPutDTO.setItem("Hotel reservation");
+    itemPutDTO.setCompleted(false);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/todos/{itemId}", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(itemPutDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void updateResponsible_success() throws Exception {
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/todos/{itemId}/responsible", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+
+  @Test
+  public void updateGroupPackings_success() throws Exception {
+    // given
+    ItemPutDTO itemPutDTO = new ItemPutDTO();
+    itemPutDTO.setItem("Shirt");
+    itemPutDTO.setCompleted(false);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/groupPackings/{itemId}", testTrip.getId(), testGroupItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(itemPutDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void updateGroupPackingsResponsible_success() throws Exception {
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/groupPackings/{itemId}/responsible", testTrip.getId(), testGroupItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void updateIndividualPackings_success() throws Exception {
+    // given
+    ItemPutDTO itemPutDTO = new ItemPutDTO();
+    itemPutDTO.setItem("Car");
+    itemPutDTO.setCompleted(false);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/individualPackings/{itemId}", testTrip.getId(), testIndividualItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(itemPutDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+
+  // DELETE REQUESTS ----------------------------------------------------------------------------------------------------------------
+
+  @Test
+  public void rejectInvitation_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/invitation", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void leaveTrip_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/exit", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+  @Test
+  public void deleteTrip_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void deleteConnection_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/connection", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+  @Test
+  public void deleteResponsible_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/todos/{itemId}/responsible", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void deleteTodo_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/todos/{itemId}", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void deleteGroupPackingsResponsible_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/groupPackings/{itemId}/responsible", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void deleteGroupPacking_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/groupPackings/{itemId}", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+  @Test
+  public void deleteIndividualPacking_success() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/individualPackings/{itemId}", testTrip.getId(), testTodoItem.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization", testUser.getToken());
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
 
 
 
