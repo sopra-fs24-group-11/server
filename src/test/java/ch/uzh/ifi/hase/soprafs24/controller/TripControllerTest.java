@@ -5,10 +5,16 @@ import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
 import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ConnectionDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TripPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,11 +36,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.util.Arrays.asList;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TripController.class)
 public class TripControllerTest {
@@ -179,7 +188,6 @@ public class TripControllerTest {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
-    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
     List<User> users = new ArrayList<>(); users.add(testUser);
     given(tripParticipantService.getTripUsersWithoutAdmin(testTrip)).willReturn(users);
 
@@ -194,6 +202,25 @@ public class TripControllerTest {
     mockMvc.perform(getRequest).andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id", is(testUser.getId().intValue())))
             .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+  }
+  @Test
+  public void getTripParticipants_notAdmin_throwsError() throws Exception {
+    // given
+    User wrongUser = new User();
+    wrongUser.setId(10L);
+    testTrip.setAdministrator(wrongUser);
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/participants", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
   }
 
   @Test
@@ -531,9 +558,159 @@ public class TripControllerTest {
 
 // POST REQUESTS ----------------------------------------------------------------------------------------------------------------
 
+  @Test
+  public void createTrip_success() throws Exception {
+    // given
+    TripPostDTO tripPostDTO = new TripPostDTO();
+    tripPostDTO.setParticipants(new ArrayList<>());
+    tripPostDTO.setTripDescription("Wir gehen in die Ferien");
+    tripPostDTO.setTripName("Ferien");
+    tripPostDTO.setMeetUpTime(LocalDateTime.of(2040,11,11,11,11));
+    Station station = new Station(); station.setStationCode("8503633"); station.setStationName("Uster, See");
+    tripPostDTO.setMeetUpPlace(station);
+
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.createTrip(Mockito.any(), Mockito.any(), Mockito.any())).willReturn(testTrip.getId());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/trips/new")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(tripPostDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isCreated())
+            .andExpect(content().string(containsString(testTrip.getId().toString())));
+  }
+
+  /*@Test
+  public void saveConnection_success() throws Exception {
+    // given
+    ConnectionDTO connectionDTO = new ConnectionDTO();
+    connectionDTO.setDepartureTime(LocalDateTime.of(2024,11,11,11,11));
+    connectionDTO.setArrivalTime(LocalDateTime.of(2024,11,11,11,15));
+    connectionDTO.setConnectionType(ConnectionType.BUS);
+    connectionDTO.setConnectionName("B 817");
+    Station departurePoint = new Station(); departurePoint.setStationCode("8503633"); departurePoint.setStationName("Uster, See");
+    connectionDTO.setDeparturePoint(departurePoint);
+    Station arrivalPoint = new Station(); arrivalPoint.setStationCode("8573504"); arrivalPoint.setStationName("Uster, Bahnhof");
+    connectionDTO.setArrivalPoint(arrivalPoint);
+    List<ConnectionDTO> connectionDTOS = new ArrayList<>(); connectionDTOS.add(connectionDTO);
+
+
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
 
 
 
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/connection}", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(connectionDTOS))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isCreated());
+  }*/
+
+  @Test
+  public void createTodo_success() throws Exception {
+    // given
+    ItemPostDTO itemPostDTO = new ItemPostDTO();
+    itemPostDTO.setItem("Hotel reservation");
+
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    given(listService.addItem(eq(testTrip), Mockito.any(), eq(ItemType.TODO), eq(testTripParticipant))).willReturn(testTodoItem);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/todos", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(itemPostDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isCreated())
+            .andExpect(jsonPath("$.userId", is(testUser.getId().intValue())))
+            .andExpect(jsonPath("$.id", is(testTodoItem.getId().intValue())))
+            .andExpect(jsonPath("$.item", is(testTodoItem.getItem())))
+            .andExpect(jsonPath("$.completed", is(testTodoItem.isCompleted())));
+  }
+
+  @Test
+  public void createGroupPacking_success() throws Exception {
+    // given
+    ItemPostDTO itemPostDTO = new ItemPostDTO();
+    itemPostDTO.setItem("Shirt");
+
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    given(listService.addItem(eq(testTrip), Mockito.any(), eq(ItemType.GROUPPACKING), eq(testTripParticipant))).willReturn(testGroupItem);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/groupPackings", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(itemPostDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isCreated())
+            .andExpect(jsonPath("$.userId", is(testUser.getId().intValue())))
+            .andExpect(jsonPath("$.id", is(testGroupItem.getId().intValue())))
+            .andExpect(jsonPath("$.item", is(testGroupItem.getItem())))
+            .andExpect(jsonPath("$.completed", is(testGroupItem.isCompleted())));
+  }
+
+  @Test
+  public void createIndividualPacking_success() throws Exception {
+    // given
+    ItemPostDTO itemPostDTO = new ItemPostDTO();
+    itemPostDTO.setItem("Car");
+
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    given(listService.addItem(eq(testTrip), Mockito.any(), eq(ItemType.INDIVIDUALPACKING), eq(testTripParticipant))).willReturn(testIndividualItem);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/individualPackings", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(itemPostDTO))
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isCreated())
+            .andExpect(jsonPath("$.userId", is(testUser.getId().intValue())))
+            .andExpect(jsonPath("$.id", is(testIndividualItem.getId().intValue())))
+            .andExpect(jsonPath("$.item", is(testIndividualItem.getItem())))
+            .andExpect(jsonPath("$.completed", is(testIndividualItem.isCompleted())));
+  }
+
+  @Test
+  public void addItem_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    doNothing().when(listService).transferList(eq(testTrip), eq(testUser), eq(testTripParticipant), Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/transfer/packings", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isCreated());
+  }
 
 
 
