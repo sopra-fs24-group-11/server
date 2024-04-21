@@ -155,7 +155,7 @@ public class TripService {
     }
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, newAdmin);
     if (participant.getStatus() == InvitationStatus.PENDING) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "New Admin you wanted to choose has not yet accepted the trip request");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("%s has not yet accepted the trip request.", participant.getUser().getUsername()));
     }
     trip.setAdministrator(newAdmin);
     trip = tripRepository.save(trip);

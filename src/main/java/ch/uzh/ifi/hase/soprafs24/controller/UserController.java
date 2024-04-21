@@ -209,7 +209,7 @@ public class UserController {
     userService.increaseLevel(sender, 0.05);
   }
 
-  @PutMapping("/users/friends/{friendId}")
+  @PutMapping("/users/friends/{friendId}") // test: PUT 3, 4
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void acceptRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId)  {
@@ -218,7 +218,7 @@ public class UserController {
     friendshipService.acceptRequest(acceptor, requester);
     userService.increaseLevel(acceptor, 0.1);
   }
-  @DeleteMapping("/users/friends/{friendId}")
+  @DeleteMapping("/users/friends/{friendId}") // test: DELETE 3, 4
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void deleteFriend(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
@@ -227,7 +227,7 @@ public class UserController {
     friendshipService.deleteFriend(friend, deleter);
   }
 
-  @GetMapping("/users/notifications")
+  @GetMapping("/users/notifications") // test: GET 13, 14
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<NotificationGetDTO> getUserNotifications(@RequestHeader("Authorization") String token) {
@@ -244,7 +244,7 @@ public class UserController {
 
 
 
-  @GetMapping("/users/packings")
+  @GetMapping("/users/packings") // test: GET 15,16
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<TemplateGetDTO> getItems(@RequestHeader("Authorization") String token) {
@@ -257,7 +257,7 @@ public class UserController {
     }
     return templateGetDTOS;
   }
-  @PostMapping("/users/packings")
+  @PostMapping("/users/packings") // test: POST 9, 10
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public TemplateGetDTO addItem(@RequestHeader("Authorization") String token, @RequestBody TemplateDTO templateDTO) {
@@ -266,7 +266,7 @@ public class UserController {
     TemplatePackingItem item = DTOMapper.INSTANCE.convertTemplateDTOToEntity(templateDTO);
     return(DTOMapper.INSTANCE.convertEntityToTemplateGetDTO(userService.addItem(user, item)));
   }
-  @PutMapping("/users/packings/{itemId}")
+  @PutMapping("/users/packings/{itemId}") // test: PUT 5, 6
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId, @RequestBody TemplateDTO templateDTO) {
