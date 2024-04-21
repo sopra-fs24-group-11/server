@@ -16,10 +16,8 @@ public class TripParticipant implements Serializable {
   private Long id;
 
   @Embedded
-  @AttributeOverrides({
-          @AttributeOverride(name = "stationName", column = @Column(nullable = true)),
-          @AttributeOverride(name = "stationCode", column = @Column(nullable = true))
-  })
+  @AttributeOverride(name = "stationName", column = @Column(nullable = true))
+  @AttributeOverride(name = "stationCode", column = @Column(nullable = true))
   private Station startPoint;
 
   private LocalDateTime startTime;

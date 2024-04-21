@@ -3,8 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.TripRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -19,8 +17,6 @@ import java.util.*;
 @Service
 @Transactional
 public class TripService {
-  private final Logger log = LoggerFactory.getLogger(TripService.class);
-
   private final TripRepository tripRepository;
   private final UserService userService;
   private final TripParticipantService tripParticipantService;

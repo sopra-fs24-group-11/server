@@ -34,7 +34,6 @@ public class TripController {
 
   @PostMapping("/trips/new")
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public Long createTrip(@RequestHeader ("Authorization") String token, @RequestBody TripPostDTO tripPostDTO) {
     NullChecker.tripPostDTOChecker(tripPostDTO);
     List<Long> userIds = tripPostDTO.getParticipants();
@@ -46,7 +45,6 @@ public class TripController {
   }
   @PutMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestBody TripPutDTO tripPutDTO) {
     NullChecker.tripPutDTOChecker(tripPutDTO);
     List<Long> userIds = tripPutDTO.getParticipants();
@@ -59,7 +57,6 @@ public class TripController {
   }
   @GetMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public BasicTripInfoGetDTO getTripInfo(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -72,7 +69,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/participants")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<ParticipantGetDTO> getTripParticipants(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     Trip trip = tripService.getTripById(tripId);
     User requester = userService.getUserByToken(token);
@@ -90,7 +86,6 @@ public class TripController {
 
   @GetMapping("/trips/history")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<BasicTripInfoGetDTO> getTripHistory(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TripParticipant> participants = tripParticipantService.getTripHistory(user);
@@ -104,7 +99,6 @@ public class TripController {
   }
   @GetMapping("/trips/current")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<BasicTripInfoGetDTO> getCurrentTrips(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TripParticipant> participants = tripParticipantService.getCurrentTrips(user);
@@ -118,7 +112,6 @@ public class TripController {
   }
   @GetMapping("/trips/invitations")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<BasicTripInfoGetDTO> getUnansweredTrips(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TripParticipant> participants = tripParticipantService.getUnansweredTrips(user);
@@ -132,7 +125,6 @@ public class TripController {
   }
   @GetMapping("/trips/favorites")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<BasicTripInfoGetDTO> getFavoriteTrips(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TripParticipant> participants = tripParticipantService.getFavoriteTrips(user);
@@ -147,7 +139,6 @@ public class TripController {
 
   @PutMapping("/trips/{tripId}/favorites")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void markTripAsFavorite(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -156,14 +147,12 @@ public class TripController {
 
   @GetMapping("/trips/searchStation")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<Station> getStations (@RequestHeader("Authorization") String token, @RequestParam String start) {
     return ConnectionService.getLocationsName(start);
   }
 
   @GetMapping("/trips/{tripId}/startPoint")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<List<Connection>> getConnectionsByCode (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("start") String start, @RequestParam("isLate") boolean isLate) {
     Trip trip = tripService.getTripById(tripId);
     String end = trip.getMeetUpPlace().getStationCode();
@@ -174,7 +163,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/geoLocation")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<List<Connection>> getConnectionsByLocation (@RequestHeader("Authorization") String token, @PathVariable Long tripId, @RequestParam("x") String x, @RequestParam("y") String y, @RequestParam("isLate") boolean isLate) {
     Trip trip = tripService.getTripById(tripId);
     String end = trip.getMeetUpPlace().getStationCode();
@@ -186,7 +174,6 @@ public class TripController {
 
   @PutMapping("/trips/{tripId}/invitation")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void acceptInvitation(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -196,7 +183,6 @@ public class TripController {
 
   @DeleteMapping("/trips/{tripId}/invitation")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void rejectInvitation(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -205,7 +191,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/admin")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public boolean isAdmin(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -213,7 +198,6 @@ public class TripController {
   }
   @PutMapping("/trips/{tripId}/admin/{adminId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void newAdmin(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("adminId") Long adminId) {
     User oldAdmin = userService.getUserByToken(token);
     User newAdmin = userService.getUserById(adminId);
@@ -223,7 +207,6 @@ public class TripController {
   }
   @DeleteMapping("/trips/{tripId}/exit")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void leaveTrip(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -232,7 +215,6 @@ public class TripController {
 
   @DeleteMapping("/trips/{tripId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteTrip(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User requester = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -241,7 +223,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/pictures")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<MemberGetDTO> getMembersWithImages(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -260,7 +241,6 @@ public class TripController {
 
   @PostMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public void saveConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionDTO> connectionDTOS) {
     NullChecker.connectionDTOsChecker(connectionDTOS);
     User user = userService.getUserByToken(token);
@@ -278,7 +258,6 @@ public class TripController {
   }
   @PutMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody List<ConnectionDTO> connectionDTOS) {
     NullChecker.connectionDTOsChecker(connectionDTOS);
     User user = userService.getUserByToken(token);
@@ -296,7 +275,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<ConnectionDTO> getConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -311,7 +289,6 @@ public class TripController {
   }
   @DeleteMapping("/trips/{tripId}/connection")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteConnection(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -323,7 +300,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/connections")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<ConnectionAndUserDTO> getConnections(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -347,7 +323,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/notifications")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<NotificationGetDTO> getTripNotifications(@RequestHeader("Authorization") String token, @PathVariable Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -368,7 +343,6 @@ public class TripController {
   // Item can be deleted only by responsible person. If nobody is responsible, it can be deleted by everybody.
   @GetMapping("/trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<ItemGetDTO> getTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -385,7 +359,6 @@ public class TripController {
 
   @PutMapping("trips/{tripId}/todos/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateTodos(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId, @RequestBody ItemPutDTO itemPutDTO) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -401,7 +374,6 @@ public class TripController {
 
   @PutMapping("trips/{tripId}/todos/{itemId}/responsible")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -418,7 +390,6 @@ public class TripController {
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}/responsible")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -434,7 +405,6 @@ public class TripController {
 
   @PostMapping("trips/{tripId}/todos")
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public ItemGetDTO createTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     NullChecker.itemPostDTOChecker(itemPostDTO);
     User user = userService.getUserByToken(token);
@@ -449,7 +419,6 @@ public class TripController {
 
   @DeleteMapping("trips/{tripId}/todos/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteTodo(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -464,7 +433,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/groupPackings")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<ItemGetDTO> getGroupPackings(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -481,7 +449,6 @@ public class TripController {
 
   @PutMapping("trips/{tripId}/groupPackings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateGroupPackings(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId, @RequestBody ItemPutDTO itemPutDTO) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -497,7 +464,6 @@ public class TripController {
 
   @PutMapping("trips/{tripId}/groupPackings/{itemId}/responsible")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateGroupPackingsResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -513,7 +479,6 @@ public class TripController {
 
   @DeleteMapping("trips/{tripId}/groupPackings/{itemId}/responsible")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteGroupPackingsResponsible(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -528,7 +493,6 @@ public class TripController {
 
   @PostMapping("trips/{tripId}/groupPackings")
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public ItemGetDTO createGroupPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     NullChecker.itemPostDTOChecker(itemPostDTO);
     User user = userService.getUserByToken(token);
@@ -543,7 +507,6 @@ public class TripController {
 
   @DeleteMapping("trips/{tripId}/groupPackings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteGroupPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -558,7 +521,6 @@ public class TripController {
 
   @GetMapping("/trips/{tripId}/individualPackings")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<ItemGetDTO> getIndividualPackings(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -575,7 +537,6 @@ public class TripController {
 
   @PutMapping("trips/{tripId}/individualPackings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateIndividualPackings(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId, @RequestBody ItemPutDTO itemPutDTO) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -592,7 +553,6 @@ public class TripController {
 
   @PostMapping("trips/{tripId}/individualPackings")
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public ItemGetDTO createIndividualPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @RequestBody ItemPostDTO itemPostDTO) {
     NullChecker.itemPostDTOChecker(itemPostDTO);
     User user = userService.getUserByToken(token);
@@ -607,7 +567,6 @@ public class TripController {
 
   @DeleteMapping("trips/{tripId}/individualPackings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteIndividualPacking(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
@@ -622,13 +581,12 @@ public class TripController {
 
   @PostMapping("/trips/{tripId}/transfer/packings")
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public void addItem(@RequestHeader("Authorization") String token, @PathVariable("tripId") Long tripId) {
     User user = userService.getUserByToken(token);
     Trip trip = tripService.getTripById(tripId);
     tripService.isOngoing(trip);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
-    listService.transferList(trip, user, selectedParticipant, userService.getItems(user));
+    listService.transferList(trip, selectedParticipant, userService.getItems(user));
   }
 }

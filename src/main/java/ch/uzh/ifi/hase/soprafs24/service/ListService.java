@@ -4,10 +4,6 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.ItemRepository;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.ItemGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -15,14 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 public class ListService {
-
-  private final Logger log = LoggerFactory.getLogger(ListService.class);
   private final ItemRepository itemRepository;
 
   @Autowired
@@ -31,7 +24,6 @@ public class ListService {
   }
 
   public List<Item> getItems (Trip trip, ItemType itemType, TripParticipant participant) {
-    List<Item> items;
     if (itemType.equals(ItemType.INDIVIDUALPACKING)) {
       return itemRepository.findAllByTripAndItemTypeAndParticipant(trip, itemType, participant);
     } else {
@@ -46,7 +38,7 @@ public class ListService {
       existingItem.setCompleted(updatedItem.isCompleted()); // first select --> then complete
     }
     existingItem.setItem(updatedItem.getItem());
-    existingItem = itemRepository.save(existingItem);
+    itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
@@ -57,7 +49,7 @@ public class ListService {
     }
     existingItem.setParticipant(participant);
     existingItem.setUserId(participant.getUser().getId());
-    existingItem = itemRepository.save(existingItem);
+    itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
@@ -66,7 +58,7 @@ public class ListService {
     existingItem.setParticipant(null);
     existingItem.setUserId(null);
     existingItem.setCompleted(false);
-    existingItem = itemRepository.save(existingItem);
+    itemRepository.save(existingItem);
     itemRepository.flush();
   }
 
@@ -164,7 +156,7 @@ public class ListService {
     itemRepository.flush();
   }
 
-  public void transferList(Trip trip, User user, TripParticipant participant, List<TemplatePackingItem> items) {
+  public void transferList(Trip trip, TripParticipant participant, List<TemplatePackingItem> items) {
     for (TemplatePackingItem item : items) {
       Item newItem = new Item();
       newItem.setItem(item.getItem());

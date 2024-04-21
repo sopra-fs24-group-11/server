@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class ItemRepositoryIntegrationTest {
+class ItemRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -75,7 +75,7 @@ public class ItemRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByTripAndItemType_success() {
+  void findAllByTripAndItemType_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -98,12 +98,12 @@ public class ItemRepositoryIntegrationTest {
 
     // then
     assertNotNull(items);
-    assertEquals(items.size(), 1);
+    assertEquals(1, items.size());
     assertTrue(items.contains(item));
   }
 
   @Test
-  public void findAllByTripAndItemTypeAndParticipant_success() {
+  void findAllByTripAndItemTypeAndParticipant_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -126,12 +126,12 @@ public class ItemRepositoryIntegrationTest {
 
     // then
     assertNotNull(items);
-    assertEquals(items.size(), 1);
+    assertEquals(1, items.size());
     assertTrue(items.contains(item));
   }
 
   @Test
-  public void findAllByUserId_success() {
+  void findAllByUserId_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -154,12 +154,12 @@ public class ItemRepositoryIntegrationTest {
 
     // then
     assertNotNull(items);
-    assertEquals(items.size(), 1);
+    assertEquals(1, items.size());
     assertTrue(items.contains(item));
   }
 
   @Test
-  public void findAllByParticipant_success() {
+  void findAllByParticipant_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -182,12 +182,12 @@ public class ItemRepositoryIntegrationTest {
 
     // then
     assertNotNull(items);
-    assertEquals(items.size(), 1);
+    assertEquals(1, items.size());
     assertTrue(items.contains(item));
   }
 
   @Test
-  public void deleteAllByParticipantAndItemType_success() {
+  void deleteAllByParticipantAndItemType_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -214,7 +214,7 @@ public class ItemRepositoryIntegrationTest {
   }
 
   @Test
-  public void deleteAllByUserIdAndItemType_success() {
+  void deleteAllByUserIdAndItemType_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -241,7 +241,7 @@ public class ItemRepositoryIntegrationTest {
   }
 
   @Test
-  public void deleteAllByTrip_success() {
+  void deleteAllByTrip_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class FriendshipServiceTest {
+class FriendshipServiceTest {
 
   @Mock
   private FriendshipRepository friendshipRepository;
@@ -38,7 +38,7 @@ public class FriendshipServiceTest {
   private Friendship testFriendship;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     MockitoAnnotations.openMocks(this);
 
     // given
@@ -68,7 +68,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testSendRequest_success() {
+  void testSendRequest_success() {
     // when
     friendshipService.sendRequest(testUser1, testUser2);
     // then
@@ -79,12 +79,12 @@ public class FriendshipServiceTest {
             .createUserNotification(eq(testUser2), Mockito.anyString());
   }
   @Test
-  public void testSendRequest_toYourself_throwsError() {
+  void testSendRequest_toYourself_throwsError() {
     assertThrows(ResponseStatusException.class, () -> friendshipService.sendRequest(testUser1, testUser1));
   }
 
   @Test
-  public void testSendRequest_duplicate_throwsError() {
+  void testSendRequest_duplicate_throwsError() {
     // given
     friendshipService.sendRequest(testUser1, testUser2);
     Mockito.when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
@@ -94,7 +94,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testAcceptRequest_success() {
+  void testAcceptRequest_success() {
     // when
     Mockito.when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
     friendshipService.acceptRequest(testUser2, testUser1);
@@ -110,7 +110,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testAcceptRequest_nonExistentFriendship_throwsError() {
+  void testAcceptRequest_nonExistentFriendship_throwsError() {
     // when
     when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(null);
     // then
@@ -118,7 +118,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testDeleteFriend_success() {
+  void testDeleteFriend_success() {
     // when
     when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
     friendshipService.deleteFriend(testUser2, testUser1);
@@ -132,7 +132,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testDeleteFriend_noFriendship_throwsNotFoundError() {
+  void testDeleteFriend_noFriendship_throwsNotFoundError() {
     // given
     when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(null);
 
@@ -141,7 +141,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testDeleteFriend_1_success() {
+  void testDeleteFriend_1_success() {
     // when
     Mockito.when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
     friendshipService.deleteFriend(testUser2, testUser1);
@@ -153,7 +153,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testDeleteFriend_2_success() {
+  void testDeleteFriend_2_success() {
     // when
     when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
     friendshipService.deleteFriend(testUser1, testUser2);
@@ -166,14 +166,14 @@ public class FriendshipServiceTest {
 
 
   @Test
-  public void testDeleteFriend_conflict_throwsConflictError() {
+  void testDeleteFriend_conflict_throwsConflictError() {
     // then
     assertThrows(ResponseStatusException.class, () -> friendshipService.deleteFriend(testUser2, testUser1));
   }
 
 
   @Test
-  public void testGetAllReceivedFriendRequests_success() {
+  void testGetAllReceivedFriendRequests_success() {
     // when
     List<Friendship> fr = new ArrayList<>();
     fr.add(testFriendship);
@@ -189,7 +189,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testGetAllSentFriendRequests_success() {
+  void testGetAllSentFriendRequests_success() {
     // when
     List<Friendship> fr = new ArrayList<>();
     fr.add(testFriendship);
@@ -207,7 +207,7 @@ public class FriendshipServiceTest {
 
 
   @Test
-  public void testFindFriendStatusSearch_Incomplete_success() {
+  void testFindFriendStatusSearch_Incomplete_success() {
     // when
     when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
     FriendshipStatusSearch friendshipStatusSearch1 = friendshipService.findFriendStatusSearch(testUser1, testUser2);
@@ -219,7 +219,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testFindFriendStatusSearch_NonExistent_success() {
+  void testFindFriendStatusSearch_NonExistent_success() {
     // when
     FriendshipStatusSearch friendshipStatusSearch1 = friendshipService.findFriendStatusSearch(testUser1, testUser3);
     FriendshipStatusSearch friendshipStatusSearch2 = friendshipService.findFriendStatusSearch(testUser3, testUser1);
@@ -230,7 +230,7 @@ public class FriendshipServiceTest {
   }
 
   @Test
-  public void testIncreasePoints_success() {
+  void testIncreasePoints_success() {
     // given
     when(friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2)).thenReturn(testFriendship);
     List<User> users = new ArrayList<>();

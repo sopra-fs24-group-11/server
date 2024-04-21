@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 
 public class Friend {
   private Long friendId;

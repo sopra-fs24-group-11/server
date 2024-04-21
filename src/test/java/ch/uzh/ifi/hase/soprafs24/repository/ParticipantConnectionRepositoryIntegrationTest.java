@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-public class ParticipantConnectionRepositoryIntegrationTest {
+class ParticipantConnectionRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -65,7 +65,7 @@ public class ParticipantConnectionRepositoryIntegrationTest {
     return participant;
   }
 
-  public ParticipantConnection createParticipantConnectionDummy(TripParticipant participant) {
+  ParticipantConnection createParticipantConnectionDummy(TripParticipant participant) {
     ParticipantConnection connection = new ParticipantConnection();
     connection.setParticipant(participant);
     connection.setConnectionName("B 37");
@@ -84,7 +84,7 @@ public class ParticipantConnectionRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByParticipant_success() {
+  void findAllByParticipant_success() {
     // given
     User user =  createUserDummy();
     entityManager.persist(user);
@@ -109,7 +109,7 @@ public class ParticipantConnectionRepositoryIntegrationTest {
     List<ParticipantConnection> connections = participantConnectionRepository.findAllByParticipant(participant);
 
     // then
-    assertEquals(connections.size(), 2);
+    assertEquals(2, connections.size());
     assertTrue(connections.contains(connection1));
     assertTrue(connections.contains(connection2));
     assertEquals(connections.get(0).getParticipant(), participant);
@@ -117,7 +117,7 @@ public class ParticipantConnectionRepositoryIntegrationTest {
   }
 
   @Test
-  public void deleteAllByParticipant_success() {
+  void deleteAllByParticipant_success() {
     // given
     User user = createUserDummy();
     entityManager.persist(user);
@@ -143,7 +143,7 @@ public class ParticipantConnectionRepositoryIntegrationTest {
 
     // then
     List<ParticipantConnection> connections = participantConnectionRepository.findAllByParticipant(participant);
-    assertEquals(connections.size(), 0);
+    assertEquals(0, connections.size());
   }
 
 }

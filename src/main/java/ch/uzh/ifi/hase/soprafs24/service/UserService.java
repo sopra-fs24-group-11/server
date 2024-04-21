@@ -6,8 +6,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.Image;
 import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TemplatePackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -38,9 +36,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UserService {
-
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
-
   private final Random random = new Random();
   private final UserRepository userRepository;
   private final FeedbackRepository feedbackRepository;
@@ -114,7 +109,6 @@ public class UserService {
   public void updateUser(String token, User user) {
     User existingUser = getUserByToken(token);
     checkIfUserNameIsValid(user);
-    /*checkIfEmailIsValid(user);*/
     if (!Objects.equals(user.getUsername(), existingUser.getUsername())) {
       checkIfUserNameExists(user);
     }
@@ -241,8 +235,6 @@ public class UserService {
   }
 
 
-
-
   /**
    * Image Service
    */
@@ -307,7 +299,7 @@ public class UserService {
       ImageIO.write(image, "jpg", baos);
       return baos.toByteArray();
     } catch (IOException e) {
-      return null;
+      return new byte[0];
     }
   }
 

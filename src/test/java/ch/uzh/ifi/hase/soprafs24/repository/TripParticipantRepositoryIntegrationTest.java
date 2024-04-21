@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class TripParticipantRepositoryIntegrationTest {
+class TripParticipantRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -66,7 +66,7 @@ public class TripParticipantRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByTrip_success() {
+  void findAllByTrip_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -95,7 +95,7 @@ public class TripParticipantRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByUserAndFavouriteTrip_success() {
+  void findAllByUserAndFavouriteTrip_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -119,11 +119,11 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(participants);
-    assertEquals(participants.size(), 1);
+    assertEquals(1, participants.size());
     assertTrue(participants.contains(participant1));
   }
   @Test
-  public void findAllByUserAndTripCompletedAndStatus_success() {
+  void findAllByUserAndTripCompletedAndStatus_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -146,12 +146,12 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(participants);
-    assertEquals(participants.size(), 1);
+    assertEquals(1, participants.size());
     assertTrue(participants.contains(participant1));
   }
 
   @Test
-  public void findByUserAndTripAndStatus_success() {
+  void findByUserAndTripAndStatus_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -174,10 +174,10 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(foundParticipant);
-    assertEquals(foundParticipant, participant1);
+    assertEquals(participant1, foundParticipant);
   }
   @Test
-  public void findAllByUserAndTripCompleted_success() {
+  void findAllByUserAndTripCompleted_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -200,13 +200,13 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(participants);
-    assertEquals(participants.size(), 2);
+    assertEquals(2, participants.size());
     assertTrue(participants.contains(participant1));
     assertTrue(participants.contains(participant2));
   }
 
   @Test
-  public void findAllByUserAndTripAdministrator_success() {
+  void findAllByUserAndTripAdministrator_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -231,12 +231,12 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(participants);
-    assertEquals(participants.size(), 1);
+    assertEquals(1, participants.size());
     assertTrue(participants.contains(participant1));
   }
 
   @Test
-  public void findByUserAndTrip_success() {
+  void findByUserAndTrip_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -259,11 +259,11 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(foundParticipant);
-    assertEquals(foundParticipant, participant1);
+    assertEquals(participant1, foundParticipant);
   }
 
   @Test
-  public void findAllByUser_success() {
+  void findAllByUser_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -286,13 +286,13 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(participants);
-    assertEquals(participants.size(), 2);
+    assertEquals(2, participants.size());
     assertTrue(participants.contains(participant1));
     assertTrue(participants.contains(participant2));
   }
 
   @Test
-  public void findAllByTripAndStatus_success() {
+  void findAllByTripAndStatus_success() {
     // given
     User user = createUserDummy("user1", "abc");
     entityManager.persist(user);
@@ -315,7 +315,7 @@ public class TripParticipantRepositoryIntegrationTest {
 
     // then
     assertNotNull(participants);
-    assertEquals(participants.size(), 1);
+    assertEquals(1, participants.size());
     assertTrue(participants.contains(participant1));
   }
 }

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-public class TemplatePackingRepositoryIntegrationTest {
+class TemplatePackingRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -39,7 +39,7 @@ public class TemplatePackingRepositoryIntegrationTest {
   }
 
   @Test
-  public void findByIdAndUser_success() {
+  void findByIdAndUser_success() {
 // given
     User user = createUserDummy();
     entityManager.persist(user);
@@ -58,12 +58,12 @@ public class TemplatePackingRepositoryIntegrationTest {
     // then
     assertNotNull(found);
     assertNotNull(found.getId());
-    assertEquals(found.getUser(), user);
-    assertEquals(found.getItem(), item.getItem());
+    assertEquals(user, found.getUser());
+    assertEquals(item.getItem(), found.getItem());
   }
 
   @Test
-  public void deleteAllByUser_success() {
+  void deleteAllByUser_success() {
 // given
     User user = createUserDummy();
     entityManager.persist(user);
@@ -86,11 +86,11 @@ public class TemplatePackingRepositoryIntegrationTest {
 
     // then
     List<TemplatePackingItem> found = templatePackingRepository.findAllByUser(user);
-    assertEquals(found.size(), 0);
+    assertEquals(0, found.size());
   }
 
   @Test
-  public void findAllByUser_success() {
+  void findAllByUser_success() {
 // given
     User user = createUserDummy();
     entityManager.persist(user);
@@ -112,7 +112,7 @@ public class TemplatePackingRepositoryIntegrationTest {
     List<TemplatePackingItem> found = templatePackingRepository.findAllByUser(user);
 
     // then
-    assertEquals(found.size(), 2);
+    assertEquals(2, found.size());
     assertTrue(found.contains(item1));
     assertTrue(found.contains(item2));
   }

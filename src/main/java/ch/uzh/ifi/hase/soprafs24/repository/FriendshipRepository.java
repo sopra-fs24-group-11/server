@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.repository;
 
 import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
-import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

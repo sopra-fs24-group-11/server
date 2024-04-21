@@ -1,19 +1,14 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class UserServiceTest {
+class UserServiceTest {
 
   @Mock
   private UserRepository userRepository;
@@ -24,7 +19,7 @@ public class UserServiceTest {
   private User testUser;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     MockitoAnnotations.openMocks(this);
 
     // given
@@ -39,7 +34,7 @@ public class UserServiceTest {
   }
 
   /*@Test
-  public void createUser_validInputs_success() {
+  void createUser_validInputs_success() {
     // when -> any object is being saved in the userRepository -> return the dummy
     // testUser
     User createdUser = userService.createUser(testUser);
@@ -55,7 +50,7 @@ public class UserServiceTest {
   }
 
 *//*  @Test
-  public void createUser_duplicateName_throwsException() {
+  void createUser_duplicateName_throwsException() {
     // given -> a first user has already been created
     userService.createUser(testUser);
 
@@ -69,7 +64,7 @@ public class UserServiceTest {
   }*//*
 
   @Test
-  public void createUser_duplicateInputs_throwsException() {
+  void createUser_duplicateInputs_throwsException() {
     // given -> a first user has already been created
     userService.createUser(testUser);
 

@@ -38,20 +38,16 @@ public class UserController {
     this.friendshipService = friendshipService;
     this.notificationService = notificationService;
   }
-
   @PostMapping("/users/register") // test: POST 1,2
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public String createUser(@RequestBody UserPostDTO userPostDTO) {
     NullChecker.userPostDTOChecker(userPostDTO);
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
     User user = userService.createUser(userInput);
     return user.getToken();
   }
-
   @PostMapping("/users/login") // test: POST 3,4
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public String loginUser(@RequestBody UserLoginPostDTO userLoginPostDTO) {
     NullChecker.userLoginPostDTOChecker(userLoginPostDTO);
     User userInput = DTOMapper.INSTANCE.convertUserLoginPostDTOtoEntity(userLoginPostDTO);
@@ -59,39 +55,29 @@ public class UserController {
   }
   @PutMapping("/users/logout") // test not really needed
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void logoutUser(@RequestHeader ("Authorization") String token) {
     userService.logoutUser(token);
   }
-
   @GetMapping("/users") // test: GET 1,2
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public UserGetDTO getUser(@RequestHeader ("Authorization") String token) {
     User user = userService.getUserByToken(token);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
-
   @PutMapping("/users") // test: PUT 1,2
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateUser(@RequestHeader ("Authorization") String token, @RequestBody UserPutDTO userPutDTO) {
     NullChecker.userPutDTOChecker(userPutDTO);
     User user = DTOMapper.INSTANCE.convertUserPutDTOToEntity(userPutDTO);
     userService.updateUser(token, user);
   }
-
   @DeleteMapping("/users") // test: DELETE 1,2
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteUser(@RequestHeader ("Authorization") String token) {
     userService.deleteUser(token);
   }
-
-
   @GetMapping("/users/search") // test: GET 3,4
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<MatchingUserGetDTO> getMatchingUsers(@RequestHeader("Authorization") String token, @RequestParam("name") String name) {
     List<User> users = userService.getMatchingUsers(token, name);
     List<MatchingUserGetDTO> userGetDTOs = new ArrayList<>();
@@ -104,10 +90,8 @@ public class UserController {
     }
     return userGetDTOs;
   }
-
   @PostMapping("/users/feedback") // test: POST 5,6
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public void giveFeedback(@RequestHeader("Authorization") String token, @RequestBody MessagePostDTO messagePostDTO) {
     NullChecker.messagePostDTOChecker(messagePostDTO);
     User user = userService.getUserByToken(token);
@@ -115,11 +99,9 @@ public class UserController {
     userService.increaseLevel(user, 0.5);
   }
 
-
   // image
   @PutMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void saveProfilePicture(@RequestHeader("Authorization") String token, @RequestParam("image") MultipartFile imageFile) throws IOException {
     NullChecker.imageChecker(imageFile);
     User user = userService.getUserByToken(token);
@@ -128,24 +110,20 @@ public class UserController {
   }
   @GetMapping("/users/image")
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public byte[] getProfilePicture(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     return userService.getProfilePicture(user);
   }
   @DeleteMapping("/users/image")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteProfilePicture(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     userService.deleteProfilePicture(user);
   }
 
-
   // friends
   @GetMapping("/users/friends") // test: GET 5,6
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<FriendGetDTO> getAllAcceptedFriends(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<Friend> friends =  friendshipService.getAllAcceptedFriends(user);
@@ -160,7 +138,6 @@ public class UserController {
   }
   @GetMapping("/users/friends/requests") // test: GET 7,8
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<FriendGetDTO> getAllReceivedFriendRequests(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<Friend> friends = friendshipService.getAllReceivedFriendRequests(user);
@@ -173,7 +150,6 @@ public class UserController {
   }
   @GetMapping("/users/friends/pending") // test: GET 9, 10
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<FriendGetDTO> getAllPendingFriendRequests(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<Friend> friends = friendshipService.getAllPendingFriendRequests(user);
@@ -186,7 +162,6 @@ public class UserController {
   }
   @GetMapping("/users/friends/sent") // test: GET 11, 12
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<FriendGetDTO> getAllSentFriendRequests(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<Friend> friends = friendshipService.getAllSentFriendRequests(user);
@@ -197,21 +172,16 @@ public class UserController {
     }
     return friendGetDTOs;
   }
-
-
   @PostMapping("/users/friends/{friendId}") // test: POST 7, 8
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public void makeRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
     User sender = userService.getUserByToken(token);
     User receiver = userService.getUserById(friendId);
     friendshipService.sendRequest(sender, receiver);
     userService.increaseLevel(sender, 0.05);
   }
-
   @PutMapping("/users/friends/{friendId}") // test: PUT 3, 4
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void acceptRequest(@RequestHeader("Authorization") String token, @PathVariable Long friendId)  {
     User acceptor = userService.getUserByToken(token);
     User requester = userService.getUserById(friendId);
@@ -220,16 +190,13 @@ public class UserController {
   }
   @DeleteMapping("/users/friends/{friendId}") // test: DELETE 3, 4
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteFriend(@RequestHeader("Authorization") String token, @PathVariable Long friendId) {
     User deleter = userService.getUserByToken(token);
     User friend = userService.getUserById(friendId);
     friendshipService.deleteFriend(friend, deleter);
   }
-
   @GetMapping("/users/notifications") // test: GET 13, 14
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<NotificationGetDTO> getUserNotifications(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<UserNotification> notes = notificationService.getUserNotifications(user);
@@ -241,12 +208,8 @@ public class UserController {
     }
     return notificationGetDTOs;
   }
-
-
-
   @GetMapping("/users/packings") // test: GET 15,16
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public List<TemplateGetDTO> getItems(@RequestHeader("Authorization") String token) {
     User user = userService.getUserByToken(token);
     List<TemplatePackingItem> items = userService.getItems(user);
@@ -259,7 +222,6 @@ public class UserController {
   }
   @PostMapping("/users/packings") // test: POST 9, 10
   @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
   public TemplateGetDTO addItem(@RequestHeader("Authorization") String token, @RequestBody TemplateDTO templateDTO) {
     NullChecker.templateDTOChecker(templateDTO);
     User user = userService.getUserByToken(token);
@@ -268,7 +230,6 @@ public class UserController {
   }
   @PutMapping("/users/packings/{itemId}") // test: PUT 5, 6
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void updateItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId, @RequestBody TemplateDTO templateDTO) {
     NullChecker.templateDTOChecker(templateDTO);
     User user = userService.getUserByToken(token);
@@ -277,7 +238,6 @@ public class UserController {
   }
   @DeleteMapping("/users/packings/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
   public void deleteItem(@RequestHeader("Authorization") String token, @PathVariable("itemId") Long itemId) {
     User user = userService.getUserByToken(token);
     userService.deleteItem(user, itemId);

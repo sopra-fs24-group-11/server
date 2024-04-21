@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Connection {
@@ -17,20 +16,16 @@ public class Connection {
   private LocalDateTime departureTime;
 
   @Embedded
-  @AttributeOverrides({
-          @AttributeOverride(name = "stationName", column = @Column(name = "departure_station_name", nullable = false)),
-          @AttributeOverride(name = "stationCode", column = @Column(name = "departure_station_code", nullable = false))
-  })
+  @AttributeOverride(name = "stationName", column = @Column(name = "departure_station_name", nullable = false))
+  @AttributeOverride(name = "stationCode", column = @Column(name = "departure_station_code", nullable = false))
   private Station departurePoint;
 
   @Column(nullable = false)
   private LocalDateTime arrivalTime;
 
   @Embedded
-  @AttributeOverrides({
-          @AttributeOverride(name = "stationName", column = @Column(name = "arrival_station_name", nullable = false)),
-          @AttributeOverride(name = "stationCode", column = @Column(name = "arrival_station_code", nullable = false))
-  })
+  @AttributeOverride(name = "stationName", column = @Column(name = "arrival_station_name", nullable = false))
+  @AttributeOverride(name = "stationCode", column = @Column(name = "arrival_station_code", nullable = false))
   private Station arrivalPoint;
 
 

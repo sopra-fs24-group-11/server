@@ -31,20 +31,16 @@ public class ParticipantConnection implements Serializable {
   private LocalDateTime departureTime;
 
   @Embedded
-  @AttributeOverrides({
-          @AttributeOverride(name = "stationName", column = @Column(name = "departure_station_name", nullable = false)),
-          @AttributeOverride(name = "stationCode", column = @Column(name = "departure_station_code", nullable = false))
-  })
+  @AttributeOverride(name = "stationName", column = @Column(name = "departure_station_name", nullable = false))
+  @AttributeOverride(name = "stationCode", column = @Column(name = "departure_station_code", nullable = false))
   private Station departurePoint;
 
   @Column(nullable = false)
   private LocalDateTime arrivalTime;
 
   @Embedded
-  @AttributeOverrides({
-          @AttributeOverride(name = "stationName", column = @Column(name = "arrival_station_name", nullable = false)),
-          @AttributeOverride(name = "stationCode", column = @Column(name = "arrival_station_code", nullable = false))
-  })
+  @AttributeOverride(name = "stationName", column = @Column(name = "arrival_station_name", nullable = false))
+  @AttributeOverride(name = "stationCode", column = @Column(name = "arrival_station_code", nullable = false))
   private Station arrivalPoint;
 
   public Long getId() {

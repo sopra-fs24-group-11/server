@@ -32,7 +32,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,7 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TripController.class)
-public class TripControllerTest {
+class TripControllerTest {
   @Autowired
   private MockMvc mockMvc;
   @MockBean
@@ -67,7 +66,7 @@ public class TripControllerTest {
   private Item testIndividualItem;
   private Item testGroupItem;
   @BeforeEach
-  public void setup() {
+  void setup() {
     MockitoAnnotations.openMocks(this);
 
     // given
@@ -151,7 +150,7 @@ public class TripControllerTest {
   }
   // GET REQUESTS ----------------------------------------------------------------------------------------------------------------
   @Test
-  public void getTripInfo_success() throws Exception {
+  void getTripInfo_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -180,7 +179,7 @@ public class TripControllerTest {
 
 
   @Test
-  public void getTripParticipants_success() throws Exception {
+  void getTripParticipants_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -200,7 +199,7 @@ public class TripControllerTest {
             .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
   }
   @Test
-  public void getTripParticipants_notAdmin_throwsError() throws Exception {
+  void getTripParticipants_notAdmin_throwsError() throws Exception {
     // given
     User wrongUser = new User();
     wrongUser.setId(10L);
@@ -220,7 +219,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getTripHistory_success() throws Exception {
+  void getTripHistory_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     List<TripParticipant> participants = new ArrayList<>(); participants.add(testTripParticipant);
@@ -248,7 +247,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getCurrentTrips_success() throws Exception {
+  void getCurrentTrips_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     List<TripParticipant> participants = new ArrayList<>(); participants.add(testTripParticipant);
@@ -276,7 +275,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getUnansweredTrips_success() throws Exception {
+  void getUnansweredTrips_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     List<TripParticipant> participants = new ArrayList<>(); participants.add(testTripParticipant);
@@ -304,7 +303,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getFavoriteTrips_success() throws Exception {
+  void getFavoriteTrips_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     List<TripParticipant> participants = new ArrayList<>(); participants.add(testTripParticipant);
@@ -333,7 +332,7 @@ public class TripControllerTest {
 
 // Problem below: I think it's that the method is static.
   /*@Test
-  public void getStations_success() throws Exception {
+  void getStations_success() throws Exception {
     // given
     String name = "Como S. Giovanni";
     Station station = new Station();
@@ -359,7 +358,7 @@ public class TripControllerTest {
 
 
   @Test
-  public void isAdmin_success() throws Exception {
+  void isAdmin_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -379,7 +378,7 @@ public class TripControllerTest {
 
 
   @Test
-  public void getMembersWithImages_success() throws Exception {
+  void getMembersWithImages_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -400,7 +399,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getConnection_success() throws Exception {
+  void getConnection_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -428,7 +427,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getConnections_success() throws Exception {
+  void getConnections_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -458,7 +457,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getTripNotifications_success() throws Exception {
+  void getTripNotifications_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -480,7 +479,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getTodos_success() throws Exception {
+  void getTodos_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -504,7 +503,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getGroupPackings_success() throws Exception {
+  void getGroupPackings_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -528,7 +527,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void getIndividualPackings_success() throws Exception {
+  void getIndividualPackings_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
@@ -555,7 +554,7 @@ public class TripControllerTest {
 // POST REQUESTS ----------------------------------------------------------------------------------------------------------------
 
   @Test
-  public void createTrip_success() throws Exception {
+  void createTrip_success() throws Exception {
     // given
     TripPostDTO tripPostDTO = new TripPostDTO();
     tripPostDTO.setParticipants(new ArrayList<>());
@@ -581,7 +580,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void saveConnection_success() throws Exception {
+  void saveConnection_success() throws Exception {
     // given
     ConnectionDTO connectionDTO = new ConnectionDTO();
     connectionDTO.setDepartureTime(LocalDateTime.of(2024,11,11,11,11));
@@ -610,7 +609,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void createTodo_success() throws Exception {
+  void createTodo_success() throws Exception {
     // given
     ItemPostDTO itemPostDTO = new ItemPostDTO();
     itemPostDTO.setItem("Hotel reservation");
@@ -636,7 +635,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void createGroupPacking_success() throws Exception {
+  void createGroupPacking_success() throws Exception {
     // given
     ItemPostDTO itemPostDTO = new ItemPostDTO();
     itemPostDTO.setItem("Shirt");
@@ -662,7 +661,7 @@ public class TripControllerTest {
   }
 
   @Test
-  public void createIndividualPacking_success() throws Exception {
+  void createIndividualPacking_success() throws Exception {
     // given
     ItemPostDTO itemPostDTO = new ItemPostDTO();
     itemPostDTO.setItem("Car");
@@ -688,12 +687,12 @@ public class TripControllerTest {
   }
 
   @Test
-  public void addItem_success() throws Exception {
+  void addItem_success() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
     given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
-    doNothing().when(listService).transferList(eq(testTrip), eq(testUser), eq(testTripParticipant), Mockito.any());
+    doNothing().when(listService).transferList(eq(testTrip), eq(testTripParticipant), Mockito.any());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest = post("/trips/{tripId}/transfer/packings", testTrip.getId())
@@ -707,7 +706,7 @@ public class TripControllerTest {
 
 // PUT REQUESTS ----------------------------------------------------------------------------------------------------------------
 @Test
-public void updateTrip_success() throws Exception {
+void updateTrip_success() throws Exception {
   // given
   TripPutDTO tripPutDTO = new TripPutDTO();
   tripPutDTO.setParticipants(new ArrayList<>());
@@ -729,7 +728,7 @@ public void updateTrip_success() throws Exception {
 }
 
   @Test
-  public void markTripAsFavorite_success() throws Exception {
+  void markTripAsFavorite_success() throws Exception {
 
     MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/favorites", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -741,7 +740,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void acceptInvitation_success() throws Exception {
+  void acceptInvitation_success() throws Exception {
 
     MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/invitation", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -753,7 +752,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void newAdmin_success() throws Exception {
+  void newAdmin_success() throws Exception {
 
     MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/admin/{adminId}", testTrip.getId(), testUser.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -765,7 +764,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void updateConnection_success() throws Exception {
+  void updateConnection_success() throws Exception {
     // given
     ConnectionDTO connectionDTO = new ConnectionDTO();
     connectionDTO.setDepartureTime(LocalDateTime.of(2024, 11, 11, 11, 11));
@@ -797,7 +796,7 @@ public void updateTrip_success() throws Exception {
 
 
   @Test
-  public void updateTodos_success() throws Exception {
+  void updateTodos_success() throws Exception {
     // given
     ItemPutDTO itemPutDTO = new ItemPutDTO();
     itemPutDTO.setItem("Hotel reservation");
@@ -815,7 +814,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void updateResponsible_success() throws Exception {
+  void updateResponsible_success() throws Exception {
     MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/todos/{itemId}/responsible", testTrip.getId(), testTodoItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -827,7 +826,7 @@ public void updateTrip_success() throws Exception {
 
 
   @Test
-  public void updateGroupPackings_success() throws Exception {
+  void updateGroupPackings_success() throws Exception {
     // given
     ItemPutDTO itemPutDTO = new ItemPutDTO();
     itemPutDTO.setItem("Shirt");
@@ -845,7 +844,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void updateGroupPackingsResponsible_success() throws Exception {
+  void updateGroupPackingsResponsible_success() throws Exception {
     MockHttpServletRequestBuilder putRequest = put("/trips/{tripId}/groupPackings/{itemId}/responsible", testTrip.getId(), testGroupItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -856,7 +855,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void updateIndividualPackings_success() throws Exception {
+  void updateIndividualPackings_success() throws Exception {
     // given
     ItemPutDTO itemPutDTO = new ItemPutDTO();
     itemPutDTO.setItem("Car");
@@ -877,7 +876,7 @@ public void updateTrip_success() throws Exception {
   // DELETE REQUESTS ----------------------------------------------------------------------------------------------------------------
 
   @Test
-  public void rejectInvitation_success() throws Exception {
+  void rejectInvitation_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/invitation", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -887,7 +886,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void leaveTrip_success() throws Exception {
+  void leaveTrip_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/exit", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -896,7 +895,7 @@ public void updateTrip_success() throws Exception {
     mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
   }
   @Test
-  public void deleteTrip_success() throws Exception {
+  void deleteTrip_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -906,7 +905,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void deleteConnection_success() throws Exception {
+  void deleteConnection_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/connection", testTrip.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -915,7 +914,7 @@ public void updateTrip_success() throws Exception {
     mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
   }
   @Test
-  public void deleteResponsible_success() throws Exception {
+  void deleteResponsible_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/todos/{itemId}/responsible", testTrip.getId(), testTodoItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -925,7 +924,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void deleteTodo_success() throws Exception {
+  void deleteTodo_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/todos/{itemId}", testTrip.getId(), testTodoItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -935,7 +934,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void deleteGroupPackingsResponsible_success() throws Exception {
+  void deleteGroupPackingsResponsible_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/groupPackings/{itemId}/responsible", testTrip.getId(), testTodoItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -945,7 +944,7 @@ public void updateTrip_success() throws Exception {
   }
 
   @Test
-  public void deleteGroupPacking_success() throws Exception {
+  void deleteGroupPacking_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/groupPackings/{itemId}", testTrip.getId(), testTodoItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -954,7 +953,7 @@ public void updateTrip_success() throws Exception {
     mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
   }
   @Test
-  public void deleteIndividualPacking_success() throws Exception {
+  void deleteIndividualPacking_success() throws Exception {
     MockHttpServletRequestBuilder deleteRequest = delete("/trips/{tripId}/individualPackings/{itemId}", testTrip.getId(), testTodoItem.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)

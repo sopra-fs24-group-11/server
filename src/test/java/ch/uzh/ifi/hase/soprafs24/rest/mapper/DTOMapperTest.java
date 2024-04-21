@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Tests if the mapping between the internal and the external/API representation
  * works.
  */
-public class DTOMapperTest {
+class DTOMapperTest {
   @Test
-  public void testConvertUserPostDTOtoEntity() {
+  void testConvertUserPostDTOtoEntity() {
     // create UserPostDTO
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("1234");
@@ -34,7 +34,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToUserGetDTO() {
+  void testConvertEntityToUserGetDTO() {
 
     // create User
     User user = new User();
@@ -61,7 +61,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertUserLoginPostDTOtoEntity() {
+  void testConvertUserLoginPostDTOtoEntity() {
     // Create UserLoginPostDTO
     UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
     userLoginPostDTO.setPassword("password123");
@@ -76,7 +76,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertUserPutDTOToEntity() {
+  void testConvertUserPutDTOToEntity() {
     // Create UserPutDTO
     UserPutDTO userPutDTO = new UserPutDTO();
     userPutDTO.setPassword("password123");
@@ -95,7 +95,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToMatchingUserGetDTO() {
+  void testConvertEntityToMatchingUserGetDTO() {
     // Create User
     User user = new User();
     user.setId(1L);
@@ -112,7 +112,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToFriendGetDTO() {
+  void testConvertEntityToFriendGetDTO() {
     // Create Friend
     Friend friend = new Friend();
     friend.setFriendId(2L);
@@ -131,7 +131,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertTripPostDTOtoEntity() {
+  void testConvertTripPostDTOtoEntity() {
     // Create TripPostDTO
     TripPostDTO tripPostDTO = new TripPostDTO();
     tripPostDTO.setTripName("Test Trip");
@@ -153,7 +153,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertTripPutDTOtoEntity() {
+  void testConvertTripPutDTOtoEntity() {
     // Create TripPutDTO
     TripPutDTO tripPutDTO = new TripPutDTO();
     tripPutDTO.setTripName("Updated Trip");
@@ -177,7 +177,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToParticipantGetDTO() {
+  void testConvertEntityToParticipantGetDTO() {
     // Create User
     User user = new User();
     user.setId(123L);
@@ -192,7 +192,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToBasicTripInfoGetDTO() {
+  void testConvertEntityToBasicTripInfoGetDTO() {
     // Create Trip
     Trip trip = new Trip();
     trip.setId(456L);
@@ -226,7 +226,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertConnectionDTOToEntity() {
+  void testConvertConnectionDTOToEntity() {
     // Create ConnectionDTO
     ConnectionDTO connectionDTO = new ConnectionDTO();
     connectionDTO.setConnectionType(ConnectionType.TRAIN);
@@ -255,7 +255,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToConnectionDTO() {
+  void testConvertEntityToConnectionDTO() {
     // Create ParticipantConnection
     ParticipantConnection participantConnection = new ParticipantConnection();
     participantConnection.setConnectionType(ConnectionType.BUS);
@@ -284,7 +284,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertToDoPostDTOToEntity() {
+  void testConvertToDoPostDTOToEntity() {
     // Create ItemPostDTO
     ItemPostDTO itemPostDTO = new ItemPostDTO();
     itemPostDTO.setItem("Buy groceries");
@@ -297,7 +297,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertItemPutDTOToEntity() {
+  void testConvertItemPutDTOToEntity() {
     // Create ItemPutDTO
     ItemPutDTO itemPutDTO = new ItemPutDTO();
     itemPutDTO.setItem("Do laundry");
@@ -312,7 +312,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToItemGetDTO() {
+  void testConvertEntityToItemGetDTO() {
     // Create Item
     Item item = new Item();
     item.setId(1L);
@@ -331,7 +331,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertUserNotificationToNotificationGetDTO() {
+  void testConvertUserNotificationToNotificationGetDTO() {
     // Create UserNotification
     UserNotification userNotification = new UserNotification();
     userNotification.setMessage("New message received");
@@ -346,7 +346,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToNotificationGetDTO() {
+  void testConvertEntityToNotificationGetDTO() {
     // Create TripNotification
     TripNotification tripNotification = new TripNotification();
     tripNotification.setMessage("New trip created");
@@ -361,7 +361,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToMemberGetDTO() {
+  void testConvertEntityToMemberGetDTO() {
     // Create User
     User user = new User();
     user.setId(1L);
@@ -381,7 +381,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertTemplateDTOToEntity() {
+  void testConvertTemplateDTOToEntity() {
     // Create TemplateDTO
     TemplateDTO templateDTO = new TemplateDTO();
     templateDTO.setItem("Toothbrush");
@@ -394,7 +394,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testConvertEntityToTemplateGetDTO() {
+  void testConvertEntityToTemplateGetDTO() {
     // Create TemplatePackingItem
     TemplatePackingItem templatePackingItem = new TemplatePackingItem();
     templatePackingItem.setId(1L);

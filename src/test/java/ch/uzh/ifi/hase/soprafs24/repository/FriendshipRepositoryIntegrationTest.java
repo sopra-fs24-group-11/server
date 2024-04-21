@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class FriendshipRepositoryIntegrationTest {
+class FriendshipRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -38,7 +38,7 @@ public class FriendshipRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByFriend1_success() {
+  void findAllByFriend1_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -59,12 +59,12 @@ public class FriendshipRepositoryIntegrationTest {
 
     // then
     assertNotNull(friendships);
-    assertEquals(friendships.size(), 1);
+    assertEquals(1, friendships.size());
     assertTrue(friendships.contains(friendship1));
   }
 
   @Test
-  public void findAllByFriend2_success() {
+  void findAllByFriend2_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -85,12 +85,12 @@ public class FriendshipRepositoryIntegrationTest {
 
     // then
     assertNotNull(friendships);
-    assertEquals(friendships.size(), 1);
+    assertEquals(1, friendships.size());
     assertTrue(friendships.contains(friendship1));
   }
 
   @Test
-  public void findByFriend1AndFriend2_success() {
+  void findByFriend1AndFriend2_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -115,7 +115,7 @@ public class FriendshipRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByFriend1AndStatus_success() {
+  void findAllByFriend1AndStatus_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -136,12 +136,12 @@ public class FriendshipRepositoryIntegrationTest {
 
     // then
     assertNotNull(friendships);
-    assertEquals(friendships.size(), 1);
+    assertEquals(1, friendships.size());
     assertTrue(friendships.contains(friendship1));
   }
 
   @Test
-  public void findAllByFriend2AndStatus_success() {
+  void findAllByFriend2AndStatus_success() {
     // given
     User user1 = createUserDummy("user1", "abc");
     User user2 = createUserDummy("user2", "123");
@@ -162,7 +162,7 @@ public class FriendshipRepositoryIntegrationTest {
 
     // then
     assertNotNull(friendships);
-    assertEquals(friendships.size(), 1);
+    assertEquals(1, friendships.size());
     assertTrue(friendships.contains(friendship1));
   }
 }

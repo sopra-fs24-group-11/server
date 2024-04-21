@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class UserRepositoryIntegrationTest {
+class UserRepositoryIntegrationTest {
 
   @Autowired
   private TestEntityManager entityManager;
@@ -37,7 +37,7 @@ public class UserRepositoryIntegrationTest {
   }
 
   @Test
-  public void findByUsername_success() {
+  void findByUsername_success() {
     // given
     User user = createUserDummy("firstname@lastname", "123abc");
 
@@ -60,7 +60,7 @@ public class UserRepositoryIntegrationTest {
   }
 
   @Test
-  public void findByToken_success() {
+  void findByToken_success() {
     // given
     User user = createUserDummy("firstname@lastname", "123abc");
 
@@ -83,7 +83,7 @@ public class UserRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByUsernameStartsWith_success() {
+  void findAllByUsernameStartsWith_success() {
     // given
     User user1 = createUserDummy("found1", "123");
     User user2 = createUserDummy("found2", "234");;
@@ -98,7 +98,7 @@ public class UserRepositoryIntegrationTest {
     List<User> found = userRepository.findAllByUsernameStartsWith("fo");
 
     // then
-    assertEquals(found.size(), 2);
+    assertEquals(2, found.size());
     assertTrue(found.contains(user1)); // User user1 should be found
     assertTrue(found.contains(user2)); // User user2 should be found
     assertFalse(found.contains(user3)); // User user3 should not be found

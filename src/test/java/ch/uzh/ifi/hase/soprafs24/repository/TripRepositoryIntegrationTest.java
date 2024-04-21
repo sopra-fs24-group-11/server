@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class TripRepositoryIntegrationTest {
+class TripRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -54,7 +54,7 @@ public class TripRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByCompletedFalseAndMeetUpTimeBefore_success() {
+  void findAllByCompletedFalseAndMeetUpTimeBefore_success() {
     // given
     User user =  createUserDummy();
     entityManager.persist(user);
@@ -68,7 +68,7 @@ public class TripRepositoryIntegrationTest {
     List<Trip> found = tripRepository.findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.of(2024,11,11,11,11));
 
     // then
-    assertEquals(found.size(), 1);
+    assertEquals(1, found.size());
     assertEquals(found.get(0), trip);
   }
 }

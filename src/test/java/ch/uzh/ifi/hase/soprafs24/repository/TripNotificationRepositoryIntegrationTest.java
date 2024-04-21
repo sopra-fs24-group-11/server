@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-public class TripNotificationRepositoryIntegrationTest {
+class TripNotificationRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -56,7 +56,7 @@ public class TripNotificationRepositoryIntegrationTest {
   }
 
   @Test
-  public void findAllByTrip_success() {
+  void findAllByTrip_success() {
     // given
     User user =  createUserDummy();
     entityManager.persist(user);
@@ -84,13 +84,13 @@ public class TripNotificationRepositoryIntegrationTest {
     List<TripNotification> found = tripNotificationRepository.findAllByTrip(trip);
 
     // then
-    assertEquals(found.size(), 2);
+    assertEquals(2, found.size());
     assertTrue(found.contains(tn1));
     assertTrue(found.contains(tn2));
   }
 
   @Test
-  public void deleteAllByTrip_success() {
+  void deleteAllByTrip_success() {
     // given
     User user =  createUserDummy();
     entityManager.persist(user);
@@ -119,7 +119,7 @@ public class TripNotificationRepositoryIntegrationTest {
 
     // then
     List<TripNotification> found = tripNotificationRepository.findAllByTrip(trip);
-    assertEquals(found.size(), 0);
+    assertEquals(0, found.size());
   }
 
 }

@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
-public class TripServiceIntegrationTest {
+class TripServiceIntegrationTest {
 
   @Qualifier("tripParticipantRepository")
   @Autowired
@@ -68,7 +67,7 @@ public class TripServiceIntegrationTest {
   private Friendship testFriendship;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     // Clear any existing data in the repositories
     userRepository.deleteAll();
     userRepository.flush();
@@ -165,20 +164,21 @@ public class TripServiceIntegrationTest {
   }
 
   @Test
-  public void testGetTripById_success() {
+  void testGetTripById_success() {
     Trip trip = tripService.getTripById(testTrip1.getId());
 
     assertEquals(testTrip1.getId(), trip.getId());
   }
 
   @Test
-  public void testGetTripById_notExists_throwsError() {
+  void testGetTripById_notExists_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripService.getTripById(102031321L));
   }
 
   @Test
-  public void testCreateTrip_success() {
-    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
+  void testCreateTrip_success() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser2.getId());
+    Long id = tripService.createTrip(testTrip3, testUser1, ids);
 
     Trip trip = tripService.getTripById(id);
 
@@ -187,16 +187,18 @@ public class TripServiceIntegrationTest {
     assertEquals(testTrip3.getTripDescription(), trip.getTripDescription());
   }
   @Test
-  public void testCreateTrip_inviteYourself_throwsError() {
-    assertThrows(ResponseStatusException.class, () -> tripService.createTrip(testTrip3, testUser1, asList(testUser1.getId())));
+  void testCreateTrip_inviteYourself_throwsError() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser1.getId());
+    assertThrows(ResponseStatusException.class, () -> tripService.createTrip(testTrip3, testUser1, ids));
   }
   @Test
-  public void testCreateTrip_notAFriend_throwsError() {
-    assertThrows(ResponseStatusException.class, () -> tripService.createTrip(testTrip3, testUser1, asList(testUser3.getId())));
+  void testCreateTrip_notAFriend_throwsError() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser3.getId());
+    assertThrows(ResponseStatusException.class, () -> tripService.createTrip(testTrip3, testUser1, ids));
   }
 
   @Test
-  public void testUpdateTrip_success() {
+  void testUpdateTrip_success() {
     TripParticipant testParticipant1 = new TripParticipant();
     testParticipant1.setTrip(testTrip2);
     testParticipant1.setStatus(InvitationStatus.ACCEPTED);
@@ -204,7 +206,8 @@ public class TripServiceIntegrationTest {
     testParticipant1.setUser(testUser1);
     tripParticipantRepository.save(testParticipant1);
     tripParticipantRepository.flush();
-    tripService.updateTrip(testTrip2, testTrip3, testUser1, asList(testUser2.getId()));
+    List<Long> ids = new ArrayList<>(); ids.add(testUser2.getId());
+    tripService.updateTrip(testTrip2, testTrip3, testUser1, ids);
 
     Trip trip = tripService.getTripById(testTrip2.getId());
 
@@ -213,24 +216,28 @@ public class TripServiceIntegrationTest {
     assertEquals(testTrip3.getTripDescription(), trip.getTripDescription());
   }
   @Test
-  public void testUpdateTrip_inviteYourself_throwsError() {
-    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser1, asList(testUser1.getId())));
+  void testUpdateTrip_inviteYourself_throwsError() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser1.getId());
+    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser1, ids));
   }
   @Test
-  public void testUpdateTrip_notAFriend_throwsError() {
-    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser1, asList(testUser3.getId())));
+  void testUpdateTrip_notAFriend_throwsError() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser3.getId());
+    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser1, ids));
   }
   @Test
-  public void testUpdateTrip_notAdmin_throwsError() {
-    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser2, asList(testUser1.getId())));
+  void testUpdateTrip_notAdmin_throwsError() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser1.getId());
+    assertThrows(ResponseStatusException.class, () -> tripService.updateTrip(testTrip2, testTrip3, testUser2, ids));
   }
   @Test
-  public void testIsAdmin_success() {
+  void testIsAdmin_success() {
     assertTrue(tripService.isAdmin(testTrip1, testUser1));
   }
   @Test
-  public void testNewAdmin_success() {
-    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
+  void testNewAdmin_success() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser2.getId());
+    Long id = tripService.createTrip(testTrip3, testUser1, ids);
     Trip trip = tripService.getTripById(id);
     tripService.newAdmin(trip, testUser1, testUser1);
     trip = tripService.getTripById(id);
@@ -239,32 +246,34 @@ public class TripServiceIntegrationTest {
     assertEquals(testUser1.getId(), trip.getAdministrator().getId());
   }
   @Test
-  public void testNewAdmin_notAdmin_throwsError() {
+  void testNewAdmin_notAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripService.newAdmin(testTrip1, testUser2, testUser2));
   }
   @Test
-  public void testNewAdmin_notYetAccepted_throwsError() {
-    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
+  void testNewAdmin_notYetAccepted_throwsError() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser2.getId());
+    Long id = tripService.createTrip(testTrip3, testUser1, ids);
     Trip trip = tripService.getTripById(id);
     assertThrows(ResponseStatusException.class, () -> tripService.newAdmin(trip, testUser1, testUser2));
   }
   @Test
-  public void testIsOngoing_success() {
+  void testIsOngoing_success() {
     testTrip1.setCompleted(false);
     assertDoesNotThrow(() -> tripService.isOngoing(testTrip1));
   }
   @Test
-  public void testIsOngoing_tripCompleted_throwsError() {
+  void testIsOngoing_tripCompleted_throwsError() {
     testTrip1.setCompleted(true);
     assertThrows(ResponseStatusException.class, () -> tripService.isOngoing(testTrip1));
   }
   @Test
-  public void testDeleteTrip_notAdmin_throwsError() {
+  void testDeleteTrip_notAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripService.deleteTrip(testTrip1, testUser2));
   }
   @Test
-  public void testDeleteTrip_success() {
-    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
+  void testDeleteTrip_success() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser2.getId());
+    Long id = tripService.createTrip(testTrip3, testUser1, ids);
     Trip trip = tripService.getTripById(id);
     tripService.deleteTrip(trip, testUser1);
 
@@ -272,8 +281,9 @@ public class TripServiceIntegrationTest {
 
   }
   @Test
-  public void testMarkTripsAsCompleted_success() {
-    Long id = tripService.createTrip(testTrip3, testUser1, asList(testUser2.getId()));
+  void testMarkTripsAsCompleted_success() {
+    List<Long> ids = new ArrayList<>(); ids.add(testUser2.getId());
+    Long id = tripService.createTrip(testTrip3, testUser1, ids);
     tripService.markTripsAsCompleted();
 
     List<Trip> ongoingTrips = tripRepository.findAllByCompletedFalseAndMeetUpTimeBefore(LocalDateTime.of(2020,11,11,11,11));

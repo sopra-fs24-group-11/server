@@ -14,20 +14,20 @@ import java.util.List;
 
 @WebAppConfiguration
 @SpringBootTest
-public class ConnectionServiceIntegrationTest {
+class ConnectionServiceIntegrationTest {
 
   @Autowired
   private ConnectionService connectionService;
   /*
   @Test
-  public void getLocationsCoord_validInput_listOfStations() {
+  void getLocationsCoord_validInput_listOfStations() {
     Station station = ConnectionService.getLocationsCoord("47.476417", "8.307706");
 
     assertNotNull(station);
     assertEquals("Baden", station.getStationCode());
   }*/
   @Test
-  public void getLocationsName_validInput_listOfStations() {
+  void getLocationsName_validInput_listOfStations() {
     List<Station> stations = ConnectionService.getLocationsName("Zurich");
 
     assertEquals("Zürich HB", stations.get(0).getStationName());

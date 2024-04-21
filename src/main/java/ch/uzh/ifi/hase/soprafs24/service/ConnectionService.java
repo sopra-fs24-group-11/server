@@ -6,8 +6,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.entity.Connection;
 import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
 import ch.uzh.ifi.hase.soprafs24.repository.ParticipantConnectionRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -26,7 +24,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -35,8 +32,6 @@ import java.util.List;
 @Service
 @Transactional
 public class ConnectionService {
-
-  private final Logger log = LoggerFactory.getLogger(ConnectionService.class);
   private final ParticipantConnectionRepository participantConnectionRepository;
   private final NotificationService notificationService;
 

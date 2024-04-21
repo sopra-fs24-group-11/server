@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
-public class TripParticipantServiceIntegrationTest {
+class TripParticipantServiceIntegrationTest {
 
   @Qualifier("tripParticipantRepository")
   @Autowired
@@ -60,7 +60,7 @@ public class TripParticipantServiceIntegrationTest {
   private TripParticipant testParticipant2;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     // Clear any existing data in the repositories
     userRepository.deleteAll();
     userRepository.flush();
@@ -141,7 +141,7 @@ public class TripParticipantServiceIntegrationTest {
   }
 
   @Test
-  public void testStoreParticipants_success() {
+  void testStoreParticipants_success() {
     // Prepare invited users
     List<User> invited = new ArrayList<>();
     invited.add(testUser2);
@@ -157,7 +157,7 @@ public class TripParticipantServiceIntegrationTest {
   }
 
   @Test
-  public void testStoreParticipant_success() {
+  void testStoreParticipant_success() {
     tripParticipantService.storeParticipant(testTrip1, testUser1, testUser2);
 
     // Verify that the trip participant has been created
@@ -169,7 +169,7 @@ public class TripParticipantServiceIntegrationTest {
   }
 
   @Test
-  public void testDeleteAllForAUser_success() {
+  void testDeleteAllForAUser_success() {
     tripParticipantService.deleteAllForAUser(testUser2);
 
     // Verify that all trip participants of the user have been deleted
@@ -179,19 +179,19 @@ public class TripParticipantServiceIntegrationTest {
   }
 
   @Test
-  public void testDeleteAllForAUser_isAdmin_throwsError() {
+  void testDeleteAllForAUser_isAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.deleteAllForAUser(testUser1));
   }
   @Test
-  public void testIsPartOfTripAndHasAccepted_success() {
+  void testIsPartOfTripAndHasAccepted_success() {
     assertDoesNotThrow(() -> tripParticipantService.isPartOfTripAndHasAccepted(testUser1, testTrip2));
   }
   @Test
-  public void testIsPartOfTripAndHasAccepted_notAccepted_throwsError() {
+  void testIsPartOfTripAndHasAccepted_notAccepted_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.isPartOfTripAndHasAccepted(testUser2, testTrip2));
   }
   @Test
-  public void testMarkTripAsFavorite_success() {
+  void testMarkTripAsFavorite_success() {
     // when
     tripParticipantService.markTripAsFavorite(testUser1, testTrip2);
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(testUser1, testTrip2);
@@ -200,12 +200,12 @@ public class TripParticipantServiceIntegrationTest {
     assertTrue(participant.isFavouriteTrip());
   }
   @Test
-  public void testMarkTripAsFavorite_notParticipant_throwsError() {
+  void testMarkTripAsFavorite_notParticipant_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.markTripAsFavorite(testUser2, testTrip1));
   }
 
   @Test
-  public void testAcceptInvitation_success() {
+  void testAcceptInvitation_success() {
     // when
     tripParticipantService.acceptInvitation(testUser2, testTrip2);
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(testUser1, testTrip2);
@@ -214,12 +214,12 @@ public class TripParticipantServiceIntegrationTest {
     assertEquals(InvitationStatus.ACCEPTED, participant.getStatus());
   }
   @Test
-  public void testAcceptInvitation_notParticipant_throwsError() {
+  void testAcceptInvitation_notParticipant_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.acceptInvitation(testUser2, testTrip1));
   }
 
   @Test
-  public void testRejectInvitation_success() {
+  void testRejectInvitation_success() {
     // when
     tripParticipantService.rejectInvitation(testUser2, testTrip2);
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(testUser2, testTrip2);
@@ -228,20 +228,20 @@ public class TripParticipantServiceIntegrationTest {
     assertNull(participant);
   }
   @Test
-  public void testRejectInvitation_notParticipant_throwsError() {
+  void testRejectInvitation_notParticipant_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.rejectInvitation(testUser2, testTrip1));
   }
   @Test
-  public void testRejectInvitation_isAdmin_throwsError() {
+  void testRejectInvitation_isAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.rejectInvitation(testUser1, testTrip2));
   }
   @Test
-  public void testRejectInvitation_alreadyAccepted_throwsError() {
+  void testRejectInvitation_alreadyAccepted_throwsError() {
     tripParticipantService.acceptInvitation(testUser2, testTrip2);
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.rejectInvitation(testUser2, testTrip2));
   }
   @Test
-  public void testLeaveTrip_success() {
+  void testLeaveTrip_success() {
     // when
     tripParticipantService.acceptInvitation(testUser2, testTrip2);
     tripParticipantService.leaveTrip(testUser2, testTrip2);
@@ -251,20 +251,20 @@ public class TripParticipantServiceIntegrationTest {
     assertNull(participant);
   }
   @Test
-  public void testLeaveTrip_notParticipant_throwsError() {
+  void testLeaveTrip_notParticipant_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.leaveTrip(testUser2, testTrip1));
   }
   @Test
-  public void testLeaveTrip_isAdmin_throwsError() {
+  void testLeaveTrip_isAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.leaveTrip(testUser1, testTrip2));
   }
   @Test
-  public void testLeaveTrip_notYetAccepted_throwsError() {
+  void testLeaveTrip_notYetAccepted_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.leaveTrip(testUser2, testTrip2));
   }
 
   @Test
-  public void testRemoveMemberFromTrip_success() {
+  void testRemoveMemberFromTrip_success() {
     // when
     tripParticipantService.removeMemberFromTrip(testUser2, testUser1, testTrip2);
 
@@ -274,21 +274,21 @@ public class TripParticipantServiceIntegrationTest {
     assertNull(participant);
   }
   @Test
-  public void testRemoveMemberFromTrip_notParticipant_throwsError() {
+  void testRemoveMemberFromTrip_notParticipant_throwsError() {
     // when
     tripParticipantService.rejectInvitation(testUser2, testTrip2);
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.removeMemberFromTrip(testUser2, testUser1, testTrip2));
   }
   @Test
-  public void testRemoveMemberFromTrip_notAdmin_throwsError() {
+  void testRemoveMemberFromTrip_notAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.removeMemberFromTrip(testUser1, testUser2, testTrip2));
   }
   @Test
-  public void testRemoveMemberFromTrip_isAdmin_throwsError() {
+  void testRemoveMemberFromTrip_isAdmin_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.removeMemberFromTrip(testUser1, testUser1, testTrip2));
   }
   @Test
-  public void testDeleteEverythingRelatedToATrip_success() {
+  void testDeleteEverythingRelatedToATrip_success() {
     // when
     tripParticipantService.deleteEverythingRelatedToATrip(testTrip2);
 
@@ -300,7 +300,7 @@ public class TripParticipantServiceIntegrationTest {
 
 
   @Test
-  public void testGetTripParticipant_success() {
+  void testGetTripParticipant_success() {
     // when
     TripParticipant participant = tripParticipantService.getTripParticipant(testTrip2, testUser1);
 
@@ -308,12 +308,12 @@ public class TripParticipantServiceIntegrationTest {
     assertEquals(testUser1.getId(), participant.getUser().getId());
   }
   @Test
-  public void testGetTripParticipant_notParticipant_throwsError() {
+  void testGetTripParticipant_notParticipant_throwsError() {
     assertThrows(ResponseStatusException.class, () -> tripParticipantService.getTripParticipant(testTrip1, testUser1));
   }
 
   @Test
-  public void testGetTripUsers_success() {
+  void testGetTripUsers_success() {
     // when
     List<User> users = tripParticipantService.getTripUsers(testTrip2);
 
@@ -322,7 +322,7 @@ public class TripParticipantServiceIntegrationTest {
     assertEquals(2, users.size());
   }
   @Test
-  public void testGetTripUsersWhoHaveAccepted_success() {
+  void testGetTripUsersWhoHaveAccepted_success() {
     // when
     List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(testTrip2);
 
@@ -331,7 +331,7 @@ public class TripParticipantServiceIntegrationTest {
     assertEquals(1, users.size());
   }
   @Test
-  public void testGetTripUsersWithoutAdmin_success() {
+  void testGetTripUsersWithoutAdmin_success() {
     // when
     List<User> users = tripParticipantService.getTripUsersWithoutAdmin(testTrip2);
 

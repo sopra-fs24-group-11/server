@@ -6,8 +6,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.entity.UserNotification;
 import ch.uzh.ifi.hase.soprafs24.repository.TripNotificationRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserNotificationRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +17,6 @@ import java.util.List;
 @Service
 @Transactional
 public class NotificationService {
-
-  private final Logger log = LoggerFactory.getLogger(NotificationService.class);
-
   private final UserNotificationRepository userNotificationRepository;
   private final TripNotificationRepository tripNotificationRepository;
 

@@ -6,9 +6,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.Friend;
 import ch.uzh.ifi.hase.soprafs24.entity.Friendship;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.FriendshipRepository;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.MatchingUserGetDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -23,8 +20,6 @@ import java.util.List;
 @Service
 @Transactional
 public class FriendshipService {
-  private final Logger log = LoggerFactory.getLogger(FriendshipService.class);
-
   private final FriendshipRepository friendshipRepository;
 
   private final NotificationService notificationService;
@@ -97,7 +92,6 @@ public class FriendshipService {
     return result;
   }
 
-
   public List<Friend> getAllAcceptedFriends(User user) {
     List<Friend> result = new ArrayList<>();
     List<Friendship> listOne = friendshipRepository.findAllByFriend1AndStatus(user, FriendShipStatus.ACCEPTED);
@@ -129,9 +123,6 @@ public class FriendshipService {
 
     return result;
   }
-
-
-
 
   public void sendRequest(User sender, User receiver) {
     if (sender == receiver) {
@@ -165,8 +156,6 @@ public class FriendshipService {
     notificationService.createUserNotification(requester, String.format("%s accepted your friend request", acceptor.getUsername()));
   }
 
-
-
   public void deleteFriend(User friend, User deleter) {
     Friendship friendship1 = friendshipRepository.findByFriend1AndFriend2(deleter, friend);
     Friendship friendship2 = friendshipRepository.findByFriend1AndFriend2(friend, deleter);
@@ -187,7 +176,7 @@ public class FriendshipService {
         notificationService.createUserNotification(deleter, String.format("You deleted your friendship with %s", friend.getUsername()));
         notificationService.createUserNotification(friend, String.format("%s deleted your friendship", deleter.getUsername()));
       }
-    } else if (friendship2 == null) {
+    } else {
       if (friendship1.getStatus()==FriendShipStatus.PENDING) {
         // requester withdraws request
         friendshipRepository.delete(friendship1);
@@ -221,7 +210,7 @@ public class FriendshipService {
         return FriendshipStatusSearch.COMPLETED;
       }
     }
-    else if (friendship2 == null) {
+    else {
       if (friendship1.getStatus() == FriendShipStatus.PENDING) {
         // searcher has sent request and is waiting for response
         return FriendshipStatusSearch.SENT;
@@ -231,7 +220,6 @@ public class FriendshipService {
         return FriendshipStatusSearch.COMPLETED;
       }
     }
-    return FriendshipStatusSearch.NOTHING;
   }
 
   public List<User> getAllAcceptedFriendsAsUsers(User user) {
@@ -255,15 +243,12 @@ public class FriendshipService {
     for (User friend1 : users) {
       for (User friend2 : users) {
         Friendship friendship = friendshipRepository.findByFriend1AndFriend2(friend1, friend2);
-        if (friendship == null) {
-          continue;
-        } else {
+        if (friendship != null) {
           friendship.setPoints(friendship.getPoints()+60);
           friendshipRepository.save(friendship);
           friendshipRepository.flush();
         }
       }
-
     }
   }
 }

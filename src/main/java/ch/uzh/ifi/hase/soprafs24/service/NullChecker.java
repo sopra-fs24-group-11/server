@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class NullChecker {
-  // also add a type checker??
+  private NullChecker() {
+    throw new IllegalStateException("Static class");
+  }
   public static void userPostDTOChecker (UserPostDTO dto) {
     if (dto.getPassword() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be null.");
@@ -231,7 +233,7 @@ public class NullChecker {
     if (!Objects.equals(type, "image/png") && !Objects.equals(type, "image/jpeg")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image of type png or jpg/jpeg/jpe/jfif.");
     }
-    long maxSizeInBytes = 3 * 1024 * 1024; // 3 MB (adjust as needed) - 10MB is internal server maximum - we only allow 3 MB
+    long maxSizeInBytes = (long)3 * 1024 * 1024; // 3 MB (adjust as needed) - 10MB is internal server maximum - we only allow 3 MB
     if (image.getSize() > maxSizeInBytes) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size of 3MB.");
     }

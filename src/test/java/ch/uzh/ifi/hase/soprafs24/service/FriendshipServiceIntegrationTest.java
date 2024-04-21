@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @WebAppConfiguration
 @SpringBootTest
-public class FriendshipServiceIntegrationTest {
+class FriendshipServiceIntegrationTest {
   @Autowired
   private FriendshipService friendshipService;
 
@@ -46,7 +46,7 @@ public class FriendshipServiceIntegrationTest {
   private User testUser3;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     // Clear any existing data in the repositories
     friendshipRepository.deleteAll();
     friendshipRepository.flush();
@@ -95,7 +95,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testSendRequest_success() {
+  void testSendRequest_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -110,7 +110,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testAcceptRequest_success() {
+  void testAcceptRequest_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -126,7 +126,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testDeleteFriend_1_success() {
+  void testDeleteFriend_1_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -138,7 +138,7 @@ public class FriendshipServiceIntegrationTest {
     assertNull(friendship);
   }
   @Test
-  public void testDeleteFriend_2_success() {
+  void testDeleteFriend_2_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -150,7 +150,7 @@ public class FriendshipServiceIntegrationTest {
     assertNull(friendship);
   }
   @Test
-  public void testDeleteFriend_3_success() {
+  void testDeleteFriend_3_success() {
     // Send a friend request and accept it
     friendshipService.sendRequest(testUser1, testUser2);
     friendshipService.acceptRequest(testUser2, testUser1);
@@ -163,7 +163,7 @@ public class FriendshipServiceIntegrationTest {
     assertNull(friendship);
   }
   @Test
-  public void testDeleteFriend_4_success() {
+  void testDeleteFriend_4_success() {
     // Send a friend request and accept it
     friendshipService.sendRequest(testUser1, testUser2);
     friendshipService.acceptRequest(testUser2, testUser1);
@@ -177,13 +177,13 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testSendRequest_toYourself_throwsError() {
+  void testSendRequest_toYourself_throwsError() {
     // Verify that sending a friend request to yourself throws an error
     assertThrows(ResponseStatusException.class, () -> friendshipService.sendRequest(testUser1, testUser1));
   }
 
   @Test
-  public void testSendRequest_duplicate_throwsError() {
+  void testSendRequest_duplicate_throwsError() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -192,19 +192,19 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testAcceptRequest_nonExistentFriendship_throwsError() {
+  void testAcceptRequest_nonExistentFriendship_throwsError() {
     // Verify that accepting a non-existent friendship throws an error
     assertThrows(ResponseStatusException.class, () -> friendshipService.acceptRequest(testUser2, testUser1));
   }
 
   @Test
-  public void testDeleteFriend_noFriendship_throwsNotFoundError() {
+  void testDeleteFriend_noFriendship_throwsNotFoundError() {
     // Verify that deleting a non-existent friendship throws a not found error
     assertThrows(ResponseStatusException.class, () -> friendshipService.deleteFriend(testUser1, testUser2));
   }
 
   @Test
-  public void testDeleteAllForAUser_success() {
+  void testDeleteAllForAUser_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -217,7 +217,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testGetAllReceivedFriendRequests_success() {
+  void testGetAllReceivedFriendRequests_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -233,7 +233,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testGetAllSentFriendRequests_success() {
+  void testGetAllSentFriendRequests_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -249,7 +249,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testGetAllAcceptedFriends_success() {
+  void testGetAllAcceptedFriends_success() {
     // Send two friend requests and accept both
     friendshipService.sendRequest(testUser1, testUser2);
     friendshipService.acceptRequest(testUser2, testUser1);
@@ -272,7 +272,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testFindFriendStatusSearch_Completed_success() {
+  void testFindFriendStatusSearch_Completed_success() {
     // Send a friend request and accept it
     friendshipService.sendRequest(testUser1, testUser2);
     friendshipService.acceptRequest(testUser2, testUser1);
@@ -287,7 +287,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testFindFriendStatusSearch_Incomplete_success() {
+  void testFindFriendStatusSearch_Incomplete_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
 
@@ -301,7 +301,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testFindFriendStatusSearch_NonExistent_success() {
+  void testFindFriendStatusSearch_NonExistent_success() {
     // Get status
     FriendshipStatusSearch friendshipStatusSearch1 = friendshipService.findFriendStatusSearch(testUser1, testUser2);
     FriendshipStatusSearch friendshipStatusSearch2 = friendshipService.findFriendStatusSearch(testUser2, testUser1);
@@ -312,7 +312,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testIncreasePoints_success() {
+  void testIncreasePoints_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
     friendshipService.acceptRequest(testUser2, testUser1);
@@ -329,7 +329,7 @@ public class FriendshipServiceIntegrationTest {
   }
 
   @Test
-  public void testGetAllAcceptedFriendsAsUsers_success() {
+  void testGetAllAcceptedFriendsAsUsers_success() {
     // Send a friend request
     friendshipService.sendRequest(testUser1, testUser2);
     friendshipService.acceptRequest(testUser2, testUser1);

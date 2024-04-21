@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
-public class UserNotificationRepositoryIntegrationTest {
+class UserNotificationRepositoryIntegrationTest {
   @Autowired
   private TestEntityManager entityManager;
 
@@ -37,7 +37,7 @@ public class UserNotificationRepositoryIntegrationTest {
     return user;
   }
   @Test
-  public void findAllByUser_success() {
+  void findAllByUser_success() {
     // given
     User user = createUserDummy();
     entityManager.persist(user);
@@ -57,13 +57,13 @@ public class UserNotificationRepositoryIntegrationTest {
     // then
     assertEquals(found.size(), 1);
     assertNotNull(found.get(0).getId());
-    assertEquals(found.get(0).getMessage(), un.getMessage());
-    assertEquals(found.get(0).getTimeStamp(), un.getTimeStamp());
-    assertEquals(found.get(0).getUser(), un.getUser());
+    assertEquals(un.getMessage(), found.get(0).getMessage());
+    assertEquals(un.getTimeStamp(), found.get(0).getTimeStamp());
+    assertEquals(un.getUser(), found.get(0).getUser());
   }
 
   @Test
-  public void deleteAllByUser_success() {
+  void deleteAllByUser_success() {
     // given
     User user = createUserDummy();
     entityManager.persist(user);
@@ -88,6 +88,6 @@ public class UserNotificationRepositoryIntegrationTest {
 
     // then
     List<UserNotification> found = userNotificationRepository.findAllByUser(user);
-    assertEquals(found.size(), 0);
+    assertEquals(0, found.size());
   }
 }

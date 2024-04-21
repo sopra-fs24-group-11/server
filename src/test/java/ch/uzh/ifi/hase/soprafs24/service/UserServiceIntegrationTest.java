@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @Rollback
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class UserServiceIntegrationTest {
+class UserServiceIntegrationTest {
 
   @Qualifier("userRepository")
   @Autowired
@@ -54,7 +54,7 @@ public class UserServiceIntegrationTest {
   private TemplatePackingItem testItem;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     // Clear any existing data in the repositories
     userRepository.deleteAll();
     userRepository.flush();
@@ -90,7 +90,7 @@ public class UserServiceIntegrationTest {
 
 
   @Test
-  public void createUser_validInputs_success() {
+  void createUser_validInputs_success() {
     // given
     assertNull(userRepository.findByUsername("testUsername"));
 
@@ -111,7 +111,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void createUser_duplicateUsername_throwsException() {
+  void createUser_duplicateUsername_throwsException() {
     // given
     assertNull(userRepository.findByUsername("testUsername"));
 
@@ -136,7 +136,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void getUserByToken_tokenExists_success() {
+  void getUserByToken_tokenExists_success() {
     // when
     User foundUser = userService.getUserByToken(testUser1.getToken());
 
@@ -149,14 +149,14 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void getUserByToken_tokenNonExistant_throwsException() {
+  void getUserByToken_tokenNonExistant_throwsException() {
 
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.getUserByToken("ab"));
   }
 
   @Test
-  public void getUserById_idExists_success() {
+  void getUserById_idExists_success() {
     // when
     User foundUser = userService.getUserById(testUser1.getId());
 
@@ -168,13 +168,13 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void getUserById_idNonExistant_throwsException() {
+  void getUserById_idNonExistant_throwsException() {
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.getUserById(2L));
   }
 
   @Test
-  public void loginUser_userExists_success() {
+  void loginUser_userExists_success() {
     // when
     String token = userService.loginUser(testUser1);
 
@@ -183,7 +183,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void loginUser_userNonExistant_throwsException() {
+  void loginUser_userNonExistant_throwsException() {
     // when
     User testUser = new User();
     testUser.setPassword("testName");
@@ -196,7 +196,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void updateUser_userExists_success() {
+  void updateUser_userExists_success() {
     // when
     User testUser = new User();
     testUser.setPassword("testName");
@@ -215,7 +215,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void updateUser_userNonExistant_throwsException() {
+  void updateUser_userNonExistant_throwsException() {
     // when
     User testUser = new User();
     testUser.setPassword("testName");
@@ -228,7 +228,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void deleteUser_userExists_success() {
+  void deleteUser_userExists_success() {
     // given
     assertNull(userRepository.findByUsername("testUsername"));
 
@@ -253,13 +253,13 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void deleteUser_userNonExistant_throwsException() {
+  void deleteUser_userNonExistant_throwsException() {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser("ab"));
   }
 
   @Test
-  public void logoutUser_userExists_success() {
+  void logoutUser_userExists_success() {
     userService.logoutUser("abc");
 
     // then
@@ -267,13 +267,13 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void logoutUser_userNonExistant_throwsException() {
+  void logoutUser_userNonExistant_throwsException() {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.logoutUser("ab"));
   }
 
   @Test
-  public void getMatchingUsers_NameExists_success() {
+  void getMatchingUsers_NameExists_success() {
 
     // given
     assertNull(userRepository.findByUsername("testUsername"));
@@ -296,7 +296,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void getMatchingUsers_NameNonExistent_emptyList() {
+  void getMatchingUsers_NameNonExistent_emptyList() {
 
     // given
     assertNull(userRepository.findByUsername("testUsername"));
@@ -312,25 +312,25 @@ public class UserServiceIntegrationTest {
 
     List<User> matchingUsers = userService.getMatchingUsers("abc", "xyz");
 
-    assertEquals(matchingUsers.size(), 0);
+    assertEquals(0, matchingUsers.size());
     assertNotNull(matchingUsers);
   }
 
   @Test
-  public void giveFeedback_success() {
+  void giveFeedback_success() {
     userService.giveFeedback(testUser1, "this is a test feedback");
 
-    assertEquals(notificationService.getUserNotifications(testUser1).get(0).getMessage(), "Thank you for giving us feedback, we are happy to look at it!");
+    assertEquals("Thank you for giving us feedback, we are happy to look at it!", notificationService.getUserNotifications(testUser1).get(0).getMessage());
   }
 
   @Test
-  public void increaseLevel_levelIncreased_success() {
+  void increaseLevel_levelIncreased_success() {
     userService.increaseLevel(testUser1, 5.0D);
 
-    assertEquals(testUser1.getLevel(), 6.0D);
+    assertEquals(6.0D, testUser1.getLevel());
   }
   @Test
-  public void getItems_itemsReturned_success() {
+  void getItems_itemsReturned_success() {
 
     List<TemplatePackingItem> returnedItems = userService.getItems(testUser1);
 
@@ -340,7 +340,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void getItem_itemReturned_success() {
+  void getItem_itemReturned_success() {
 
     TemplatePackingItem savedItem = userService.addItem(testUser1, testItem);
 
@@ -352,13 +352,13 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void getItem_itemNonExistant_throwsException() {
+  void getItem_itemNonExistant_throwsException() {
 
     assertThrows(ResponseStatusException.class, () -> userService.getItem(2L));
   }
 
   @Test
-  public void addItem_itemAdded_success() {
+  void addItem_itemAdded_success() {
     TemplatePackingItem templatePackingItem = new TemplatePackingItem();
     templatePackingItem.setItem("test item");
     templatePackingItem.setUser(testUser1);
@@ -372,7 +372,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void deleteItem_itemDeleted_success() {
+  void deleteItem_itemDeleted_success() {
     TemplatePackingItem templatePackingItem = new TemplatePackingItem();
     templatePackingItem.setItem("test item");
     templatePackingItem.setUser(testUser1);
@@ -390,7 +390,7 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
-  public void updateItem_itemUpdated_success() {
+  void updateItem_itemUpdated_success() {
     TemplatePackingItem updatedItem = new TemplatePackingItem();
     updatedItem.setItem("test item");
     updatedItem.setUser(testUser1);

@@ -58,24 +58,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
-
+class UserControllerTest {
   @Autowired
   private MockMvc mockMvc;
-
   @MockBean
   private UserService userService;
   @MockBean
   private FriendshipService friendshipService;
   @MockBean
   private NotificationService notificationService;
-  @MockBean
-  private NullChecker nullChecker;
-
   private User testUser;
   private Friend testFriend;
   @BeforeEach
-  public void setup() {
+  void setup() {
     MockitoAnnotations.openMocks(this);
 
     // given
@@ -104,7 +99,7 @@ public class UserControllerTest {
   // GET REQUESTS --------------------------------------------------------------
   @Test // GET 1: getting one user
   // given
-  public void getUser_validInput_userReturned() throws Exception {
+  void getUser_validInput_userReturned() throws Exception {
 
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
@@ -124,7 +119,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 2: getting one user
-  public void getUser_invalidInput_userNotReturned() throws Exception {
+  void getUser_invalidInput_userNotReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -138,7 +133,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 3: search with valid input
-  public void searchUser_validInput_userListReturned() throws Exception {
+  void searchUser_validInput_userListReturned() throws Exception {
     // given
     User user1 = new User();
     user1.setId(1L);
@@ -183,7 +178,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 4: search with invalid input
-  public void searchUser_invalidInput_userListReturned() throws Exception {
+  void searchUser_invalidInput_userListReturned() throws Exception {
     // given
 
     given(userService.getMatchingUsers(testUser.getToken(), "test")).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -199,7 +194,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 5: get friends with valid input
-  public void getFriends_validInput_friendListReturned() throws Exception {
+  void getFriends_validInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
@@ -226,7 +221,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 6: get friends with invalid input
-  public void getFriends_invalidInput_friendListReturned() throws Exception {
+  void getFriends_invalidInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -241,7 +236,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 7: get friend requests
-  public void getFriendRequests_validInput_friendListReturned() throws Exception {
+  void getFriendRequests_validInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
@@ -265,7 +260,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 8: get friend requests
-  public void getFriendRequests_invalidInput_friendListReturned() throws Exception {
+  void getFriendRequests_invalidInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -280,7 +275,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 9: get pending friends
-  public void getPendingFriendRequests_validInput_friendListReturned() throws Exception {
+  void getPendingFriendRequests_validInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
@@ -303,7 +298,7 @@ public class UserControllerTest {
             .andExpect(jsonPath("$[0].points", is(testFriend.getPoints())));
   }
   @Test // GET 10: get pending friends
-  public void getPendingFriendRequests_invalidInput_friendListReturned() throws Exception {
+  void getPendingFriendRequests_invalidInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -317,7 +312,7 @@ public class UserControllerTest {
             .andExpect(status().isNotFound());
   }
   @Test // GET 11: get sent friend requests
-  public void getSentFriendRequests_validInput_friendListReturned() throws Exception {
+  void getSentFriendRequests_validInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
@@ -340,7 +335,7 @@ public class UserControllerTest {
             .andExpect(jsonPath("$[0].points", is(testFriend.getPoints())));
   }
   @Test // GET 12: get sent friend requests
-  public void getSentFriendRequests_invalidInput_friendListReturned() throws Exception {
+  void getSentFriendRequests_invalidInput_friendListReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -355,7 +350,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 13: get user notifications
-  public void getUserNotifications_validInput_notificationsReturned() throws Exception {
+  void getUserNotifications_validInput_notificationsReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
@@ -383,7 +378,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 14: get user notifications
-  public void getUserNotifications_invalidInput_notificationsReturned() throws Exception {
+  void getUserNotifications_invalidInput_notificationsReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -399,7 +394,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 15: get packings of a user
-  public void getItems_validInput_itemsReturned() throws Exception {
+  void getItems_validInput_itemsReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     TemplatePackingItem templatePackingItem = new TemplatePackingItem();
@@ -422,7 +417,7 @@ public class UserControllerTest {
   }
 
   @Test // GET 16: get packings of a user
-  public void getItems_invalidInput_itemsReturned() throws Exception {
+  void getItems_invalidInput_itemsReturned() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -437,7 +432,7 @@ public class UserControllerTest {
 
   // POST REQUESTS -------------------------------------------------------------
   @Test // POST 1: register
-  public void createUser_validInput_userCreated() throws Exception {
+  void createUser_validInput_userCreated() throws Exception {
     // given
 
     UserPostDTO userPostDTO = new UserPostDTO();
@@ -460,7 +455,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 2: register
-  public void createUser_invalidInput_userCreated() throws Exception {
+  void createUser_invalidInput_userCreated() throws Exception {
     // given
 
     UserPostDTO userPostDTO = new UserPostDTO();
@@ -482,7 +477,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 3: login
-  public void loginUser_validInput_userLoggedIn() throws Exception {
+  void loginUser_validInput_userLoggedIn() throws Exception {
     // given
 
     UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
@@ -503,7 +498,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 4: login
-  public void loginUser_invalidInput_userNotLoggedIn() throws Exception {
+  void loginUser_invalidInput_userNotLoggedIn() throws Exception {
     // given
     UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
     userLoginPostDTO.setPassword("wrong Test User");
@@ -522,7 +517,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 5: feedback
-  public void giveFeedback_validInput_feedbackSaved() throws Exception {
+  void giveFeedback_validInput_feedbackSaved() throws Exception {
     MessagePostDTO messagePostDTO = new MessagePostDTO();
     messagePostDTO.setMessage("Ich bin sehr zufrieden mit GetTogether");
 
@@ -541,7 +536,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 6: feedback
-  public void giveFeedback_invalidInput_feedbackSaved() throws Exception {
+  void giveFeedback_invalidInput_feedbackSaved() throws Exception {
     MessagePostDTO messagePostDTO = new MessagePostDTO();
     messagePostDTO.setMessage("Ich bin sehr zufrieden mit GetTogether");
 
@@ -558,7 +553,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 7: send friend request
-  public void makeRequest_validInput_requestSent() throws Exception {
+  void makeRequest_validInput_requestSent() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(userService.getUserById(testFriend.getFriendId())).willReturn(testUser); // should actually return User object of friend
     doNothing().when(friendshipService).sendRequest(testUser, testUser);
@@ -573,7 +568,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 8: send friend request
-  public void makeRequest_invalidInput_requestSent() throws Exception {
+  void makeRequest_invalidInput_requestSent() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     MockHttpServletRequestBuilder postRequest = post("/users/friends/2")
@@ -585,7 +580,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 9: add packing item
-  public void addItem_validInput_itemAdded() throws Exception {
+  void addItem_validInput_itemAdded() throws Exception {
   // given
   TemplateDTO templateDTO = new TemplateDTO();
   templateDTO.setItem("this is a test item");
@@ -611,7 +606,7 @@ public class UserControllerTest {
   }
 
   @Test // POST 10: add packing item
-  public void addItem_invalidInput_itemAdded() throws Exception {
+  void addItem_invalidInput_itemAdded() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
     TemplateDTO templateDTO = new TemplateDTO();
@@ -632,7 +627,7 @@ public class UserControllerTest {
 
   // PUT REQUESTS -------------------------------------------------------------
   @Test // PUT 1: update user
-  public void updateUser_validInput_userUpdated() throws Exception {
+  void updateUser_validInput_userUpdated() throws Exception {
     // given
     UserPutDTO userPutDTO = new UserPutDTO();
     userPutDTO.setPassword("Test User");
@@ -654,7 +649,7 @@ public class UserControllerTest {
   }
 
   @Test // PUT 2: update user with invalid input
-  public void updateUser_invalidInput_userNotUpdated() throws Exception {
+  void updateUser_invalidInput_userNotUpdated() throws Exception {
     // given
     UserPutDTO userPutDTO = new UserPutDTO();
     userPutDTO.setPassword("Test User");
@@ -676,7 +671,7 @@ public class UserControllerTest {
   }
 
   @Test // PUT 3: accept friend request
-  public void acceptRequest_validInput_requestAccepted() throws Exception {
+  void acceptRequest_validInput_requestAccepted() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(userService.getUserById(testFriend.getFriendId())).willReturn(testUser); // should actually return User object of friend
@@ -693,7 +688,7 @@ public class UserControllerTest {
 
 
   @Test // PUT 4: accept friend request
-  public void acceptRequest_invalidInput_requestAccepted() throws Exception {
+  void acceptRequest_invalidInput_requestAccepted() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     MockHttpServletRequestBuilder putRequest = put("/users/friends/2")
@@ -705,7 +700,7 @@ public class UserControllerTest {
   }
 
   @Test // PUT 5: update packing item
-  public void updateItem_validInput_itemUpdated() throws Exception {
+  void updateItem_validInput_itemUpdated() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
     TemplateDTO templateDTO = new TemplateDTO();
@@ -728,7 +723,7 @@ public class UserControllerTest {
   }
 
   @Test // PUT 6: update packing item
-  public void updateItem_invalidInput_itemUpdated() throws Exception {
+  void updateItem_invalidInput_itemUpdated() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     TemplateDTO templateDTO = new TemplateDTO();
@@ -745,7 +740,7 @@ public class UserControllerTest {
   }
 
   /* @Test // PUT x: uploading an image
-  public void saveProfilePicture_validInput_pictureSaved() throws Exception {
+  void saveProfilePicture_validInput_pictureSaved() throws Exception {
     // given
 
     byte[] fileContent = "Hello, World!".getBytes();
@@ -769,7 +764,7 @@ public class UserControllerTest {
 
   // DELETE REQUESTS -------------------------------------------------------------
   @Test // DELETE 1: delete user with valid input
-  public void deleteUser_validInput_userDeleted() throws Exception {
+  void deleteUser_validInput_userDeleted() throws Exception {
     // given
 
     doNothing().when(userService).deleteUser(testUser.getToken());
@@ -785,7 +780,7 @@ public class UserControllerTest {
   }
 
   @Test // DELETE 2: delete user with invalid input
-  public void deleteUser_invalidInput_userDeleted() throws Exception {
+  void deleteUser_invalidInput_userDeleted() throws Exception {
     // given
     doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(userService).deleteUser(testUser.getToken());
 
@@ -800,7 +795,7 @@ public class UserControllerTest {
   }
 
   @Test // DELETE 3: delete friend request
-  public void deleteRequest_validInput_requestDeleted() throws Exception {
+  void deleteRequest_validInput_requestDeleted() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(userService.getUserById(testFriend.getFriendId())).willReturn(testUser); // should actually return User object of friend
@@ -817,7 +812,7 @@ public class UserControllerTest {
   }
 
   @Test // DELETE 4: delete friend request
-  public void deleteRequest_invalidInput_requestDeleted() throws Exception {
+  void deleteRequest_invalidInput_requestDeleted() throws Exception {
     // given
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -832,7 +827,7 @@ public class UserControllerTest {
   }
 
   @Test // DELETE 5: delete packing item
-  public void deleteItem_validInput_itemDeleted() throws Exception {
+  void deleteItem_validInput_itemDeleted() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
 
     TemplatePackingItem templatePackingItem = new TemplatePackingItem();
@@ -851,7 +846,7 @@ public class UserControllerTest {
   }
 
   @Test // DELETE 6: delete packing item
-  public void deleteItem_invalidInput_itemDeleted() throws Exception {
+  void deleteItem_invalidInput_itemDeleted() throws Exception {
     given(userService.getUserByToken(testUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     TemplatePackingItem templatePackingItem = new TemplatePackingItem();
