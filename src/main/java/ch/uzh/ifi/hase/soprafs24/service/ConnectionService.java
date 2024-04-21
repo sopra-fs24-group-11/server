@@ -120,7 +120,7 @@ public class ConnectionService {
       HttpRequest request;
       if (isLate) {
         request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("http://transport.opendata.ch/v1/connections?from=%s&to=%s&limit=5", encodedFrom, encodedTo, dateString, timeString)))
+                .uri(URI.create(String.format("http://transport.opendata.ch/v1/connections?from=%s&to=%s&limit=5", encodedFrom, encodedTo)))
                 .version(HttpClient.Version.HTTP_2)
                 .GET()
                 .build();
@@ -282,7 +282,7 @@ public class ConnectionService {
   }
 
   public String getTimeString(LocalDateTime localDateTime) {
-    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     return localDateTime.format(timeFormatter);
   }
 
