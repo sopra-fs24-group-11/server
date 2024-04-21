@@ -1,11 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
 import ch.uzh.ifi.hase.soprafs24.constant.InvitationStatus;
+import ch.uzh.ifi.hase.soprafs24.constant.ItemType;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs24.entity.Station;
-import ch.uzh.ifi.hase.soprafs24.entity.Trip;
-import ch.uzh.ifi.hase.soprafs24.entity.TripParticipant;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +56,11 @@ public class TripControllerTest {
   private User testUser;
   private Trip testTrip;
   private TripParticipant testTripParticipant;
+  private ParticipantConnection testParticipantConnection;
+  private TripNotification testTripNotification;
+  private Item testTodoItem;
+  private Item testIndividualItem;
+  private Item testGroupItem;
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
@@ -93,6 +97,52 @@ public class TripControllerTest {
     testTripParticipant.setFavouriteTrip(true);
     testTripParticipant.setStatus(InvitationStatus.ACCEPTED);
     testTripParticipant.setInvitator(testUser);
+
+    testParticipantConnection = new ParticipantConnection();
+    testParticipantConnection.setParticipant(testTripParticipant);
+    testParticipantConnection.setDepartureTime(LocalDateTime.of(2024,11,11,11,11));
+    testParticipantConnection.setArrivalTime(LocalDateTime.of(2024,11,11,11,15));
+    testParticipantConnection.setConnectionType(ConnectionType.BUS);
+    testParticipantConnection.setConnectionName("B 817");
+    Station departurePoint = new Station(); departurePoint.setStationCode("8503633"); departurePoint.setStationName("Uster, See");
+    testParticipantConnection.setDeparturePoint(departurePoint);
+    Station arrivalPoint = new Station(); arrivalPoint.setStationCode("8573504"); arrivalPoint.setStationName("Uster, Bahnhof");
+    testParticipantConnection.setArrivalPoint(arrivalPoint);
+
+    testTripNotification = new TripNotification();
+    testTripNotification.setTrip(testTrip);
+    testTripNotification.setId(1L);
+    testTripNotification.setMessage("This is a trip notification.");
+    testTripNotification.setTimeStamp(LocalDateTime.of(2024,11,11,11,11));
+
+    testTodoItem = new Item();
+    testTodoItem.setId(1L);
+    testTodoItem.setItemType(ItemType.TODO);
+    testTodoItem.setItem("Hotel reservation");
+    testTodoItem.setCompleted(false);
+    testTodoItem.setUserId(testUser.getId());
+    testTodoItem.setTrip(testTrip);
+    testTodoItem.setParticipant(testTripParticipant);
+
+    testIndividualItem = new Item();
+    testIndividualItem.setId(2L);
+    testIndividualItem.setItemType(ItemType.INDIVIDUALPACKING);
+    testIndividualItem.setItem("Shirt");
+    testIndividualItem.setCompleted(false);
+    testIndividualItem.setUserId(testUser.getId());
+    testIndividualItem.setTrip(testTrip);
+    testIndividualItem.setParticipant(testTripParticipant);
+
+    testGroupItem = new Item();
+    testGroupItem.setId(3L);
+    testGroupItem.setItemType(ItemType.GROUPPACKING);
+    testGroupItem.setItem("Car");
+    testGroupItem.setCompleted(false);
+    testGroupItem.setUserId(testUser.getId());
+    testGroupItem.setTrip(testTrip);
+    testGroupItem.setParticipant(testTripParticipant);
+
+
   }
   // GET REQUESTS ----------------------------------------------------------------------------------------------------------------
   @Test
@@ -305,11 +355,181 @@ public class TripControllerTest {
   }
 
 
+  @Test
+  public void getMembersWithImages_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    List<User> users = new ArrayList<>(); users.add(testUser);
+    given(tripParticipantService.getTripUsersWhoHaveAccepted(testTrip)).willReturn(users);
 
 
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/pictures", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id", is(testUser.getId().intValue())))
+            .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+  }
+
+  @Test
+  public void getConnection_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    List<ParticipantConnection> connections = new ArrayList<>(); connections.add(testParticipantConnection);
+    given(connectionService.getConnection(testTripParticipant)).willReturn(connections);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/connection", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].connectionType", is(testParticipantConnection.getConnectionType().toString())))
+            .andExpect(jsonPath("$[0].connectionName", is(testParticipantConnection.getConnectionName())))
+            .andExpect(jsonPath("$[0].departureTime", is(testParticipantConnection.getDepartureTime().format(formatter))))
+            .andExpect(jsonPath("$[0].arrivalTime", is(testParticipantConnection.getArrivalTime().format(formatter))))
+            .andExpect(jsonPath("$[0].departurePoint.stationCode", is(testParticipantConnection.getDeparturePoint().getStationCode())))
+            .andExpect(jsonPath("$[0].departurePoint.stationName", is(testParticipantConnection.getDeparturePoint().getStationName())))
+            .andExpect(jsonPath("$[0].arrivalPoint.stationCode", is(testParticipantConnection.getArrivalPoint().getStationCode())))
+            .andExpect(jsonPath("$[0].arrivalPoint.stationName", is(testParticipantConnection.getArrivalPoint().getStationName())));
+  }
+
+  @Test
+  public void getConnections_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    List<TripParticipant> participants = new ArrayList<>(); participants.add(testTripParticipant);
+    given(tripParticipantService.getTripParticipantsWhoHaveAccepted(testTrip)).willReturn(participants);
+    List<ParticipantConnection> connections = new ArrayList<>(); connections.add(testParticipantConnection);
+    given(connectionService.getConnection(testTripParticipant)).willReturn(connections);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/connections", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].username", is(testUser.getUsername())))
+            .andExpect(jsonPath("$[0].connectionDTO[0].connectionType", is(testParticipantConnection.getConnectionType().toString())))
+            .andExpect(jsonPath("$[0].connectionDTO[0].connectionName", is(testParticipantConnection.getConnectionName())))
+            .andExpect(jsonPath("$[0].connectionDTO[0].departureTime", is(testParticipantConnection.getDepartureTime().format(formatter))))
+            .andExpect(jsonPath("$[0].connectionDTO[0].arrivalTime", is(testParticipantConnection.getArrivalTime().format(formatter))))
+            .andExpect(jsonPath("$[0].connectionDTO[0].departurePoint.stationCode", is(testParticipantConnection.getDeparturePoint().getStationCode())))
+            .andExpect(jsonPath("$[0].connectionDTO[0].departurePoint.stationName", is(testParticipantConnection.getDeparturePoint().getStationName())))
+            .andExpect(jsonPath("$[0].connectionDTO[0].arrivalPoint.stationCode", is(testParticipantConnection.getArrivalPoint().getStationCode())))
+            .andExpect(jsonPath("$[0].connectionDTO[0].arrivalPoint.stationName", is(testParticipantConnection.getArrivalPoint().getStationName())));
+  }
+
+  @Test
+  public void getTripNotifications_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    List<TripNotification> notifications = new ArrayList<>(); notifications.add(testTripNotification);
+    given(notificationService.getTripNotifications(testTrip)).willReturn(notifications);
 
 
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/notifications", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
 
+    // then
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].message", is(testTripNotification.getMessage())))
+            .andExpect(jsonPath("$[0].timeStamp", is(testTripNotification.getTimeStamp().format(formatter))));
+  }
+
+  @Test
+  public void getTodos_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    List<Item> items = new ArrayList<>(); items.add(testTodoItem);
+    given(listService.getItems(testTrip, ItemType.TODO, testTripParticipant)).willReturn(items);
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/todos", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].completed", is(testTodoItem.isCompleted())))
+            .andExpect(jsonPath("$[0].item", is(testTodoItem.getItem())))
+            .andExpect(jsonPath("$[0].id", is(testTodoItem.getId().intValue())))
+            .andExpect(jsonPath("$[0].userId", is(testUser.getId().intValue())));
+  }
+
+  @Test
+  public void getGroupPackings_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    List<Item> items = new ArrayList<>(); items.add(testGroupItem);
+    given(listService.getItems(testTrip, ItemType.GROUPPACKING, testTripParticipant)).willReturn(items);
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/groupPackings", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].completed", is(testTodoItem.isCompleted())))
+            .andExpect(jsonPath("$[0].item", is(testGroupItem.getItem())))
+            .andExpect(jsonPath("$[0].id", is(testGroupItem.getId().intValue())))
+            .andExpect(jsonPath("$[0].userId", is(testUser.getId().intValue())));
+  }
+
+  @Test
+  public void getIndividualPackings_success() throws Exception {
+    // given
+    given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
+    given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
+    given(tripParticipantService.getTripParticipant(testTrip, testUser)).willReturn(testTripParticipant);
+    List<Item> items = new ArrayList<>(); items.add(testIndividualItem);
+    given(listService.getItems(testTrip, ItemType.INDIVIDUALPACKING, testTripParticipant)).willReturn(items);
+
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/individualPackings", testTrip.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Authorization",testUser.getToken());
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].completed", is(testIndividualItem.isCompleted())))
+            .andExpect(jsonPath("$[0].item", is(testIndividualItem.getItem())))
+            .andExpect(jsonPath("$[0].id", is(testIndividualItem.getId().intValue())))
+            .andExpect(jsonPath("$[0].userId", is(testUser.getId().intValue())));
+  }
+
+
+// POST REQUESTS ----------------------------------------------------------------------------------------------------------------
 
 
 

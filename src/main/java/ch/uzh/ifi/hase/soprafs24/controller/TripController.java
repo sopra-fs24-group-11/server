@@ -373,7 +373,13 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     TripParticipant tripParticipant = tripParticipantService.getTripParticipant(trip, user);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
-    return listService.getItems(trip, ItemType.TODO, tripParticipant);
+    List<Item> items = listService.getItems(trip, ItemType.TODO, tripParticipant);
+    List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
+    for (Item item : items) {
+      ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
+      itemGetDTOS.add(itemGetDTO);
+    }
+    return itemGetDTOS;
   }
 
   @PutMapping("trips/{tripId}/todos/{itemId}")
@@ -463,7 +469,13 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant tripParticipant = tripParticipantService.getTripParticipant(trip, user);
-    return listService.getItems(trip, ItemType.GROUPPACKING, tripParticipant);
+    List<Item> items = listService.getItems(trip, ItemType.GROUPPACKING, tripParticipant);
+    List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
+    for (Item item : items) {
+      ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
+      itemGetDTOS.add(itemGetDTO);
+    }
+    return itemGetDTOS;
   }
 
   @PutMapping("trips/{tripId}/groupPackings/{itemId}")
@@ -551,7 +563,13 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     TripParticipant selectedParticipant = tripParticipantService.getTripParticipant(trip,user);
-    return listService.getItems(trip, ItemType.INDIVIDUALPACKING, selectedParticipant);
+    List<Item> items = listService.getItems(trip, ItemType.INDIVIDUALPACKING, selectedParticipant);
+    List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
+    for (Item item : items) {
+      ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
+      itemGetDTOS.add(itemGetDTO);
+    }
+    return itemGetDTOS;
   }
 
   @PutMapping("trips/{tripId}/individualPackings/{itemId}")

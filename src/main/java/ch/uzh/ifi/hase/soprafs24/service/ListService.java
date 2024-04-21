@@ -30,20 +30,13 @@ public class ListService {
     this.itemRepository = itemRepository;
   }
 
-  public List<ItemGetDTO> getItems (Trip trip, ItemType itemType, TripParticipant participant) {
+  public List<Item> getItems (Trip trip, ItemType itemType, TripParticipant participant) {
     List<Item> items;
     if (itemType.equals(ItemType.INDIVIDUALPACKING)) {
-      items = itemRepository.findAllByTripAndItemTypeAndParticipant(trip, itemType, participant);
+      return itemRepository.findAllByTripAndItemTypeAndParticipant(trip, itemType, participant);
     } else {
-      items = itemRepository.findAllByTripAndItemType(trip, itemType);
+      return itemRepository.findAllByTripAndItemType(trip, itemType);
     }
-      List<ItemGetDTO> itemGetDTOS = new ArrayList<>();
-      for (Item item : items) {
-        ItemGetDTO itemGetDTO = DTOMapper.INSTANCE.convertEntityToItemGetDTO(item);
-        itemGetDTOS.add(itemGetDTO);
-      }
-      return itemGetDTOS;
-
   }
 
 
