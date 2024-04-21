@@ -36,12 +36,12 @@ public class TripService {
 
   public Trip getTripById(Long id) {
     return tripRepository.findById(id).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found"));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "We couldn't find this trip."));
   }
 
   public Long createTrip(Trip newTrip, User administrator, List<Long> userIds) {
     if (userIds.contains(administrator.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip.");
     }
     // remove duplicates
     List<User> invited = new ArrayList<>();
@@ -54,13 +54,13 @@ public class TripService {
     // check trip size
     int maximum = 10+(int)Math.floor(administrator.getLevel());
     if (maximum < invited.size() + 1) { // invited plus administrator
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d", maximum));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d.", maximum));
     }
     // check if everyone invited is a friend
     List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
     for (User invite : invited) {
       if (!friends.contains(invite)) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "You can only invite friends to a trip.");
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "You can only invite friends to a trip. Make sure to send and accept friend requests first.");
       }
     }
     newTrip.setAdministrator(administrator);
@@ -77,10 +77,10 @@ public class TripService {
 
   public void updateTrip(Trip trip, Trip updatedTrip, User administrator, List<Long> userIds) {
     if (!isAdmin(trip, administrator)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
     }
     if (userIds.contains(administrator.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip.");
     }
     List<User> invited = new ArrayList<>();
     Set<Long> set = new HashSet<>();
@@ -114,7 +114,7 @@ public class TripService {
     }
     // check trip size
     if (trip.getMaxParticipants() < trip.getNumberOfParticipants()-toDelete.size()+toAdd.size()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d", trip.getMaxParticipants()));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d.", trip.getMaxParticipants()));
     }
     // check if everyone invited is a friend
     List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
@@ -147,7 +147,7 @@ public class TripService {
 
   public void newAdmin(Trip trip, User oldAdmin, User newAdmin) {
     if (!isAdmin(trip, oldAdmin)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
     }
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, newAdmin);
     if (participant.getStatus() == InvitationStatus.PENDING) {
@@ -161,7 +161,7 @@ public class TripService {
 
   public void deleteTrip(Trip trip, User requester) {
     if (!isAdmin(trip, requester)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
     }
 
     List<User> users = tripParticipantService.getTripUsers(trip);
@@ -177,7 +177,7 @@ public class TripService {
 
   public void isOngoing(Trip trip) {
     if (trip.isCompleted()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is finished, cannot make changes anymore!");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "The trip has finished, you cannot make changes anymore! Leaving and deleting the trip is still possible.");
     }
   }
 

@@ -24,9 +24,8 @@ public class Application {
 
   @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public String helloWorld() {
-    return "The application is running.";
+    return "We are get-together's server. There's nothing much to see here, why don't you visit our client? https://sopra-fs24-group-11-client.oa.r.appspot.com/";
   }
 
   @Bean

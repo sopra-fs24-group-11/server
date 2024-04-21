@@ -72,7 +72,7 @@ public class ConnectionService {
       }
       return stations;
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This station could not be retrieved from external API");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The station could not be retrieved.");
     }
   }
 
@@ -103,7 +103,7 @@ public class ConnectionService {
         }
       return retStation;
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This station could not be retrieved from external API");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No station found near your location.");
     }
   }
 
@@ -230,7 +230,7 @@ public class ConnectionService {
       return connections;
 
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This station could not be retrieved from external API");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No connections available, try again later.");
     }
   }
 

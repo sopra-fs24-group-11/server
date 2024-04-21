@@ -203,7 +203,7 @@ public class UserService {
   }
   public TemplatePackingItem getItem(Long itemId) {
     return templatePackingRepository.findById(itemId).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found."));
   }
   public TemplatePackingItem addItem(User user, TemplatePackingItem item) {
     item.setUser(user);
@@ -230,7 +230,7 @@ public class UserService {
   public void checkIfItemExistsAndHasUser(User user, Long itemId) {
     TemplatePackingItem item = templatePackingRepository.findByIdAndUser(itemId, user);
     if (item == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found.");
     }
   }
 

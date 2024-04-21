@@ -126,10 +126,10 @@ public class FriendshipService {
 
   public void sendRequest(User sender, User receiver) {
     if (sender == receiver) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't have a friendship with yourself");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't have a friendship with yourself.");
     }
     if (friendshipRepository.findByFriend1AndFriend2(sender, receiver) != null || friendshipRepository.findByFriend1AndFriend2(receiver, sender) != null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Friendship already exists or is pending");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Friendship already exists or is pending.");
     }
     Friendship friendship = new Friendship();
     friendship.setFriend1(sender);
@@ -146,7 +146,7 @@ public class FriendshipService {
   public void acceptRequest(User acceptor, User requester) {
     Friendship friendship = friendshipRepository.findByFriend1AndFriend2(requester, acceptor);
     if (friendship == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist.");
     }
     friendship.setStatus(FriendShipStatus.ACCEPTED);
     friendshipRepository.save(friendship);
@@ -160,7 +160,7 @@ public class FriendshipService {
     Friendship friendship1 = friendshipRepository.findByFriend1AndFriend2(deleter, friend);
     Friendship friendship2 = friendshipRepository.findByFriend1AndFriend2(friend, deleter);
     if (friendship1 == null && friendship2 == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship does not exist.");
     } else if (friendship1 != null && friendship2 != null) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "There shouldn't be two symmetric friendships...");
     }

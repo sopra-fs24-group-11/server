@@ -126,7 +126,7 @@ public class TripParticipantService {
     // TO DO: delete / revert list items
     List<TripParticipant> tripAdmins = tripParticipantRepository.findAllByUserAndTripAdministrator(user, user);
     if (!tripAdmins.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot delete your account if you are an admin");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("You cannot delete your account if you are an admin of a trip. Please delete the trips first. There are %d trips remaining.", tripAdmins.size()));
     }
     List<TripParticipant> tripParticipants = getAllTripsOfAUser(user);
 
@@ -146,7 +146,7 @@ public class TripParticipantService {
   public void isPartOfTripAndHasAccepted(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTripAndStatus(user, trip, InvitationStatus.ACCEPTED);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip. In case you were invited, accept the invitation first.");
     }
   }
 
@@ -169,7 +169,7 @@ public class TripParticipantService {
   public void markTripAsFavorite(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip.");
     }
     participant.setFavouriteTrip(!participant.isFavouriteTrip());
     tripParticipantRepository.save(participant);
@@ -182,7 +182,7 @@ public class TripParticipantService {
   public void acceptInvitation(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You were not invited to this trip.");
     }
     participant.setStatus(InvitationStatus.ACCEPTED);
     tripParticipantRepository.save(participant);
@@ -192,13 +192,13 @@ public class TripParticipantService {
   public void rejectInvitation(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You were not invited to this trip.");
     }
     if (Objects.equals(trip.getAdministrator().getId(), user.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot reject an invitation, admin has automatically accepted");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "As the admin, you cannot reject the invitation, the admin has automatically accepted.");
     }
     if (participant.getStatus()==InvitationStatus.ACCEPTED) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot reject an invitation that has already been accepted - You have to leave the trip instead");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot reject an invitation that has already been accepted - You have to leave the trip instead.");
     }
 
     // to do: revert / delete list items -> even if there shouldn't be any, it could happen (via postman) and a 500 error would be thrown
@@ -216,13 +216,13 @@ public class TripParticipantService {
   public void leaveTrip(User leaver, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(leaver, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not a participant of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip.");
     }
     if (Objects.equals(trip.getAdministrator().getId(), leaver.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot leave before announcing a new admin");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot leave before announcing a new admin.");
     }
     if (participant.getStatus()==InvitationStatus.PENDING) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot leave a trip that hasn't been accepted yet - You have to reject the invitation instead");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot leave a trip that hasn't been accepted yet - You have to reject the invitation instead.");
     }
 
     listService.deleteAllForAParticipant(participant);
@@ -241,14 +241,14 @@ public class TripParticipantService {
 
   public void removeMemberFromTrip(User userToBeRemoved, User requester, Trip trip) {
     if (!Objects.equals(trip.getAdministrator().getId(), requester.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
     }
     if (Objects.equals(userToBeRemoved.getId(), requester.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot remove yourself from the trip");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot remove yourself from the trip.");
     }
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(userToBeRemoved, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be removed is not part of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be removed is not part of this trip.");
     }
 
     listService.deleteAllForAParticipant(participant);

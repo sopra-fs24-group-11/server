@@ -19,7 +19,7 @@ public class NullChecker {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be null.");
     }
     if (dto.getUsername() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be .");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null.");
     }
     if (dto.getUsername().length() > 30) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Username cannot exceed 30 characters.");
