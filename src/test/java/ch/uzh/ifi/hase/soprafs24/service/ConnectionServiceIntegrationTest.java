@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
+import ch.uzh.ifi.hase.soprafs24.entity.Connection;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,13 @@ class ConnectionServiceIntegrationTest {
 
     assertEquals("Zürich HB", stations.get(0).getStationName());
     assertEquals("8503000", stations.get(0).getStationCode());
+  }
+
+  @Test
+  void getConnectionsByCode_validInput_listOfListOfConnections() {
+    List<List<Connection>> connectionsList = ConnectionService.getConnectionsByCode("8503000", "8587010", "2024-12-12", "17:30", false);
+
+    assertEquals("Zürich HB", connectionsList.get(0).get(0).getDeparturePoint().getStationName());
   }
 
 
