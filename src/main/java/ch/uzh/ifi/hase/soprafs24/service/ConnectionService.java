@@ -93,18 +93,21 @@ public class ConnectionService {
       JSONObject obj = new JSONObject(response.body());
       JSONArray jsonArray = obj.getJSONArray("stations");
 
-    // extract name and id of stations and add them to the list of stations
-        JSONObject jsonStation = jsonArray.getJSONObject(0);
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject jsonStation = jsonArray.getJSONObject(i);
+        // extract name and id of stations and add them to the list of stations
 
         Station retStation = new Station();
         if (!jsonStation.isNull("id")) {
           retStation.setStationCode(jsonStation.getString("id"));
           retStation.setStationName(jsonStation.getString("name"));
+          return retStation;
         }
-      return retStation;
+      }
     } catch(IOException | InterruptedException apiException) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No station found near your location.");
     }
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No station found near your location.");
   }
 
   public static List<List<Connection>> getConnectionsByCode(String from, String to, String dateString, String timeString, boolean isLate) {

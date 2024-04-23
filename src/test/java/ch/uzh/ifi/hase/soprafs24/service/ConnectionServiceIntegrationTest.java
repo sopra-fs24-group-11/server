@@ -18,14 +18,14 @@ class ConnectionServiceIntegrationTest {
 
   @Autowired
   private ConnectionService connectionService;
-  /*
+
   @Test
   void getLocationsCoord_validInput_listOfStations() {
     Station station = ConnectionService.getLocationsCoord("47.476417", "8.307706");
 
     assertNotNull(station);
-    assertEquals("Baden", station.getStationCode());
-  }*/
+    assertEquals("Baden", station.getStationName());
+  }
   @Test
   void getLocationsName_validInput_listOfStations() {
     List<Station> stations = ConnectionService.getLocationsName("Zurich");
