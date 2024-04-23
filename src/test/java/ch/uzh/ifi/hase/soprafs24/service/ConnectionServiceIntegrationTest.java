@@ -23,6 +23,8 @@ import java.util.List;
 
 @WebAppConfiguration
 @SpringBootTest
+@Transactional
+@Rollback
 class ConnectionServiceIntegrationTest {
 
 
