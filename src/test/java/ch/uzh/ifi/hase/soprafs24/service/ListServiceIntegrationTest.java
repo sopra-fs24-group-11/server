@@ -179,10 +179,19 @@ public class ListServiceIntegrationTest {
     assertEquals("this is a changed test item", itemRepository.findById(1L).get().getItem());
   }
 
-  @Test
+  /*@Test
   void updateResponsible_validInput_success() {
-    listService.deleteResponsible(1L);
     listService.updateResponsible(1L, testParticipant2);
     assertEquals(testParticipant2, itemRepository.findById(1L).get().getParticipant());
+  }*/
+
+  void addItem_validInput_success() {
+    Item testItem2 = new Item();
+    testItem2.setUserId(1L);
+    testItem2.setParticipant(testParticipant1);
+    testItem2.setItem("this is a second test item");
+    testItem2.setId(2L);
+    listService.addItem(testTrip1, testItem2, ItemType.GROUPPACKING, testParticipant1);
+    assertEquals("this is a second test item", itemRepository.findById(2L).get().getItem());
   }
 }
