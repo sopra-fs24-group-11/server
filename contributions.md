@@ -27,8 +27,9 @@
 | 3    | Marc    | #98 - server  | Done        |
 | 3    | Gabriel | # - server    | Done        |
 | 3    | Gabriel | # - server    | Done        |
-| 3    | Jan     | # - client    | Done        |
-| 3    | Jan     | # - client    | Done        |
+| 3    | Jan     | #11 - client  | Done        |
+| 3    | Jan     | #12 - client  | Done        |
+| 3    | Jan     | #61 - client  | Done        |
 | 3    | Livio   | # - client    | Done        |
 | 3    | Livio   | # - client    | Done        |
 | 3    | Patrik  | # - client    | Done        |
