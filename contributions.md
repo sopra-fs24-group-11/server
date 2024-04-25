@@ -30,8 +30,8 @@
 | 3    | Jan     | #11 - client  | Done        |
 | 3    | Jan     | #12 - client  | Done        |
 | 3    | Jan     | #61 - client  | Done        |
-| 3    | Livio   | # - client    | Done        |
-| 3    | Livio   | # - client    | Done        |
+| 3    | Livio   | #6 - client   | Done        | 
+| 3    | Livio   | #49 - client  | Done        |
 | 3    | Patrik  | # - client    | Done        |
 | 3    | Patrik  | # - client    | Done        |
 | 4    | Marc    | # - server    | Done        |
