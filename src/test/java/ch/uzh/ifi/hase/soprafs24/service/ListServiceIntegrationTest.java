@@ -56,7 +56,6 @@ public class ListServiceIntegrationTest {
   @Autowired
   private UserNotificationRepository userNotificationRepository;
 
-  private TripParticipant testParticipant1;
 
   private ParticipantConnection participantConnection;
 
@@ -76,6 +75,9 @@ public class ListServiceIntegrationTest {
   private User testUser1;
 
   private Item testItem1;
+  private TripParticipant testParticipant1;
+
+  private TripParticipant testParticipant2;
   @BeforeEach
   void setup() {
     // Clear any existing data in the repositories
@@ -120,7 +122,14 @@ public class ListServiceIntegrationTest {
     testParticipant1.setInvitator(testUser1);
     testParticipant1.setUser(testUser1);
 
+    testParticipant2 = new TripParticipant();
+    testParticipant2.setTrip(testTrip1);
+    testParticipant2.setStatus(InvitationStatus.PENDING);
+    testParticipant2.setInvitator(testUser1);
+    testParticipant2.setUser(testUser1);
+
     testParticipant1 = tripParticipantRepository.save(testParticipant1);
+    testParticipant2 = tripParticipantRepository.save(testParticipant2);
     tripParticipantRepository.flush();
 
     participantConnection = new ParticipantConnection();
@@ -168,5 +177,12 @@ public class ListServiceIntegrationTest {
     listService.updateItem(1L, testItem2);
 
     assertEquals("this is a changed test item", itemRepository.findById(1L).get().getItem());
+  }
+
+  @Test
+  void updateResponsible_validInput_success() {
+    listService.deleteResponsible(1L);
+    listService.updateResponsible(1L, testParticipant2);
+    assertEquals(testParticipant2, itemRepository.findById(1L).get().getParticipant());
   }
 }
