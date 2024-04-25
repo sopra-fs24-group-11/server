@@ -202,7 +202,7 @@ class UserControllerTest {
     List<Friend> friends = new ArrayList<Friend>();
     friends.add(testFriend);
     given(friendshipService.getAllAcceptedFriends(testUser)).willReturn(friends);
-    given(userService.getUserById(Mockito.any())).willReturn(testUser); // should return the User object for the friend, not the user
+    given(userService.getUserById(Mockito.any())).willReturn(testUser);
     given(userMock.getStatus()).willReturn(UserStatus.ONLINE);
 
     // when/then
