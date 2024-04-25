@@ -14,14 +14,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebAppConfiguration
@@ -197,5 +200,41 @@ public class ListServiceIntegrationTest {
     testItem2.setId(2L);
     listService.addItem(testTrip1, testItem2, ItemType.GROUPPACKING, testParticipant1);
     assertEquals("this is a second test item", itemRepository.findById(2L).get().getItem());
+  }
+
+  @Test
+  void deleteItem_validInput_success() {
+    listService.deleteItem(1L);
+    assertThrows(NoSuchElementException.class, () -> itemRepository.findById(1L).get());
+  }
+
+  @Test
+  void checkIfItemIdHasType_validInput_success() {
+    listService.checkIfItemIdHasType(1L, ItemType.GROUPPACKING);
+  }
+
+  @Test
+  void checkIfItemIdHasType_validInput_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> listService.checkIfItemIdHasType(1L, ItemType.INDIVIDUALPACKING));
+  }
+
+  @Test
+  void checkIfItemIdHasParticipant_validInput_success() {
+    listService.checkIfItemIdHasParticipant(1L, testParticipant1);
+  }
+
+  @Test
+  void checkIfItemIdHasParticipant_validInput_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> listService.checkIfItemIdHasParticipant(1L, testParticipant2));
+  }
+
+  @Test
+  void checkIfItemIdHasParticipantOrNone_validInput_success() {
+    listService.checkIfItemIdHasParticipantOrNone(1L, testParticipant1);
+  }
+
+  @Test
+  void checkIfItemIdHasNoParticipant_validInput_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> listService.checkIfItemIdHasNoParticipant(1L));
   }
 }
