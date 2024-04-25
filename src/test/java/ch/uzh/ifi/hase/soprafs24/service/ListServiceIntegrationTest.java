@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @Transactional
 @Rollback
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ListServiceIntegrationTest {
   @Qualifier("participantConnectionRepository")
   @Autowired
@@ -83,6 +85,8 @@ public class ListServiceIntegrationTest {
     // Clear any existing data in the repositories
     tripRepository.deleteAll();
     tripRepository.flush();
+    itemRepository.deleteAll();
+    itemRepository.flush();
 
     testUser1 = new User();
     testUser1.setId(1L);
@@ -143,8 +147,7 @@ public class ListServiceIntegrationTest {
     participantConnections = new ArrayList<ParticipantConnection>();
     participantConnections.add(participantConnection);
 
-    itemRepository.deleteAll();
-    itemRepository.flush();
+
 
     testItem1 = new Item();
     testItem1.setUserId(1L);
@@ -153,8 +156,8 @@ public class ListServiceIntegrationTest {
     testItem1.setItem("this is a test item");
     testItem1.setTrip(testTrip1);
     testItem1.setCompleted(false);
-    testItem1.setId(1L);
     testItem1 = itemRepository.save(testItem1);
+    itemRepository.flush();
   }
 
   @Test
@@ -173,18 +176,19 @@ public class ListServiceIntegrationTest {
     testItem2.setItem("this is a changed test item");
     testItem2.setTrip(testTrip1);
     testItem2.setCompleted(false);
-    testItem2.setId(1L);
     listService.updateItem(1L, testItem2);
 
     assertEquals("this is a changed test item", itemRepository.findById(1L).get().getItem());
   }
 
-  /*@Test
+  @Test
   void updateResponsible_validInput_success() {
+    listService.deleteResponsible(1L);
     listService.updateResponsible(1L, testParticipant2);
     assertEquals(testParticipant2, itemRepository.findById(1L).get().getParticipant());
-  }*/
+  }
 
+  @Test
   void addItem_validInput_success() {
     Item testItem2 = new Item();
     testItem2.setUserId(1L);
