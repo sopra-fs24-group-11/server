@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @WebAppConfiguration
 @SpringBootTest
@@ -76,6 +76,7 @@ public class ListServiceIntegrationTest {
   private ListService listService;
 
   private Trip testTrip1;
+  private Trip testTrip2;
 
   private User testUser1;
 
@@ -120,7 +121,18 @@ public class ListServiceIntegrationTest {
     testTrip1.setMeetUpTime(LocalDateTime.of(2000,11,11,11,11));
     testTrip1.setAdministrator(testUser1);
 
+    testTrip2 = new Trip();
+    testTrip2.setTripName("Como");
+    testTrip2.setTripDescription("We are going to Como this spring.");
+    testTrip2.setCompleted(false);
+    testTrip2.setMaxParticipants(10);
+    testTrip2.setNumberOfParticipants(1);
+    testTrip2.setMeetUpPlace(station);
+    testTrip2.setMeetUpTime(LocalDateTime.of(2000,11,11,11,11));
+    testTrip2.setAdministrator(testUser1);
+
     testTrip1 = tripRepository.save(testTrip1);
+    testTrip2 = tripRepository.save(testTrip2);
     tripRepository.flush();
 
     testParticipant1 = new TripParticipant();
@@ -224,8 +236,19 @@ public class ListServiceIntegrationTest {
   }
 
   @Test
-  void checkIfItemIdHasParticipant_validInput_throwsException() {
+  void checkIfItemIdHasParticipant_invalidInput_throwsException() {
     assertThrows(ResponseStatusException.class, () -> listService.checkIfItemIdHasParticipant(1L, testParticipant2));
+  }
+
+
+  @Test
+  void checkIfItemIdHasTrip_validInput_success() {
+    listService.checkIfItemIdHasTrip(1L, testTrip1);
+  }
+
+  @Test
+  void checkIfItemIdHasTrip_invalidInput_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> listService.checkIfItemIdHasTrip(1L, testTrip2));
   }
 
   @Test
@@ -234,7 +257,20 @@ public class ListServiceIntegrationTest {
   }
 
   @Test
-  void checkIfItemIdHasNoParticipant_validInput_throwsException() {
+  void checkIfItemIdHasNoParticipant_invalidInput_throwsException() {
     assertThrows(ResponseStatusException.class, () -> listService.checkIfItemIdHasNoParticipant(1L));
+  }
+
+  @Test
+  void revertAllForAParticipant_validInput_success() {
+    listService.revertAllForAParticipant(testParticipant1);
+    assertNull(testItem1.getParticipant());
+  }
+
+
+  @Test
+  void revertAllForAUser_validInput_success() {
+    listService.revertAllForAUser(testUser1.getId());
+    assertNull(testItem1.getParticipant());
   }
 }
