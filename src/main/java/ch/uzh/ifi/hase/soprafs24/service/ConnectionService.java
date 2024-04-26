@@ -93,6 +93,7 @@ public class ConnectionService {
       JSONObject obj = new JSONObject(response.body());
       JSONArray jsonArray = obj.getJSONArray("stations");
 
+      // for loop needed since the station at position [0] could be null
       for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject jsonStation = jsonArray.getJSONObject(i);
         // extract name and id of stations and add them to the list of stations
