@@ -26,7 +26,7 @@
 | 3    | Marc    | #97 - server  | Done        |
 | 3    | Marc    | #98 - server  | Done        |
 | 3    | Gabriel | #44 - server  | Done        |
-| 3    | Gabriel | # - server    | Done        |
+| 3    | Gabriel | #119 - server | Done        |
 | 3    | Jan     | #11 - client  | Done        |
 | 3    | Jan     | #12 - client  | Done        |
 | 3    | Jan     | #61 - client  | Done        |
