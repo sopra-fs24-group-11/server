@@ -32,10 +32,11 @@
 | 3    | Jan     | #61 - client  | Done        |
 | 3    | Livio   | #6 - client   | Done        | 
 | 3    | Livio   | #49 - client  | Done        |
-| 3    | Patrik  | #21 - client    | Done        |
-| 3    | Patrik  | #56 - client    | Done        |
-| 4    | Marc    | # - server    | Done        |
-| 4    | Marc    | # - server    | Done        |
+| 3    | Patrik  | #21 - client  | Done        |
+| 3    | Patrik  | #56 - client  | Done        |
+| 4    | Marc    | #74 - server  | Done        |
+| 4    | Marc    | #110 - server | Done        |
+| 4    | Marc    | #111 - server | Done        |
 | 4    | Gabriel | # - server    | Done        |
 | 4    | Gabriel | # - server    | Done        |
 | 4    | Jan     | # - client    | Done        |
