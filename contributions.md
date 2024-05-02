@@ -41,8 +41,8 @@
 | 4    | Gabriel | # - server    | Done        |
 | 4    | Jan     | 40 - client   | Done        |
 | 4    | Jan     | 44 - client   | Done        |
-| 4    | Livio   | # - client    | Done        |
-| 4    | Livio   | # - client    | Done        |
+| 4    | Livio   | 37 - client   | Done        |
+| 4    | Livio   | 38 - client   | Done        |
 | 4    | Patrik  | # - client    | Done        |
 | 4    | Patrik  | # - client    | Done        |
 | 5    | Marc    | # - server    | Done        |
