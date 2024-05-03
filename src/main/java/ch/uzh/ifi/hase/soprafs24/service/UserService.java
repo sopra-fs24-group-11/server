@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,6 +46,7 @@ public class UserService {
   private final NotificationService notificationService;
   private final ListService listService;
   private final TemplatePackingRepository templatePackingRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @Autowired
   public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService, ListService listService, TemplatePackingRepository templatePackingRepository) {
@@ -54,6 +57,7 @@ public class UserService {
     this.notificationService = notificationService;
     this.listService = listService;
     this.templatePackingRepository = templatePackingRepository;
+    this.passwordEncoder = new BCryptPasswordEncoder();
   }
 
   public User getUserByToken(String token) {
@@ -83,6 +87,8 @@ public class UserService {
     newUser.setCreationDate(LocalDate.now());
     newUser.setLastOnline(LocalDateTime.now());
     newUser.setLevel(1.00);
+    String encodedPassword = this.passwordEncoder.encode(newUser.getPassword());
+    newUser.setPassword(encodedPassword);
 
     Image profileImage = new Image();
     profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
@@ -96,7 +102,7 @@ public class UserService {
 
   public String loginUser(User loginUser) {
     User existingUser = userRepository.findByUsername(loginUser.getUsername());
-    if (existingUser == null || !Objects.equals(loginUser.getPassword(), existingUser.getPassword())) {
+    if (existingUser == null || !passwordEncoder.matches(loginUser.getPassword(), existingUser.getPassword())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT,
               "The Username or password are wrong.");
     }
@@ -117,7 +123,8 @@ public class UserService {
     existingUser.setUsername(user.getUsername());
     existingUser.setBirthday(user.getBirthday());
     existingUser.setEmail(user.getEmail());
-    existingUser.setPassword(user.getPassword());
+    String encodedPassword = this.passwordEncoder.encode(user.getPassword());
+    existingUser.setPassword(encodedPassword);
     // Save the updated user
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
