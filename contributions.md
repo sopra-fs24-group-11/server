@@ -37,8 +37,8 @@
 | 4    | Marc    | #74 - server  | Done        |
 | 4    | Marc    | #110 - server | Done        |
 | 4    | Marc    | #111 - server | Done        |
-| 4    | Gabriel | # - server    | Done        |
-| 4    | Gabriel | # - server    | Done        |
+| 4    | Gabriel | #109 - server | Done        |
+| 4    | Gabriel | #113 - server | Done        |
 | 4    | Jan     | 40 - client   | Done        |
 | 4    | Jan     | 44 - client   | Done        |
 | 4    | Livio   | 37 - client   | Done        |
