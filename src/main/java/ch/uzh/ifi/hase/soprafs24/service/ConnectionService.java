@@ -153,8 +153,7 @@ public class ConnectionService {
             ConnectionType retType;
             switch (jsonType) {
               case "T":
-                retType = ConnectionType.TRAM;
-                break;
+                retType = ConnectionType.TRAM; break;
               case "B":
                 retType = ConnectionType.BUS; break;
               case "BAT":
@@ -281,7 +280,7 @@ public class ConnectionService {
   }
 
   public String getTimeString(LocalDateTime localDateTime) {
-    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm"); // very important: use "HH:mm" instead of "hh:mm" for 24h format
     return localDateTime.format(timeFormatter);
   }
 
