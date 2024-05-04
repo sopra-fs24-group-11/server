@@ -30,6 +30,9 @@ public class NullChecker {
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null.");
     }
+    if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
+    }
     if (dto.getBirthday() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be null.");
     }
@@ -62,6 +65,9 @@ public class NullChecker {
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null.");
     }
+    if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
+    }
     if (dto.getBirthday() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be null.");
     }
@@ -89,9 +95,6 @@ public class NullChecker {
     if (dto.getTripName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot be only whitespaces.");
     }
-    if (!dto.getTripName().matches("^[a-zA-Z0-9\\-._&%/:?!\\s]+$")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name can only contain letters, numbers, spaces, and special characters '-._&%/:?!'.");
-    }
     if (dto.getTripDescription() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be null.");
     }
@@ -103,9 +106,6 @@ public class NullChecker {
     }
     if (dto.getTripDescription().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be only whitespaces.");
-    }
-    if (!dto.getTripDescription().matches("^[a-zA-Z0-9\\-._&%/:?!\\s]+$")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description can only contain letters, numbers, spaces, and special characters '-._&%/:?!'.");
     }
     if (dto.getMeetUpPlace() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up place cannot be null.");
@@ -145,9 +145,6 @@ public class NullChecker {
     if (dto.getTripName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot be only whitespaces.");
     }
-    if (!dto.getTripName().matches("^[a-zA-Z0-9\\-._&%/:?!\\s]+$")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name can only contain letters, numbers, spaces, and special characters '-._&%/:?!'.");
-    }
     if (dto.getTripDescription() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be null.");
     }
@@ -159,9 +156,6 @@ public class NullChecker {
     }
     if (dto.getTripDescription().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be only whitespaces.");
-    }
-    if (!dto.getTripDescription().matches("^[a-zA-Z0-9\\-._&%/:?!\\s]+$")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description can only contain letters, numbers, spaces, and special characters '-._&%/:?!'.");
     }
     if (dto.getMeetUpPlace() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up place cannot be null.");
@@ -217,7 +211,13 @@ public class NullChecker {
   }
   public static void itemPostDTOChecker(ItemPostDTO dto) {
     if (dto.getItem() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Item cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item kann nicht null sein.");
+    }
+    if (dto.getItem().isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu kurz. Die Minimallänge beträgt 1 Zeichen.");
+    }
+    if (dto.getItem().length() > 50) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 50 Zeichen.");
     }
   }
   public static void templateDTOChecker(TemplateDTO dto) {
