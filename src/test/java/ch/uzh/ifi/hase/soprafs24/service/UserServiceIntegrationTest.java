@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -52,6 +54,7 @@ class UserServiceIntegrationTest {
   private User testUser1;
 
   private TemplatePackingItem testItem;
+  private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   @BeforeEach
   void setup() {
@@ -66,6 +69,8 @@ class UserServiceIntegrationTest {
     testUser1.setId(1L);
     testUser1.setUsername("user1");
     testUser1.setPassword("Firstname Lastname");
+    String encodedPassword = passwordEncoder.encode("Firstname Lastname");
+    testUser1.setPassword(encodedPassword);
     testUser1.setStatus(UserStatus.ONLINE);
     testUser1.setToken("abc");
     testUser1.setCreationDate(LocalDate.of(2020, 11, 11));
@@ -176,7 +181,11 @@ class UserServiceIntegrationTest {
   @Test
   void loginUser_userExists_success() {
     // when
-    String token = userService.loginUser(testUser1);
+    User testUser = new User();
+    testUser.setUsername("user1");
+    testUser.setPassword("Firstname Lastname");
+
+    String token = userService.loginUser(testUser);
 
     // then
     assertEquals(testUser1.getToken(), token);
@@ -207,7 +216,7 @@ class UserServiceIntegrationTest {
 
     // then
     assertEquals(testUser1.getUsername(), testUser.getUsername());
-    assertEquals(testUser1.getPassword(), testUser.getPassword());
+    assertTrue(passwordEncoder.matches(testUser.getPassword(), testUser1.getPassword()));
     assertEquals(testUser1.getEmail(), testUser.getEmail());
     assertEquals(testUser1.getBirthday(), testUser.getBirthday());
     assertNotNull(testUser1.getToken());
