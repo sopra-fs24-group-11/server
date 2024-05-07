@@ -16,28 +16,28 @@ public class NullChecker {
   }
   public static void userPostDTOChecker (UserPostDTO dto) {
     if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password kann nicht null sein.");
     }
     if (dto.getUsername() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
     if (dto.getUsername().length() > 30) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username cannot exceed 30 characters.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername kann nicht länger als 30 Zeichen sein.");
     }
     if (dto.getUsername().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username must have at least 2 characters.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername muss mindestens 2 Zeichen lang haben.");
     }
     if (dto.getEmail() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-Mail kann nicht null sein.");
     }
     if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
     }
     if (dto.getBirthday() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht null sein.");
     }
     if (dto.getBirthday().isAfter(LocalDate.now())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be in the future.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht in der Zukunft sein.");
     }
   }
   public static void userLoginPostDTOChecker (UserLoginPostDTO dto) {
@@ -51,10 +51,10 @@ public class NullChecker {
 
   public static void userPutDTOChecker (UserPutDTO dto) {
     if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password kann nicht null sein.");
     }
     if (dto.getUsername() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
     if (dto.getUsername().length() > 30) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Username cannot exceed 30 characters.");

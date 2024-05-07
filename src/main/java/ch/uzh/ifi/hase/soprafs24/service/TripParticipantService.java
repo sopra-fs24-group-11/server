@@ -45,7 +45,7 @@ public class TripParticipantService {
   public TripParticipant getTripParticipant(Trip trip, User user) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sie sind nicht Mitglied dieses Ausflugs.");
     }
     return participant;
   }
@@ -93,7 +93,7 @@ public class TripParticipantService {
     admin.setTrip(trip);
     admin.setStatus(InvitationStatus.ACCEPTED);
     newParticipants.add(admin);
-    notificationService.createUserNotification(administrator, String.format("You created the trip '%s'", trip.getTripName()));
+    notificationService.createUserNotification(administrator, String.format("Sie haben den Ausflug '%s' erstellt", trip.getTripName()));
 
     for(User user : invited) {
       TripParticipant participant = new TripParticipant();
@@ -101,7 +101,7 @@ public class TripParticipantService {
       participant.setInvitator(administrator);
       participant.setTrip(trip);
       newParticipants.add(participant);
-      notificationService.createUserNotification(user, String.format("You were invited to the trip '%s' by %s", trip.getTripName(), administrator.getUsername()));
+      notificationService.createUserNotification(user, String.format("Sie wurden von %s zum Ausflug '%s' eingeladen", administrator.getUsername(), trip.getTripName()));
     }
     tripParticipantRepository.saveAll(newParticipants);
     tripParticipantRepository.flush();
@@ -116,8 +116,8 @@ public class TripParticipantService {
 
     tripParticipantRepository.save(newParticipant);
     tripParticipantRepository.flush();
-    notificationService.createUserNotification(user, String.format("You were invited to the trip '%s' by %s", trip.getTripName(), administrator.getUsername()));
-    notificationService.createTripNotification(trip, String.format("%s added %s to the trip", administrator.getUsername(), user.getUsername()));
+    notificationService.createUserNotification(user, String.format("Sie wurden von %s zum Ausflug '%s' eingeladen", administrator.getUsername(), trip.getTripName()));
+    notificationService.createTripNotification(trip, String.format("%s hat %s zum Ausflug hinzugefügt", administrator.getUsername(), user.getUsername()));
   }
 
 
@@ -126,7 +126,7 @@ public class TripParticipantService {
     // TO DO: delete / revert list items
     List<TripParticipant> tripAdmins = tripParticipantRepository.findAllByUserAndTripAdministrator(user, user);
     if (!tripAdmins.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("You cannot delete your account if you are an admin of a trip. Please delete the trips first. There are %d trips remaining.", tripAdmins.size()));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Sie können Ihren Account nicht löschen, solange Sie Administrator in mindestens einem Ausflug sind. Bitte löschen Sie diese Ausflüge. %d solche Ausflüge sind übrig.", tripAdmins.size()));
     }
     List<TripParticipant> tripParticipants = getAllTripsOfAUser(user);
 
@@ -136,7 +136,7 @@ public class TripParticipantService {
       trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
       trip = tripRepository.save(trip);
       tripRepository.flush();
-      notificationService.createTripNotification(trip, String.format("%s left the trip", user.getUsername()));
+      notificationService.createTripNotification(trip, String.format("%s hat den Ausflug verlassen", user.getUsername()));
     }
 
     tripParticipantRepository.deleteAll(tripParticipants);
@@ -146,7 +146,7 @@ public class TripParticipantService {
   public void isPartOfTripAndHasAccepted(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTripAndStatus(user, trip, InvitationStatus.ACCEPTED);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip. In case you were invited, accept the invitation first.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sie sind nicht Mitglied dieses Ausflugs. Fall Sie eingeladen wurden, nehmen Sie die Einladung im Dashboard an.");
     }
   }
 
@@ -169,7 +169,7 @@ public class TripParticipantService {
   public void markTripAsFavorite(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sie sind nicht Mitglied dieses Ausflugs.");
     }
     participant.setFavouriteTrip(!participant.isFavouriteTrip());
     tripParticipantRepository.save(participant);
@@ -182,23 +182,23 @@ public class TripParticipantService {
   public void acceptInvitation(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You were not invited to this trip.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sie wurden nicht zu diesem Ausflug eingeladen.");
     }
     participant.setStatus(InvitationStatus.ACCEPTED);
     tripParticipantRepository.save(participant);
     tripParticipantRepository.flush();
-    notificationService.createTripNotification(trip, String.format("%s has accepted the trip invitation", user.getUsername()));
+    notificationService.createTripNotification(trip, String.format("%s hat die Einladung angenommen.", user.getUsername()));
   }
   public void rejectInvitation(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(user, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You were not invited to this trip.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sie wurden nicht zu diesem Ausflug eingeladen.");
     }
     if (Objects.equals(trip.getAdministrator().getId(), user.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "As the admin, you cannot reject the invitation, the admin has automatically accepted.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Als Administrator kann die Einladung nicht abgelehnt werden. Administratoren haben automatisch angenommen.");
     }
     if (participant.getStatus()==InvitationStatus.ACCEPTED) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot reject an invitation that has already been accepted - You have to leave the trip instead.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Einladungen die bereits angenommen wurden können nicht abgelehnt werden - Verlassen Sie den Trip, falls Sie das wollen.");
     }
 
     // to do: revert / delete list items -> even if there shouldn't be any, it could happen (via postman) and a 500 error would be thrown
@@ -210,19 +210,19 @@ public class TripParticipantService {
     trip = tripRepository.save(trip);
     tripRepository.flush();
 
-    notificationService.createTripNotification(trip, String.format("%s has rejected the trip invitation", user.getUsername()));
+    notificationService.createTripNotification(trip, String.format("%s hat die Einladung abgelehnt", user.getUsername()));
   }
 
   public void leaveTrip(User leaver, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(leaver, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not part of this trip.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sie sind nicht Mitglied dieses Ausflugs.");
     }
     if (Objects.equals(trip.getAdministrator().getId(), leaver.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin cannot leave before announcing a new admin.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Ernennen Sie einen neuen Admin, um den Ausflug zu verlassen..");
     }
     if (participant.getStatus()==InvitationStatus.PENDING) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot leave a trip that hasn't been accepted yet - You have to reject the invitation instead.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Ausflüge, die noch nicht angenommen wurden, können nicht verlassen werden - Lehnen Sie die Einladung ab, falls Sie das wünschen.");
     }
 
     listService.deleteAllForAParticipant(participant);
@@ -235,20 +235,20 @@ public class TripParticipantService {
     trip = tripRepository.save(trip);
     tripRepository.flush();
 
-    notificationService.createTripNotification(trip, String.format("%s has left the trip", leaver.getUsername()));
-    notificationService.createUserNotification(leaver, String.format("You left the trip '%s'", trip.getTripName()));
+    notificationService.createTripNotification(trip, String.format("%s hat den Ausflug verlassen", leaver.getUsername()));
+    notificationService.createUserNotification(leaver, String.format("Sie haben den Ausflug '%s' verlassen", trip.getTripName()));
   }
 
   public void removeMemberFromTrip(User userToBeRemoved, User requester, Trip trip) {
     if (!Objects.equals(trip.getAdministrator().getId(), requester.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie sind nicht Administator dieses Ausflugs.");
     }
     if (Objects.equals(userToBeRemoved.getId(), requester.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot remove yourself from the trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie können sich nicht selbst vom Ausflug entfernen.");
     }
     TripParticipant participant = tripParticipantRepository.findByUserAndTrip(userToBeRemoved, trip);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be removed is not part of this trip.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("%s ist nicht Teil des Ausflugs und kann daher nicht entfernt werden.", userToBeRemoved.getUsername()));
     }
 
     listService.deleteAllForAParticipant(participant);
@@ -256,8 +256,8 @@ public class TripParticipantService {
     connectionService.deleteConnection(participant);
     tripParticipantRepository.delete(participant);
     tripParticipantRepository.flush();
-    notificationService.createTripNotification(trip, String.format("%s removed %s from the trip", requester.getUsername(), userToBeRemoved.getUsername()));
-    notificationService.createUserNotification(userToBeRemoved, String.format("%s removed you from the trip '%s'", requester.getUsername(), trip.getTripName()));
+    notificationService.createTripNotification(trip, String.format("%s hat %s vom Ausflug entfernt", requester.getUsername(), userToBeRemoved.getUsername()));
+    notificationService.createUserNotification(userToBeRemoved, String.format("%s hat Sie vom Ausflug '%s' entfernt", requester.getUsername(), trip.getTripName()));
 
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
     tripRepository.save(trip);

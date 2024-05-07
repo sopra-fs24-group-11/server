@@ -36,12 +36,12 @@ public class TripService {
 
   public Trip getTripById(Long id) {
     return tripRepository.findById(id).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "We couldn't find this trip."));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Der Ausflug konnte nicht gefunden werden."));
   }
 
   public Long createTrip(Trip newTrip, User administrator, List<Long> userIds) {
     if (userIds.contains(administrator.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie haben sich selbst eingeladen.");
     }
     // remove duplicates
     List<User> invited = new ArrayList<>();
@@ -54,13 +54,13 @@ public class TripService {
     // check trip size
     int maximum = 10+(int)Math.floor(administrator.getLevel());
     if (maximum < invited.size() + 1) { // invited plus administrator
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d.", maximum));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Zu viele Teilnehmer, die Maximalgrösse beträgt %d.", maximum));
     }
     // check if everyone invited is a friend
     List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
     for (User invite : invited) {
       if (!friends.contains(invite)) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "You can only invite friends to a trip. Make sure to send and accept friend requests first.");
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Es können nur bestehende Freunde eingeladen werden. Versichern Sie sich, Freundschaftsanfragen zuerst zu verschicken und anzunehmen.");
       }
     }
     newTrip.setAdministrator(administrator);
@@ -71,16 +71,16 @@ public class TripService {
     tripRepository.flush();
     // store every trip participant
     tripParticipantService.storeParticipants(newTrip, administrator, invited);
-    notificationService.createTripNotification(newTrip, String.format("%s created the trip '%s'", administrator.getUsername(), newTrip.getTripName()));
+    notificationService.createTripNotification(newTrip, String.format("%s hat den Ausflug '%s' erstellt", administrator.getUsername(), newTrip.getTripName()));
     return newTrip.getId();
   }
 
   public void updateTrip(Trip trip, Trip updatedTrip, User administrator, List<Long> userIds) {
     if (!isAdmin(trip, administrator)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Nur Administratoren können die Details bearbeiten.");
     }
     if (userIds.contains(administrator.getId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You invited yourself to the trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie haben sich selbst eingeladen.");
     }
     List<User> invited = new ArrayList<>();
     Set<Long> set = new HashSet<>();
@@ -114,13 +114,13 @@ public class TripService {
     }
     // check trip size
     if (trip.getMaxParticipants() < trip.getNumberOfParticipants()-toDelete.size()+toAdd.size()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Too many participants, size is limited to %d.", trip.getMaxParticipants()));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Zu viele Teilnehmer, die Maximalgrösse beträgt %d.", trip.getMaxParticipants()));
     }
     // check if everyone invited is a friend
     List<User> friends = friendshipService.getAllAcceptedFriendsAsUsers(administrator);
     for (User invite : toAdd) {
       if (!friends.contains(invite)) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "You can only invite friends to a trip.");
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Es können nur bestehende Freunde eingeladen werden. Versichern Sie sich, Freundschaftsanfragen zuerst zu verschicken und anzunehmen.");
       }
     }
 
@@ -134,10 +134,10 @@ public class TripService {
     trip.setNumberOfParticipants(trip.getNumberOfParticipants()+toAdd.size());
     trip = tripRepository.save(trip);
     tripRepository.flush();
-    notificationService.createTripNotification(trip, String.format("%s updated the trip's details'", administrator.getUsername()));
+    notificationService.createTripNotification(trip, String.format("%s hat die Details des Ausflugs angepasst", administrator.getUsername()));
     List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
     for (User user : users) {
-      notificationService.createUserNotification(user, String.format("The trip '%s' has been updated", trip.getTripName()));
+      notificationService.createUserNotification(user, String.format("Details des Auflugs '%s' wurde geändert", trip.getTripName()));
     }
   }
 
@@ -147,26 +147,26 @@ public class TripService {
 
   public void newAdmin(Trip trip, User oldAdmin, User newAdmin) {
     if (!isAdmin(trip, oldAdmin)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Nur Administratoren können die Details bearbeiten.");
     }
     TripParticipant participant = tripParticipantService.getTripParticipant(trip, newAdmin);
     if (participant.getStatus() == InvitationStatus.PENDING) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("%s has not yet accepted the trip request.", participant.getUser().getUsername()));
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("%s hat die Einladung noch nicht angenommen.", participant.getUser().getUsername()));
     }
     trip.setAdministrator(newAdmin);
     trip = tripRepository.save(trip);
     tripRepository.flush();
-    notificationService.createTripNotification(trip, String.format("%s announced %s as the new Administrator", oldAdmin.getUsername(), newAdmin.getUsername()));
+    notificationService.createTripNotification(trip, String.format("%s hat %s zum Administrator ernannt.", oldAdmin.getUsername(), newAdmin.getUsername()));
   }
 
   public void deleteTrip(Trip trip, User requester) {
     if (!isAdmin(trip, requester)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not the admin of this trip.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Nur Administratoren können die Details bearbeiten.");
     }
 
     List<User> users = tripParticipantService.getTripUsers(trip);
     for (User user : users) {
-      notificationService.createUserNotification(user, String.format("The trip '%s' has been deleted", trip.getTripName()));
+      notificationService.createUserNotification(user, String.format("Der Ausflug '%s' wurde gelöscht.", trip.getTripName()));
     }
     listService.deleteAllForATrip(trip);
     notificationService.deleteAllForATrip(trip);
@@ -177,7 +177,7 @@ public class TripService {
 
   public void isOngoing(Trip trip) {
     if (trip.isCompleted()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "The trip has finished, you cannot make changes anymore! Leaving and deleting the trip is still possible.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Der Ausflug ist beendet, Sie können nichts mehr ändern! Den Ausflug löschen oder verlassen ist noch möglich.");
     }
   }
 
@@ -187,11 +187,11 @@ public class TripService {
     for (Trip trip : ongoingTrips) {
       trip.setCompleted(true);
       tripRepository.save(trip);
-      notificationService.createTripNotification(trip, "The trip has finished!");
+      notificationService.createTripNotification(trip, "Der Ausflug ist beendet! Hurraa!");
       List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
       friendshipService.increasePoints(users);
       for (User u : users) {
-        notificationService.createUserNotification(u, String.format("The trip '%s' has been completed", trip.getTripName()));
+        notificationService.createUserNotification(u, String.format("Der Ausflug '%s' ist beendet.", trip.getTripName()));
         userService.increaseLevel(u, (double)trip.getNumberOfParticipants()/10);
       }
     }

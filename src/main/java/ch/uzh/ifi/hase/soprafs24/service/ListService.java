@@ -45,7 +45,7 @@ public class ListService {
   public void updateResponsible(Long itemId, TripParticipant participant) {
     Item existingItem = getItemById(itemId);
     if (existingItem.getParticipant() != null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("This item has already been selected by %s.", existingItem.getParticipant().getUser().getUsername()));
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("Dieses item wurde bereits von %s ausgewählt.", existingItem.getParticipant().getUser().getUsername()));
     }
     existingItem.setParticipant(participant);
     existingItem.setUserId(participant.getUser().getId());
@@ -82,41 +82,41 @@ public class ListService {
   }
 
   private Item getItemById(Long itemId) {
-    return itemRepository.findById(itemId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Item not found."));
+    return itemRepository.findById(itemId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Item nicht gefunden."));
   }
 
   public void checkIfItemIdHasType(Long itemId, ItemType itemType) {
     Item item = getItemById(itemId);
     if (item.getItemType() != itemType) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item nicht gefunden.");
     }
   }
 
   public void checkIfItemIdHasParticipant(Long itemId, TripParticipant participant) {
     Item item = getItemById(itemId);
     if (item.getParticipant() != participant) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("This item has been selected by %s.", item.getParticipant().getUser().getUsername()));
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("Dieses item wurde bereits von %s ausgewählt.", item.getParticipant().getUser().getUsername()));
     }
   }
 
   public void checkIfItemIdHasTrip(Long itemId, Trip trip) {
     Item item = getItemById(itemId);
     if (item.getTrip() != trip) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change this item.");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sie dürfen dieses Item nicht anpassen.");
     }
   }
 
   public void checkIfItemIdHasParticipantOrNone(Long itemId, TripParticipant participant) {
     Item item = getItemById(itemId);
     if (item.getParticipant() != null && item.getParticipant() != participant) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("This item has been selected by %s.", item.getParticipant().getUser().getUsername()));
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("Dieses item wurde bereits von %s ausgewählt.", item.getParticipant().getUser().getUsername()));
     }
   }
 
   public void checkIfItemIdHasNoParticipant(Long itemId) {
     Item item = getItemById(itemId);
     if (item.getParticipant() != null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("This item has been selected by %s.", item.getParticipant().getUser().getUsername()));
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("Dieses item wurde bereits von %s ausgewählt.", item.getParticipant().getUser().getUsername()));
     }
   }
 
