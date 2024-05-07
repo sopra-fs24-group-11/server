@@ -3,9 +3,10 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Connection {
+public class Connection implements Serializable {
   @Column(nullable = false)
   private ConnectionType connectionType;
 
