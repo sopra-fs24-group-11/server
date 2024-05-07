@@ -329,7 +329,7 @@ class UserServiceIntegrationTest {
   void giveFeedback_success() {
     userService.giveFeedback(testUser1, "this is a test feedback");
 
-    assertEquals("Thank you for giving us feedback, we are happy to look at it!", notificationService.getUserNotifications(testUser1).get(0).getMessage());
+    assertEquals("Danke für das Feedback! Gerne schauen wir es uns näher an!", notificationService.getUserNotifications(testUser1).get(0).getMessage());
   }
 
   @Test
