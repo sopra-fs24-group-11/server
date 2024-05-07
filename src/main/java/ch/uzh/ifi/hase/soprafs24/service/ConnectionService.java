@@ -72,7 +72,7 @@ public class ConnectionService {
       }
       return stations;
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The station could not be retrieved.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Es wurde keine Station gefunden.");
     }
   }
 
@@ -106,9 +106,9 @@ public class ConnectionService {
         }
       }
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No station found near your location.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Station in Ihrer Nähe gefunden.");
     }
-    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No station found near your location.");
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Station in Ihrer Nähe gefunden.");
   }
 
   public static List<List<Connection>> getConnectionsByCode(String from, String to, String dateString, String timeString, boolean isLate) {
@@ -233,7 +233,7 @@ public class ConnectionService {
       return connections;
 
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No connections available, try again later.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Verbindungen gefunden, versuchen Sie es später erneut.");
     }
   }
 
@@ -254,7 +254,7 @@ public class ConnectionService {
 
   public void saveConnection(TripParticipant participant, List<ParticipantConnection> connections) {
     if(!participantConnectionRepository.findAllByParticipant(participant).isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "You already have a connection, update it.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie haben bereits eine Verbindung. Ändern Sie diese.");
 
     }
     for (ParticipantConnection connection : connections) {
@@ -262,7 +262,7 @@ public class ConnectionService {
     }
     participantConnectionRepository.saveAll(connections);
     participantConnectionRepository.flush();
-    notificationService.createTripNotification(participant.getTrip(), String.format("%s has chosen a connection", participant.getUser().getUsername()));
+    notificationService.createTripNotification(participant.getTrip(), String.format("%s hat eine Verbindung ausgewählt", participant.getUser().getUsername()));
   }
 
   public void updateConnection(TripParticipant participant, List<ParticipantConnection> newConnection) {

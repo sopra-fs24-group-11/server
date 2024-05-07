@@ -63,7 +63,7 @@ public class UserService {
   public User getUserByToken(String token) {
     User user = userRepository.findByToken(token);
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Requester not found. Try to log out and log in again.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Benutzer nicht gefunden. Versuchen Sie auszuloggen und erneut einzuloggen.");
     }
     user.setLastOnline(LocalDateTime.now());
     user.setStatus(UserStatus.ONLINE);
@@ -74,7 +74,7 @@ public class UserService {
 
   public User getUserById(Long id) {
     return userRepository.findById(id).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Nutzer nicht gefunden."));
   }
 
 
@@ -96,15 +96,14 @@ public class UserService {
 
     newUser = userRepository.save(newUser);
     userRepository.flush();
-    notificationService.createUserNotification(newUser, String.format("Welcome to Get-Together %s!", newUser.getUsername()));
+    notificationService.createUserNotification(newUser, String.format("Willkommen bei Get-Together %s!", newUser.getUsername()));
     return newUser;
   }
 
   public String loginUser(User loginUser) {
     User existingUser = userRepository.findByUsername(loginUser.getUsername());
     if (existingUser == null || !passwordEncoder.matches(loginUser.getPassword(), existingUser.getPassword())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT,
-              "The Username or password are wrong.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername oder Passwort sind falsch.");
     }
     existingUser.setStatus(UserStatus.ONLINE);
     existingUser = userRepository.save(existingUser);
@@ -128,7 +127,7 @@ public class UserService {
     // Save the updated user
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
-    notificationService.createUserNotification(existingUser, "You updated your profile");
+    notificationService.createUserNotification(existingUser, "Sie haben ihr Profil bearbeitet");
   }
 
   public void deleteUser(String token) {
@@ -168,7 +167,7 @@ public class UserService {
     feedback.setMessage(message);
     feedbackRepository.save(feedback);
     feedbackRepository.flush();
-    notificationService.createUserNotification(user, "Thank you for giving us feedback, we are happy to look at it!");
+    notificationService.createUserNotification(user, "Danke für das Feedback! Gerne schauen wir es uns näher an!");
   }
 
   /**
@@ -184,14 +183,14 @@ public class UserService {
   private void checkIfUserNameExists(User userToBe) {
     User userByUsername = userRepository.findByUsername(userToBe.getUsername());
 
-    String baseErrorMessage = "Username already taken.";
+    String baseErrorMessage = "Benutzername bereits vergeben.";
     if (userByUsername != null) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
     }
   }
   private void checkIfUserNameIsValid(User userToBe) {
     String un = userToBe.getUsername();
-    String baseErrorMessage = "The username should have no spaces and should only contain letters, numbers or '-._'!";
+    String baseErrorMessage = "Der Benutzername darf nur Buchstaben, Nummern und die Zeichen '-._' beinhalten!";
     if (un.length()<2 ||un.length()>30 || un.isBlank() || un.contains(" ") || !un.matches("^[a-zA-Z0-9\\-._]+$")) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
     }
@@ -210,7 +209,7 @@ public class UserService {
   }
   public TemplatePackingItem getItem(Long itemId) {
     return templatePackingRepository.findById(itemId).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found."));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Item nicht gefunden."));
   }
   public TemplatePackingItem addItem(User user, TemplatePackingItem item) {
     item.setUser(user);
@@ -237,7 +236,7 @@ public class UserService {
   public void checkIfItemExistsAndHasUser(User user, Long itemId) {
     TemplatePackingItem item = templatePackingRepository.findByIdAndUser(itemId, user);
     if (item == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item nicht gefunden.");
     }
   }
 
