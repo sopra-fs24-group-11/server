@@ -90,9 +90,9 @@ public class UserService {
     String encodedPassword = this.passwordEncoder.encode(newUser.getPassword());
     newUser.setPassword(encodedPassword);
 
-    //Image profileImage = new Image();
-    //profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
-    //newUser.setProfileImage(profileImage);
+    Image profileImage = new Image();
+    profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
+    newUser.setProfileImage(profileImage);
 
     newUser = userRepository.save(newUser);
     userRepository.flush();

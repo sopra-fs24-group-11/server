@@ -56,7 +56,7 @@ public class User implements Serializable {
   private String email;
 
   @Embedded
-  @Column(nullable = true)
+  @Column(nullable = false)
   private Image profileImage;
 
   public Long getId() {
