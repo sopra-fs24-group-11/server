@@ -437,6 +437,7 @@ class UserControllerTest {
 
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("Test User");
+    userPostDTO.setPassword2("Test User");
     userPostDTO.setUsername("testUsername");
     userPostDTO.setBirthday(LocalDate.of(2003, 1, 14));
     userPostDTO.setEmail("user@test.ch");
@@ -460,6 +461,7 @@ class UserControllerTest {
 
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("Test User");
+    userPostDTO.setPassword2("Test User");
     userPostDTO.setUsername("u");
     userPostDTO.setBirthday(LocalDate.of(2003, 1, 14));
     userPostDTO.setEmail("user@test.ch");
@@ -631,6 +633,7 @@ class UserControllerTest {
     // given
     UserPutDTO userPutDTO = new UserPutDTO();
     userPutDTO.setPassword("Test User");
+    userPutDTO.setPassword2("Test User");
     userPutDTO.setUsername("testUsername");
     userPutDTO.setEmail("user@test.ch");
     userPutDTO.setBirthday(LocalDate.of(2000, 1, 1));
@@ -653,6 +656,7 @@ class UserControllerTest {
     // given
     UserPutDTO userPutDTO = new UserPutDTO();
     userPutDTO.setPassword("Test User");
+    userPutDTO.setPassword2("Test User");
     userPutDTO.setUsername("testUsername");
     userPutDTO.setEmail("user@test.ch");
     userPutDTO.setBirthday(LocalDate.of(2000, 1, 1));

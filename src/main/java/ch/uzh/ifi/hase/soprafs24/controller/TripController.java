@@ -228,11 +228,11 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     tripParticipantService.isPartOfTripAndHasAccepted(user, trip);
     List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
-
+    List<Image> images = userService.getImagesOfUsers(users);
     List<MemberGetDTO> memberGetDTOs = new ArrayList<>();
 
-    for (User u : users) {
-      memberGetDTOs.add(DTOMapper.INSTANCE.convertEntityToMemberGetDTO(u));
+    for (Image img: images) {
+      memberGetDTOs.add(DTOMapper.INSTANCE.convertEntityToMemberGetDTO(img));
     }
     return memberGetDTOs;
   }

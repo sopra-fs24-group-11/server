@@ -363,21 +363,16 @@ class DTOMapperTest {
   @Test
   void testConvertEntityToMemberGetDTO() {
     // Create User
-    User user = new User();
-    user.setId(1L);
-    user.setUsername("john_doe");
-    Image profileImage = new Image();
-    byte[] byteArray = "profile_picture_bytes".getBytes();
-    profileImage.setProfilePicture(byteArray);
-    user.setProfileImage(profileImage);
+    Image image = new Image();
+    image.setId(1L);
+    image.setUserId(2L);
+    image.setProfilePicture(new byte[0]);
 
     // MAP -> Create MemberGetDTO
-    MemberGetDTO memberGetDTO = DTOMapper.INSTANCE.convertEntityToMemberGetDTO(user);
+    MemberGetDTO memberGetDTO = DTOMapper.INSTANCE.convertEntityToMemberGetDTO(image);
 
     // Check content
-    assertEquals(user.getId(), memberGetDTO.getId());
-    assertEquals(user.getUsername(), memberGetDTO.getUsername());
-    assertArrayEquals(user.getProfileImage().getProfilePicture(), memberGetDTO.getProfilePicture());
+    assertEquals(image.getUserId(), memberGetDTO.getUserId());
   }
 
   @Test

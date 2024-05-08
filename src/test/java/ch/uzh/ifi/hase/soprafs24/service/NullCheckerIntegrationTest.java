@@ -268,7 +268,7 @@ class NullCheckerIntegrationTest {
   @Test
   void tripPostDTOChecker_LongTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
-    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 50 characters.");
+    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 100 characters. This is a very long trip description that exceeds the maximum allowed length of 100 characters.");
     dto.setTripName("Holidays");
     Station station = new Station();
     station.setStationName("Station Name");
@@ -502,7 +502,7 @@ class NullCheckerIntegrationTest {
   @Test
   void tripPutDTOChecker_LongTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
-    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 50 characters.");
+    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 100 characters. This is a very long trip description that exceeds the maximum allowed length of 100 characters.");
     dto.setTripName("Holidays");
     Station station = new Station();
     station.setStationName("Station Name");

@@ -1,24 +1,15 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 public class MemberGetDTO {
-  private Long id;
-  private String username;
+  private Long userId;
   private byte[] profilePicture;
 
-  public Long getId() {
-    return id;
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public byte[] getProfilePicture() {

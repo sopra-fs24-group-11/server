@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.entity.Image;
 import ch.uzh.ifi.hase.soprafs24.repository.FeedbackRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.ImageRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TemplatePackingRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 public class UserService {
   private final Random random = new Random();
   private final UserRepository userRepository;
+  private final ImageRepository imageRepository;
   private final FeedbackRepository feedbackRepository;
   private final FriendshipService friendshipService;
   private final TripParticipantService tripParticipantService;
@@ -49,10 +51,11 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService, ListService listService, TemplatePackingRepository templatePackingRepository) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, @Qualifier("feedbackRepository") FeedbackRepository feedbackRepository, @Qualifier("imageRepository") ImageRepository imageRepository, FriendshipService friendshipService, TripParticipantService tripParticipantService, NotificationService notificationService, ListService listService, TemplatePackingRepository templatePackingRepository) {
     this.userRepository = userRepository;
     this.feedbackRepository = feedbackRepository;
     this.friendshipService = friendshipService;
+    this.imageRepository = imageRepository;
     this.tripParticipantService = tripParticipantService;
     this.notificationService = notificationService;
     this.listService = listService;
@@ -90,13 +93,16 @@ public class UserService {
     String encodedPassword = this.passwordEncoder.encode(newUser.getPassword());
     newUser.setPassword(encodedPassword);
 
-    Image profileImage = new Image();
-    profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
-    newUser.setProfileImage(profileImage);
-
     newUser = userRepository.save(newUser);
     userRepository.flush();
     notificationService.createUserNotification(newUser, String.format("Willkommen bei Get-Together %s!", newUser.getUsername()));
+
+    Image profileImage = new Image();
+    profileImage.setProfilePicture(generateDefaultImage(newUser.getUsername()));
+    profileImage.setUserId(newUser.getId());
+    imageRepository.save(profileImage);
+    imageRepository.flush();
+
     return newUser;
   }
 
@@ -141,6 +147,8 @@ public class UserService {
     tripParticipantService.deleteAllForAUser(user);
     notificationService.deleteAllForAUser(user);
 
+    imageRepository.deleteByUserId(user.getId());
+    imageRepository.flush();
     userRepository.deleteById(user.getId());
     userRepository.flush();
   }
@@ -247,24 +255,22 @@ public class UserService {
   public void saveProfilePicture(User user, MultipartFile imageFile) throws IOException {
     byte[] imageData = imageFile.getBytes();
 
-    Image profileImage = new Image();
+    Image profileImage = imageRepository.findByUserId(user.getId());
     profileImage.setProfilePicture(imageData);
-    user.setProfileImage(profileImage);
-    userRepository.save(user);
-    userRepository.flush();
+    imageRepository.save(profileImage);
+    imageRepository.flush();
   }
 
   public void deleteProfilePicture (User user){
-    Image profileImage = user.getProfileImage();
+    Image profileImage = imageRepository.findByUserId(user.getId());
     profileImage.setProfilePicture(generateDefaultImage(user.getUsername()));
-    user.setProfileImage(profileImage);
-    userRepository.save(user);
-    userRepository.flush();
+    imageRepository.save(profileImage);
+    imageRepository.flush();
   }
 
 
   public byte[] getProfilePicture(User user) {
-    Image profileImage = user.getProfileImage();
+    Image profileImage = imageRepository.findByUserId(user.getId());
     return profileImage.getProfilePicture();
   }
 
@@ -309,7 +315,15 @@ public class UserService {
     }
   }
 
-  @Scheduled(fixedRate = 300000) // Check every 5 seconds
+  public List<Image> getImagesOfUsers(List<User> users) {
+    List<Image> images = new ArrayList<>();
+    for (User user: users) {
+      images.add(imageRepository.findByUserId(user.getId()));
+    }
+    return images;
+  }
+
+  @Scheduled(fixedRate = 300000) // Check every 5 minutes
   public void markUsersAsOffline() {
     List<User> users = userRepository.findAllByStatusAndLastOnlineBefore(UserStatus.ONLINE, LocalDateTime.now().minusMinutes(5));
     for (User user : users) {

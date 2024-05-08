@@ -124,10 +124,9 @@ public interface DTOMapper {
   @Mapping(source = "timeStamp", target = "timeStamp")
   NotificationGetDTO convertEntityToNotificationGetDTO(TripNotification tripNotification);
 
-  @Mapping(source = "id", target = "id")
-  @Mapping(source = "username", target = "username")
-  @Mapping(source = "profileImage.profilePicture", target = "profilePicture")
-  MemberGetDTO convertEntityToMemberGetDTO(User user);
+  @Mapping(source = "userId", target = "userId")
+  @Mapping(source = "profilePicture", target = "profilePicture")
+  MemberGetDTO convertEntityToMemberGetDTO(Image image);
 
   @Mapping(source = "item", target = "item")
   TemplatePackingItem convertTemplateDTOToEntity(TemplateDTO templateDTO);

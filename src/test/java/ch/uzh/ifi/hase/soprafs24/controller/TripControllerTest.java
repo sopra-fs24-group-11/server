@@ -14,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -380,11 +381,18 @@ class TripControllerTest {
   @Test
   void getMembersWithImages_success() throws Exception {
     // given
+    Image testImage = new Image();
+    testImage.setUserId(testUser.getId());
+    testImage.setId(1L);
+    testImage.setProfilePicture(new byte[0]);
+    List<Image> images = new ArrayList<>();
+    images.add(testImage);
+
     given(userService.getUserByToken(testUser.getToken())).willReturn(testUser);
     given(tripService.getTripById(testTrip.getId())).willReturn(testTrip);
     List<User> users = new ArrayList<>(); users.add(testUser);
     given(tripParticipantService.getTripUsersWhoHaveAccepted(testTrip)).willReturn(users);
-
+    given(userService.getImagesOfUsers(Mockito.any())).willReturn(images);
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest = get("/trips/{tripId}/pictures", testTrip.getId())
@@ -394,8 +402,7 @@ class TripControllerTest {
 
     // then
     mockMvc.perform(getRequest).andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id", is(testUser.getId().intValue())))
-            .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+            .andExpect(jsonPath("$[0].userId", is(testUser.getId().intValue())));
   }
 
   @Test
