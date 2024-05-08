@@ -102,7 +102,7 @@ public class ListService {
   public void checkIfItemIdHasTrip(Long itemId, Trip trip) {
     Item item = getItemById(itemId);
     if (item.getTrip() != trip) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sie dürfen dieses Item nicht anpassen.");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Du darfst dieses Item nicht anpassen.");
     }
   }
 

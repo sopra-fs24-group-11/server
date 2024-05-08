@@ -66,7 +66,7 @@ public class UserService {
   public User getUserByToken(String token) {
     User user = userRepository.findByToken(token);
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Benutzer nicht gefunden. Versuchen Sie auszuloggen und erneut einzuloggen.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Benutzer nicht gefunden. Versuche dich auszuloggen und erneut einzuloggen.");
     }
     user.setLastOnline(LocalDateTime.now());
     user.setStatus(UserStatus.ONLINE);
@@ -133,7 +133,7 @@ public class UserService {
     // Save the updated user
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
-    notificationService.createUserNotification(existingUser, "Sie haben ihr Profil bearbeitet");
+    notificationService.createUserNotification(existingUser, "Du hast dein Profil bearbeitet");
   }
 
   public void deleteUser(String token) {

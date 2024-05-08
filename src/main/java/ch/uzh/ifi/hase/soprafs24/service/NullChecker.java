@@ -103,37 +103,37 @@ public class NullChecker {
 
   public static void tripPostDTOChecker (TripPostDTO dto) {
     if (dto.getTripName() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht null sein.");
     }
     if (dto.getTripName().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs muss mindestens 2 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise muss mindestens 2 Zeichen lang sein.");
     }
     if (dto.getTripName().length() > 20) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs darf höchstens 20 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise darf höchstens 20 Zeichen lang sein.");
     }
     if (dto.getTripName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs kann nicht nur aus Leerschlägen bestehen.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getTripDescription() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht null sein.");
     }
     if (dto.getTripDescription().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs muss mindestens 2 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
     if (dto.getTripDescription().length() > 100) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs darf höchstens 100 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 100 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs kann nicht nur aus Leerschlägen bestehen.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getMeetUpPlace() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Destination kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (dto.getMeetUpPlace().getStationName() == null || dto.getMeetUpPlace().getStationCode() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Destination kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (Objects.equals(dto.getMeetUpPlace().getStationName(), "") || Objects.equals(dto.getMeetUpPlace().getStationCode(), "")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wählen Sie eine Station aus.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wähle eine Station aus.");
     }
     if (dto.getMeetUpTime() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Zeit des Treffpunkts kann nicht null sein.");
@@ -153,37 +153,37 @@ public class NullChecker {
 
   public static void tripPutDTOChecker (TripPutDTO dto) {
     if (dto.getTripName() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht null sein.");
     }
     if (dto.getTripName().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs muss mindestens 2 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise muss mindestens 2 Zeichen lang sein.");
     }
     if (dto.getTripName().length() > 20) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs darf höchstens 20 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise darf höchstens 20 Zeichen lang sein.");
     }
     if (dto.getTripName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name des Ausflugs kann nicht nur aus Leerschlägen bestehen.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getTripDescription() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht null sein.");
     }
     if (dto.getTripDescription().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs muss mindestens 2 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
     if (dto.getTripDescription().length() > 100) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs darf höchstens 100 Zeichen lang sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 100 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung des Ausflugs kann nicht nur aus Leerschlägen bestehen.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getMeetUpPlace() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Destination kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (dto.getMeetUpPlace().getStationName() == null || dto.getMeetUpPlace().getStationCode() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Destination kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (Objects.equals(dto.getMeetUpPlace().getStationName(), "") || Objects.equals(dto.getMeetUpPlace().getStationCode(), "")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wählen Sie eine Station aus.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wähle eine Station aus.");
     }
     if (dto.getMeetUpTime() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Zeit des Treffpunkts kann nicht null sein.");

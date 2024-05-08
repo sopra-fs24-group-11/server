@@ -73,7 +73,7 @@ public class TripController {
     Trip trip = tripService.getTripById(tripId);
     User requester = userService.getUserByToken(token);
     if (trip.getAdministrator()!=requester) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sie sind nicht Administrator dieses Ausflugs.");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Du bist nicht Administrator dieser Reise.");
     }
     List<User> users = tripParticipantService.getTripUsersWithoutAdmin(trip);
     List<ParticipantGetDTO> participantGetDTOs = new ArrayList<>();

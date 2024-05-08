@@ -106,9 +106,9 @@ public class ConnectionService {
         }
       }
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Station in Ihrer Nähe gefunden.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Station in deiner Nähe gefunden.");
     }
-    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Station in Ihrer Nähe gefunden.");
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Station in deiner Nähe gefunden.");
   }
 
   public static List<List<Connection>> getConnectionsByCode(String from, String to, String dateString, String timeString, boolean isLate) {
@@ -233,7 +233,7 @@ public class ConnectionService {
       return connections;
 
     } catch(IOException | InterruptedException apiException) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Verbindungen gefunden, versuchen Sie es später erneut.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Keine Verbindungen gefunden, versuch es später erneut.");
     }
   }
 
@@ -254,7 +254,7 @@ public class ConnectionService {
 
   public void saveConnection(TripParticipant participant, List<ParticipantConnection> connections) {
     if(!participantConnectionRepository.findAllByParticipant(participant).isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie haben bereits eine Verbindung. Ändern Sie diese.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Du hast bereits eine Verbindung. Ändere diese.");
 
     }
     for (ParticipantConnection connection : connections) {
