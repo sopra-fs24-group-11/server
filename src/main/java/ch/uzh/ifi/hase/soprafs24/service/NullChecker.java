@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +31,7 @@ public class NullChecker {
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-Mail kann nicht null sein.");
     }
-    if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+    if (!EmailValidator.getInstance().isValid(dto.getEmail())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
     }
     if (dto.getBirthday() == null) {
@@ -65,7 +66,7 @@ public class NullChecker {
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null.");
     }
-    if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+    if (!EmailValidator.getInstance().isValid(dto.getEmail())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
     }
     if (dto.getBirthday() == null) {
