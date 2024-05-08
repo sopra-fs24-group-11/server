@@ -45,8 +45,11 @@
 | 4    | Livio   | 38 - client   | Done        |
 | 4    | Patrik  | #43 - client  | Done        |
 | 4    | Patrik  | #63 - client  | Done        |
-| 5    | Marc    | # - server    | Done        |
-| 5    | Marc    | # - server    | Done        |
+| 5    | Marc    | #37 - server  | Done        |
+| 5    | Marc    | #70 - server  | Done        |
+| 5    | Marc    | #87 - server  | Done        |
+| 5    | Marc    | #91 - server  | Done        |
+| 5    | Marc    | #99 - server  | Done        |
 | 5    | Gabriel | # - server    | Done        |
 | 5    | Gabriel | # - server    | Done        |
 | 5    | Jan     | # - client    | Done        |
