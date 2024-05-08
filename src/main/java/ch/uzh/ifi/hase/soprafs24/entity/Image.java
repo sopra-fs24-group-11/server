@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Embeddable
 public class Image implements Serializable {
   @Lob
-  @Column(name = "image_data", columnDefinition = "BLOB")
+  @Column(name = "image_data")
   private byte[] profilePicture;
 
 
