@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * - unique = true -> this value must be unqiue across the database -> composes
  * the primary key
  */
-@Entity
+@Entity(name="USERTABLE")
 @Table(name = "USERTABLE")
 public class User implements Serializable {
 
