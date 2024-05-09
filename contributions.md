@@ -50,8 +50,8 @@
 | 5    | Marc    | #87 - server  | Done        |
 | 5    | Marc    | #91 - server  | Done        |
 | 5    | Marc    | #99 - server  | Done        |
-| 5    | Gabriel | # - server    | Done        |
-| 5    | Gabriel | # - server    | Done        |
+| 5    | Gabriel | #131 - server | Done        |
+| 5    | Gabriel | #132 - server | Done        |
 | 5    | Jan     | #15 - client  | Done        |
 | 5    | Jan     | #14 - clien   | Done        |
 | 5    | Livio   | #48 - client  | Done        |
