@@ -111,7 +111,6 @@ class UserControllerTest {
     // then
     mockMvc.perform(getRequest).andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(testUser.getId().intValue())))
-            .andExpect(jsonPath("$.password", is(testUser.getPassword())))
             .andExpect(jsonPath("$.username", is(testUser.getUsername())))
             .andExpect(jsonPath("$.email", is(testUser.getEmail())))
             .andExpect(jsonPath("$.birthday", is(testUser.getBirthday().toString())))

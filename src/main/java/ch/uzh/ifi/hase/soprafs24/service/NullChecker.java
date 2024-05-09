@@ -235,8 +235,8 @@ public class NullChecker {
     if (dto.getItem().isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu kurz. Die Minimallänge beträgt 1 Zeichen.");
     }
-    if (dto.getItem().length() > 50) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 50 Zeichen.");
+    if (dto.getItem().length() > 100) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 100 Zeichen.");
     }
   }
   public static void templateDTOChecker(TemplateDTO dto) {
@@ -246,15 +246,15 @@ public class NullChecker {
   }
   public static void imageChecker(MultipartFile image) {
     if (image.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Kein Bild ausgewählt.");
     }
     String type = image.getContentType();
     if (!Objects.equals(type, "image/png") && !Objects.equals(type, "image/jpeg")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image of type png or jpg/jpeg/jpe/jfif.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lade ein Bild vom Typ png oder jpg/jpeg/jpe/jfif hoch.");
     }
     long maxSizeInBytes = (long)3 * 1024 * 1024; // 3 MB (adjust as needed) - 10MB is internal server maximum - we only allow 3 MB
     if (image.getSize() > maxSizeInBytes) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size of 3MB.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bildgrösse überschreitet die maximal erlaubte Grösse von 3MB.");
     }
   }
 
