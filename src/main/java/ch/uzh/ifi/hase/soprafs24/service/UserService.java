@@ -128,13 +128,21 @@ public class UserService {
     existingUser.setUsername(user.getUsername());
     existingUser.setBirthday(user.getBirthday());
     existingUser.setEmail(user.getEmail());
-    String encodedPassword = this.passwordEncoder.encode(user.getPassword());
-    existingUser.setPassword(encodedPassword);
     // Save the updated user
     existingUser = userRepository.save(existingUser);
     userRepository.flush();
     notificationService.createUserNotification(existingUser, "Du hast dein Profil bearbeitet");
   }
+
+  public void updatePassword(String token, String newPassword) {
+    User existingUser = getUserByToken(token);
+    String encodedPassword = this.passwordEncoder.encode(newPassword);
+    existingUser.setPassword(encodedPassword);
+    existingUser = userRepository.save(existingUser);
+    userRepository.flush();
+    notificationService.createUserNotification(existingUser, "Du hast dein Passwort geändert");
+  }
+
 
   public void deleteUser(String token) {
     // user chose to delete their account -> delete everything with references to the user

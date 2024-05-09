@@ -60,18 +60,6 @@ public class NullChecker {
   }
 
   public static void userPutDTOChecker (UserPutDTO dto) {
-    if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
-    }
-    if (dto.getPassword2() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bestätigungspasswort kann nicht null sein.");
-    }
-    if(dto.getPassword().length() < 4) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort ist zu kurz. Mindestlänge ist 4 Zeichen.");
-    }
-    if (!Objects.equals(dto.getPassword(), dto.getPassword2())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die neuen Passwörter stimmen nicht überein.");
-    }
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
@@ -92,6 +80,21 @@ public class NullChecker {
     }
     if (dto.getBirthday().isAfter(LocalDate.now())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht in der Zukunft liegen.");
+    }
+  }
+
+  public static void passwordPutDTOChecker (PasswordPutDTO dto) {
+    if (dto.getPassword() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
+    }
+    if (dto.getPassword2() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bestätigungspasswort kann nicht null sein.");
+    }
+    if(dto.getPassword().length() < 4) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort ist zu kurz. Mindestlänge ist 4 Zeichen.");
+    }
+    if (!Objects.equals(dto.getPassword(), dto.getPassword2())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die neuen Passwörter stimmen nicht überein.");
     }
   }
 
@@ -120,8 +123,8 @@ public class NullChecker {
     if (dto.getTripDescription().length() < 2) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
-    if (dto.getTripDescription().length() > 100) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 100 Zeichen lang sein.");
+    if (dto.getTripDescription().length() > 200) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 200 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
@@ -170,8 +173,8 @@ public class NullChecker {
     if (dto.getTripDescription().length() < 2) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
-    if (dto.getTripDescription().length() > 100) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 100 Zeichen lang sein.");
+    if (dto.getTripDescription().length() > 200) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 200 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
@@ -235,8 +238,8 @@ public class NullChecker {
     if (dto.getItem().isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu kurz. Die Minimallänge beträgt 1 Zeichen.");
     }
-    if (dto.getItem().length() > 50) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 50 Zeichen.");
+    if (dto.getItem().length() > 100) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 100 Zeichen.");
     }
   }
   public static void templateDTOChecker(TemplateDTO dto) {
@@ -246,15 +249,15 @@ public class NullChecker {
   }
   public static void imageChecker(MultipartFile image) {
     if (image.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Kein Bild ausgewählt.");
     }
     String type = image.getContentType();
     if (!Objects.equals(type, "image/png") && !Objects.equals(type, "image/jpeg")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image of type png or jpg/jpeg/jpe/jfif.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lade ein Bild vom Typ png oder jpg/jpeg/jpe/jfif hoch.");
     }
     long maxSizeInBytes = (long)3 * 1024 * 1024; // 3 MB (adjust as needed) - 10MB is internal server maximum - we only allow 3 MB
     if (image.getSize() > maxSizeInBytes) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size of 3MB.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bildgrösse überschreitet die maximal erlaubte Grösse von 3MB.");
     }
   }
 
