@@ -56,8 +56,8 @@
 | 5    | Jan     | # - client    | Done        |
 | 5    | Livio   | #48 - client  | Done        |
 | 5    | Livio   | #53 - client  | Done        |
-| 5    | Patrik  | # - client    | Done        |
-| 5    | Patrik  | # - client    | Done        |
+| 5    | Patrik  | #41 - client    | Done        |
+| 5    | Patrik  | #54 - client    | Done        |
 | 6    | Marc    | # - server    | Done        |
 | 6    | Marc    | # - server    | Done        |
 | 6    | Gabriel | # - server    | Done        |
