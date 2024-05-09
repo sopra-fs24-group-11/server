@@ -60,18 +60,6 @@ public class NullChecker {
   }
 
   public static void userPutDTOChecker (UserPutDTO dto) {
-    if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
-    }
-    if (dto.getPassword2() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bestätigungspasswort kann nicht null sein.");
-    }
-    if(dto.getPassword().length() < 4) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort ist zu kurz. Mindestlänge ist 4 Zeichen.");
-    }
-    if (!Objects.equals(dto.getPassword(), dto.getPassword2())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die neuen Passwörter stimmen nicht überein.");
-    }
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
@@ -92,6 +80,21 @@ public class NullChecker {
     }
     if (dto.getBirthday().isAfter(LocalDate.now())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht in der Zukunft liegen.");
+    }
+  }
+
+  public static void passwordPutDTOChecker (PasswordPutDTO dto) {
+    if (dto.getPassword() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
+    }
+    if (dto.getPassword2() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bestätigungspasswort kann nicht null sein.");
+    }
+    if(dto.getPassword().length() < 4) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort ist zu kurz. Mindestlänge ist 4 Zeichen.");
+    }
+    if (!Objects.equals(dto.getPassword(), dto.getPassword2())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die neuen Passwörter stimmen nicht überein.");
     }
   }
 
@@ -120,8 +123,8 @@ public class NullChecker {
     if (dto.getTripDescription().length() < 2) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
-    if (dto.getTripDescription().length() > 100) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 100 Zeichen lang sein.");
+    if (dto.getTripDescription().length() > 200) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 200 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
@@ -170,8 +173,8 @@ public class NullChecker {
     if (dto.getTripDescription().length() < 2) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
-    if (dto.getTripDescription().length() > 100) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 100 Zeichen lang sein.");
+    if (dto.getTripDescription().length() > 200) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 200 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
