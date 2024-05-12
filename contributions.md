@@ -62,8 +62,8 @@
 | 6    | Marc    | # - server    | Done        |
 | 6    | Gabriel | # - server    | Done        |
 | 6    | Gabriel | # - server    | Done        |
-| 6    | Jan     | # - client    | Done        |
-| 6    | Jan     | # - client    | Done        |
+| 6    | Jan     | #10 - client  | Done        |
+| 6    | Jan     | #13 - client  | Done        |
 | 6    | Livio   | # - client    | Done        |
 | 6    | Livio   | # - client    | Done        |
 | 6    | Patrik  | # - client    | Done        |
