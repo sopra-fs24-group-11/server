@@ -111,7 +111,6 @@ class UserControllerTest {
     // then
     mockMvc.perform(getRequest).andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(testUser.getId().intValue())))
-            .andExpect(jsonPath("$.password", is(testUser.getPassword())))
             .andExpect(jsonPath("$.username", is(testUser.getUsername())))
             .andExpect(jsonPath("$.email", is(testUser.getEmail())))
             .andExpect(jsonPath("$.birthday", is(testUser.getBirthday().toString())))
@@ -437,6 +436,7 @@ class UserControllerTest {
 
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("Test User");
+    userPostDTO.setPassword2("Test User");
     userPostDTO.setUsername("testUsername");
     userPostDTO.setBirthday(LocalDate.of(2003, 1, 14));
     userPostDTO.setEmail("user@test.ch");
@@ -460,6 +460,7 @@ class UserControllerTest {
 
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setPassword("Test User");
+    userPostDTO.setPassword2("Test User");
     userPostDTO.setUsername("u");
     userPostDTO.setBirthday(LocalDate.of(2003, 1, 14));
     userPostDTO.setEmail("user@test.ch");
@@ -630,7 +631,6 @@ class UserControllerTest {
   void updateUser_validInput_userUpdated() throws Exception {
     // given
     UserPutDTO userPutDTO = new UserPutDTO();
-    userPutDTO.setPassword("Test User");
     userPutDTO.setUsername("testUsername");
     userPutDTO.setEmail("user@test.ch");
     userPutDTO.setBirthday(LocalDate.of(2000, 1, 1));
@@ -652,7 +652,6 @@ class UserControllerTest {
   void updateUser_invalidInput_userNotUpdated() throws Exception {
     // given
     UserPutDTO userPutDTO = new UserPutDTO();
-    userPutDTO.setPassword("Test User");
     userPutDTO.setUsername("testUsername");
     userPutDTO.setEmail("user@test.ch");
     userPutDTO.setBirthday(LocalDate.of(2000, 1, 1));

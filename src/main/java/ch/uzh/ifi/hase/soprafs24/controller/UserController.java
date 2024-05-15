@@ -71,6 +71,13 @@ public class UserController {
     User user = DTOMapper.INSTANCE.convertUserPutDTOToEntity(userPutDTO);
     userService.updateUser(token, user);
   }
+  @PutMapping("/password")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updatePassword(@RequestHeader ("Authorization") String token, @RequestBody PasswordPutDTO passWordPutDTO) {
+    NullChecker.passwordPutDTOChecker(passWordPutDTO);
+    String password = passWordPutDTO.getPassword();
+    userService.updatePassword(token, password);
+  }
   @DeleteMapping("/users") // test: DELETE 1,2
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteUser(@RequestHeader ("Authorization") String token) {

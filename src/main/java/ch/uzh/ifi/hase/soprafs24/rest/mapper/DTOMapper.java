@@ -28,7 +28,6 @@ public interface DTOMapper {
   User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "password", target = "password")
   @Mapping(source = "username", target = "username")
   @Mapping(source = "status", target = "status")
   @Mapping(source = "birthday", target = "birthday")
@@ -41,7 +40,6 @@ public interface DTOMapper {
   @Mapping(source = "username", target = "username")
   User convertUserLoginPostDTOtoEntity(UserLoginPostDTO userLoginPostDTO);
 
-  @Mapping(source = "password", target = "password")
   @Mapping(source = "username", target = "username")
   @Mapping(source = "email", target = "email")
   @Mapping(source = "birthday", target = "birthday")
@@ -124,10 +122,9 @@ public interface DTOMapper {
   @Mapping(source = "timeStamp", target = "timeStamp")
   NotificationGetDTO convertEntityToNotificationGetDTO(TripNotification tripNotification);
 
-  @Mapping(source = "id", target = "id")
-  @Mapping(source = "username", target = "username")
-  @Mapping(source = "profileImage.profilePicture", target = "profilePicture")
-  MemberGetDTO convertEntityToMemberGetDTO(User user);
+  @Mapping(source = "userId", target = "userId")
+  @Mapping(source = "profilePicture", target = "profilePicture")
+  MemberGetDTO convertEntityToMemberGetDTO(Image image);
 
   @Mapping(source = "item", target = "item")
   TemplatePackingItem convertTemplateDTOToEntity(TemplateDTO templateDTO);

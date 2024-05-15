@@ -126,7 +126,7 @@ public class FriendshipService {
 
   public void sendRequest(User sender, User receiver) {
     if (sender == receiver) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Sie können nicht mit sich selbst befreundet sein.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Du kannst nicht mit dir selbst befreundet sein.");
     }
     if (friendshipRepository.findByFriend1AndFriend2(sender, receiver) != null || friendshipRepository.findByFriend1AndFriend2(receiver, sender) != null) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Freundschaft existiert bereits oder ist ausstehend.");
@@ -139,8 +139,8 @@ public class FriendshipService {
     friendshipRepository.save(friendship);
     friendshipRepository.flush();
 
-    notificationService.createUserNotification(sender, String.format("Sie haben eine Freundschaftsanfrage an %s gesendet", receiver.getUsername()));
-    notificationService.createUserNotification(receiver, String.format("Sie haben eine Freundschaftsanfrage von %s erhalten", sender.getUsername()));
+    notificationService.createUserNotification(sender, String.format("Du hast eine Freundschaftsanfrage an %s gesendet", receiver.getUsername()));
+    notificationService.createUserNotification(receiver, String.format("Du hast eine Freundschaftsanfrage von %s erhalten", sender.getUsername()));
   }
 
   public void acceptRequest(User acceptor, User requester) {
@@ -152,8 +152,8 @@ public class FriendshipService {
     friendshipRepository.save(friendship);
     friendshipRepository.flush();
 
-    notificationService.createUserNotification(acceptor, String.format("Sie haben die Freundschaftsanfrage von %s angenommen", requester.getUsername()));
-    notificationService.createUserNotification(requester, String.format("%s hat Ihre Freundschaftsanfrage angenommen", acceptor.getUsername()));
+    notificationService.createUserNotification(acceptor, String.format("Du hast die Freundschaftsanfrage von %s angenommen", requester.getUsername()));
+    notificationService.createUserNotification(requester, String.format("%s hat deine Freundschaftsanfrage angenommen", acceptor.getUsername()));
   }
 
   public void deleteFriend(User friend, User deleter) {
@@ -168,25 +168,25 @@ public class FriendshipService {
       if (friendship2.getStatus()==FriendShipStatus.PENDING) {
         // receiver rejects request
         friendshipRepository.delete(friendship2);
-        notificationService.createUserNotification(deleter, String.format("Sie haben die Freundschaftsanfrage von %s abgelehnt", friend.getUsername()));
-        notificationService.createUserNotification(friend, String.format("%s hat Ihre Freundschaftsanfrage abgelehnt", deleter.getUsername()));
+        notificationService.createUserNotification(deleter, String.format("Du hast die Freundschaftsanfrage von %s abgelehnt", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s hat deine Freundschaftsanfrage abgelehnt", deleter.getUsername()));
       } else {
         // receiver deletes friendship
         friendshipRepository.delete(friendship2);
-        notificationService.createUserNotification(deleter, String.format("Sie haben die Freundschaft mit %s gelöscht", friend.getUsername()));
-        notificationService.createUserNotification(friend, String.format("%s hat Ihre Freundschaft gelöscht", deleter.getUsername()));
+        notificationService.createUserNotification(deleter, String.format("Du hast die Freundschaft mit %s gelöscht", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s hat eure Freundschaft gelöscht", deleter.getUsername()));
       }
     } else {
       if (friendship1.getStatus()==FriendShipStatus.PENDING) {
         // requester withdraws request
         friendshipRepository.delete(friendship1);
-        notificationService.createUserNotification(deleter, String.format("Sie haben die Freundschaftsanfrage von %s zurückgezogen", friend.getUsername()));
-        notificationService.createUserNotification(friend, String.format("%s hat Ihre Freundschaftsanfrage zurückgezogen", deleter.getUsername()));
+        notificationService.createUserNotification(deleter, String.format("Du hast die Freundschaftsanfrage von %s zurückgezogen", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s hat deine Freundschaftsanfrage zurückgezogen", deleter.getUsername()));
       } else {
         // requester deletes friendship
         friendshipRepository.delete(friendship1);
-        notificationService.createUserNotification(deleter, String.format("Sie haben die Freundschaft mit %s gelöscht", friend.getUsername()));
-        notificationService.createUserNotification(friend, String.format("%s hat Ihre Freundschaft gelöscht", deleter.getUsername()));
+        notificationService.createUserNotification(deleter, String.format("Du hast die Freundschaft mit %s gelöscht", friend.getUsername()));
+        notificationService.createUserNotification(friend, String.format("%s hat eure Freundschaft gelöscht", deleter.getUsername()));
       }
     }
   }

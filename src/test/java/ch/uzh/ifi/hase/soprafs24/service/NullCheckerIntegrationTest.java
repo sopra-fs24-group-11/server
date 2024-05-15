@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.ConnectionType;
 import ch.uzh.ifi.hase.soprafs24.entity.Station;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
+import org.assertj.core.api.PathAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,14 +107,12 @@ class NullCheckerIntegrationTest {
   @Test
   void userPutDTOChecker_UsernameNull_ThrowsBadRequestException() {
     UserPutDTO dto = new UserPutDTO();
-    dto.setPassword("password");
     assertThrows(ResponseStatusException.class, () -> NullChecker.userPutDTOChecker(dto));
   }
 
   @Test
   void userPutDTOChecker_UsernameLengthLessThan2_ThrowsConflictException() {
     UserPutDTO dto = new UserPutDTO();
-    dto.setPassword("password");
     dto.setUsername("a");
     assertThrows(ResponseStatusException.class, () -> NullChecker.userPutDTOChecker(dto));
   }
@@ -121,7 +120,6 @@ class NullCheckerIntegrationTest {
   @Test
   void userPutDTOChecker_UsernameLengthMoreThan30_ThrowsConflictException() {
     UserPutDTO dto = new UserPutDTO();
-    dto.setPassword("password");
     dto.setUsername("username1234567890123456789012345678901"); // 31 characters
     assertThrows(ResponseStatusException.class, () -> NullChecker.userPutDTOChecker(dto));
   }
@@ -129,7 +127,6 @@ class NullCheckerIntegrationTest {
   @Test
   void userPutDTOChecker_EmailNull_ThrowsBadRequestException() {
     UserPutDTO dto = new UserPutDTO();
-    dto.setPassword("password");
     dto.setUsername("username");
     assertThrows(ResponseStatusException.class, () -> NullChecker.userPutDTOChecker(dto));
   }
@@ -147,7 +144,6 @@ class NullCheckerIntegrationTest {
   @Test
   void userPutDTOChecker_BirthdayNull_ThrowsBadRequestException() {
     UserPutDTO dto = new UserPutDTO();
-    dto.setPassword("password");
     dto.setUsername("username");
     dto.setEmail("email@example.com");
     assertThrows(ResponseStatusException.class, () -> NullChecker.userPutDTOChecker(dto));
@@ -156,11 +152,39 @@ class NullCheckerIntegrationTest {
   @Test
   void userPutDTOChecker_BirthdayInTheFuture_ThrowsBadRequestException() {
     UserPutDTO dto = new UserPutDTO();
-    dto.setPassword("password");
     dto.setUsername("username");
     dto.setEmail("email@example.com");
     dto.setBirthday(LocalDate.now().plusDays(1));
     assertThrows(ResponseStatusException.class, () -> NullChecker.userPutDTOChecker(dto));
+  }
+
+  @Test
+  void passwordPutDTOChecker_Password1Null_ThrowsBadRequestException() {
+    PasswordPutDTO dto = new PasswordPutDTO();
+    dto.setPassword(null);
+    dto.setPassword2("password");
+    assertThrows(ResponseStatusException.class, () -> NullChecker.passwordPutDTOChecker(dto));
+  }
+  @Test
+  void passwordPutDTOChecker_Password2Null_ThrowsBadRequestException() {
+    PasswordPutDTO dto = new PasswordPutDTO();
+    dto.setPassword("password");
+    dto.setPassword2(null);
+    assertThrows(ResponseStatusException.class, () -> NullChecker.passwordPutDTOChecker(dto));
+  }
+  @Test
+  void passwordPutDTOChecker_PasswordUnEqual_ThrowsBadRequestException() {
+    PasswordPutDTO dto = new PasswordPutDTO();
+    dto.setPassword("password1");
+    dto.setPassword2("password2");
+    assertThrows(ResponseStatusException.class, () -> NullChecker.passwordPutDTOChecker(dto));
+  }
+  @Test
+  void passwordPutDTOChecker_PasswordTooShort_ThrowsBadRequestException() {
+    PasswordPutDTO dto = new PasswordPutDTO();
+    dto.setPassword("p");
+    dto.setPassword2("p");
+    assertThrows(ResponseStatusException.class, () -> NullChecker.passwordPutDTOChecker(dto));
   }
 
   @Test
@@ -268,7 +292,7 @@ class NullCheckerIntegrationTest {
   @Test
   void tripPostDTOChecker_LongTripDescription_ThrowsBadRequestException() {
     TripPostDTO dto = new TripPostDTO();
-    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 50 characters.");
+    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 200 characters. This is a very long trip description that exceeds the maximum allowed length of 200 characters. This is a very long trip description that exceeds the maximum allowed length of 200 characters. This is a very long trip description that exceeds the maximum allowed length of 200 characters.");
     dto.setTripName("Holidays");
     Station station = new Station();
     station.setStationName("Station Name");
@@ -502,7 +526,7 @@ class NullCheckerIntegrationTest {
   @Test
   void tripPutDTOChecker_LongTripDescription_ThrowsBadRequestException() {
     TripPutDTO dto = new TripPutDTO();
-    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 50 characters.");
+    dto.setTripDescription("This is a very long trip description that exceeds the maximum allowed length of 200 characters. This is a very long trip description that exceeds the maximum allowed length of 200 characters. This is a very long trip description that exceeds the maximum allowed length of 200 characters. This is a very long trip description that exceeds the maximum allowed length of 200 characters.");
     dto.setTripName("Holidays");
     Station station = new Station();
     station.setStationName("Station Name");
@@ -784,7 +808,7 @@ class NullCheckerIntegrationTest {
   @Test
   void itemPostDTOChecker_TooLongItem_ThrowsBadRequestException() {
     ItemPostDTO dto = new ItemPostDTO();
-    dto.setItem("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+    dto.setItem("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
     assertThrows(ResponseStatusException.class, () -> NullChecker.itemPostDTOChecker(dto));
   }
 

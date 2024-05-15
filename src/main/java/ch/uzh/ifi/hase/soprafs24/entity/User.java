@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * - unique = true -> this value must be unqiue across the database -> composes
  * the primary key
  */
-@Entity
+@Entity(name="USERTABLE")
 @Table(name = "USERTABLE")
 public class User implements Serializable {
 
@@ -54,10 +54,6 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private String email;
-
-  @Embedded
-  @Column(nullable = false)
-  private Image profileImage;
 
   public Long getId() {
     return id;
@@ -127,14 +123,6 @@ public class User implements Serializable {
 
   public void setLevel (Double level) {
     this.level = level;
-  }
-
-  public Image getProfileImage() {
-    return profileImage;
-  }
-
-  public void setProfileImage(Image profileImage) {
-    this.profileImage = profileImage;
   }
 
   public LocalDateTime getLastOnline() {return lastOnline;}

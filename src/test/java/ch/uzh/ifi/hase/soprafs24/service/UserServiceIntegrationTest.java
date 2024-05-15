@@ -216,11 +216,19 @@ class UserServiceIntegrationTest {
 
     // then
     assertEquals(testUser1.getUsername(), testUser.getUsername());
-    assertTrue(passwordEncoder.matches(testUser.getPassword(), testUser1.getPassword()));
     assertEquals(testUser1.getEmail(), testUser.getEmail());
     assertEquals(testUser1.getBirthday(), testUser.getBirthday());
     assertNotNull(testUser1.getToken());
     assertEquals(UserStatus.ONLINE, testUser1.getStatus());
+  }
+  @Test
+  void updatePassword_userExists_success() {
+    // when
+    String newPassword = "testPassword";
+    userService.updatePassword("abc", newPassword);
+
+    // then
+    assertTrue(passwordEncoder.matches(newPassword, testUser1.getPassword()));
   }
 
   @Test

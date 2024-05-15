@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,7 +17,16 @@ public class NullChecker {
   }
   public static void userPostDTOChecker (UserPostDTO dto) {
     if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
+    }
+    if (dto.getPassword2() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bestätigungspasswort kann nicht null sein.");
+    }
+    if(dto.getPassword().length() < 4) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort ist zu kurz. Mindestlänge ist 4 Zeichen.");
+    }
+    if (!Objects.equals(dto.getPassword(), dto.getPassword2())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwörter stimmen nicht überein.");
     }
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
@@ -30,182 +40,194 @@ public class NullChecker {
     if (dto.getEmail() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-Mail kann nicht null sein.");
     }
-    if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+    if (!EmailValidator.getInstance().isValid(dto.getEmail())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
     }
     if (dto.getBirthday() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht null sein.");
     }
     if (dto.getBirthday().isAfter(LocalDate.now())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht in der Zukunft sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht in der Zukunft liegen.");
     }
   }
   public static void userLoginPostDTOChecker (UserLoginPostDTO dto) {
     if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be null.");
-    }
-    if (dto.getUsername() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null.");
-    }
-  }
-
-  public static void userPutDTOChecker (UserPutDTO dto) {
-    if (dto.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password kann nicht null sein.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
     }
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
+  }
+
+  public static void userPutDTOChecker (UserPutDTO dto) {
+    if (dto.getUsername() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
+    }
     if (dto.getUsername().length() > 30) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username cannot exceed 30 characters.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername kann nicht länger als 30 Zeichen sein.");
     }
     if (dto.getUsername().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username must have at least 2 characters.");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername muss mindestens 2 Zeichen lang haben.");
     }
     if (dto.getEmail() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-Mail kann nicht null sein.");
     }
-    if (!dto.getEmail().matches("^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+    if (!EmailValidator.getInstance().isValid(dto.getEmail())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ungültige E-Mail Addresse.");
     }
     if (dto.getBirthday() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht null sein.");
     }
     if (dto.getBirthday().isAfter(LocalDate.now())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Birthday cannot be in the future.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Geburtsdatum kann nicht in der Zukunft liegen.");
+    }
+  }
+
+  public static void passwordPutDTOChecker (PasswordPutDTO dto) {
+    if (dto.getPassword() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort kann nicht null sein.");
+    }
+    if (dto.getPassword2() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bestätigungspasswort kann nicht null sein.");
+    }
+    if(dto.getPassword().length() < 4) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwort ist zu kurz. Mindestlänge ist 4 Zeichen.");
+    }
+    if (!Objects.equals(dto.getPassword(), dto.getPassword2())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die neuen Passwörter stimmen nicht überein.");
     }
   }
 
   public static void messagePostDTOChecker (MessagePostDTO dto) {
     if (dto.getMessage() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message kann nicht null sein.");
     }
   }
 
   public static void tripPostDTOChecker (TripPostDTO dto) {
     if (dto.getTripName() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht null sein.");
     }
     if (dto.getTripName().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name must have at least 2 characters.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise muss mindestens 2 Zeichen lang sein.");
     }
     if (dto.getTripName().length() > 20) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot exceed 20 characters.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise darf höchstens 20 Zeichen lang sein.");
     }
     if (dto.getTripName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot be only whitespaces.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getTripDescription() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht null sein.");
     }
     if (dto.getTripDescription().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description must have at least 2 characters.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
-    if (dto.getTripDescription().length() > 50) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot exceed 50 characters.");
+    if (dto.getTripDescription().length() > 200) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 200 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be only whitespaces.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getMeetUpPlace() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up place cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (dto.getMeetUpPlace().getStationName() == null || dto.getMeetUpPlace().getStationCode() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up station information cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (Objects.equals(dto.getMeetUpPlace().getStationName(), "") || Objects.equals(dto.getMeetUpPlace().getStationCode(), "")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose a destination.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wähle eine Station aus.");
     }
     if (dto.getMeetUpTime() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Zeit des Treffpunkts kann nicht null sein.");
     }
     if (dto.getMeetUpTime().isBefore(LocalDateTime.now())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be in the past.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Zeit des Treffpunkts kann nicht in der Vergangenheit liegen.");
     }
     if (dto.getParticipants() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Participants list cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Liste der Mitglieder kann nicht null sein.");
     }
     List<Long> ids = dto.getParticipants();
     if (ids.contains(null)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ids in participant list cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Ids in der Mitgliederliste dürfen nicht null sein.");
     }
 
   }
 
   public static void tripPutDTOChecker (TripPutDTO dto) {
     if (dto.getTripName() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht null sein.");
     }
     if (dto.getTripName().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name must have at least 2 characters.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise muss mindestens 2 Zeichen lang sein.");
     }
     if (dto.getTripName().length() > 20) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot exceed 20 characters.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise darf höchstens 20 Zeichen lang sein.");
     }
     if (dto.getTripName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip name cannot be only whitespaces.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Name der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getTripDescription() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht null sein.");
     }
     if (dto.getTripDescription().length() < 2) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description must have at least 2 characters.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise muss mindestens 2 Zeichen lang sein.");
     }
-    if (dto.getTripDescription().length() > 50) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot exceed 50 characters.");
+    if (dto.getTripDescription().length() > 200) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise darf höchstens 200 Zeichen lang sein.");
     }
     if (dto.getTripDescription().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trip description cannot be only whitespaces.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Beschreibung der Reise kann nicht nur aus Leerschlägen bestehen.");
     }
     if (dto.getMeetUpPlace() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up place cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (dto.getMeetUpPlace().getStationName() == null || dto.getMeetUpPlace().getStationCode() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up station information cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Treffpunkt kann nicht null sein.");
     }
     if (Objects.equals(dto.getMeetUpPlace().getStationName(), "") || Objects.equals(dto.getMeetUpPlace().getStationCode(), "")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose a destination.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wähle eine Station aus.");
     }
     if (dto.getMeetUpTime() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Zeit des Treffpunkts kann nicht null sein.");
     }
     if (dto.getMeetUpTime().isBefore(LocalDateTime.now())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Meet-up time cannot be in the past.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Zeit des Treffpunkts kann nicht in der Vergangenheit liegen.");
     }
     if (dto.getParticipants() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Participants list cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Liste der Mitglieder kann nicht null sein.");
     }
     List<Long> ids = dto.getParticipants();
     if (ids.contains(null)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ids in participant list cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Ids in der Mitgliederliste dürfen nicht null sein.");
     }
   }
 
   public static void connectionDTOsChecker(List<ConnectionDTO> dtos) {
     for(ConnectionDTO dto : dtos) {
       if (dto.getConnectionType() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Connection type cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Verbindungstyp kann nicht null sein.");
       }
       if (dto.getConnectionName() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Connection name cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Verbindungsname kann nicht null sein.");
       }
       if (dto.getDepartureTime() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Departure time cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Abfahrtszeit kann nicht null sein.");
       }
       if (dto.getDeparturePoint() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Departure point cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Abfahrtsort kann nicht null sein.");
       }
       if (dto.getDeparturePoint().getStationName() == null || dto.getDeparturePoint().getStationCode() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Departure station information cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Abfahrtsstation kann nicht null sein.");
       }
       if (dto.getArrivalTime() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arrival time cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ankunftszeit kann nicht null sein.");
       }
       if (dto.getArrivalPoint() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arrival point cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ankunftsort kann nicht null sein.");
       }
       if (dto.getArrivalPoint().getStationName() == null || dto.getArrivalPoint().getStationCode() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arrival station information cannot be null.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ankunftsstation kann nicht null sein..");
       }
     }
   }
@@ -216,26 +238,26 @@ public class NullChecker {
     if (dto.getItem().isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu kurz. Die Minimallänge beträgt 1 Zeichen.");
     }
-    if (dto.getItem().length() > 50) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 50 Zeichen.");
+    if (dto.getItem().length() > 100) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item ist zu lange. Die Maximallänge beträgt 100 Zeichen.");
     }
   }
   public static void templateDTOChecker(TemplateDTO dto) {
     if (dto.getItem() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Item cannot be null.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Das Item kann nicht null sein.");
     }
   }
   public static void imageChecker(MultipartFile image) {
     if (image.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Kein Bild ausgewählt.");
     }
     String type = image.getContentType();
     if (!Objects.equals(type, "image/png") && !Objects.equals(type, "image/jpeg")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload an image of type png or jpg/jpeg/jpe/jfif.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lade ein Bild vom Typ png oder jpg/jpeg/jpe/jfif hoch.");
     }
     long maxSizeInBytes = (long)3 * 1024 * 1024; // 3 MB (adjust as needed) - 10MB is internal server maximum - we only allow 3 MB
     if (image.getSize() > maxSizeInBytes) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file size exceeds the maximum allowed size of 3MB.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bildgrösse überschreitet die maximal erlaubte Grösse von 3MB.");
     }
   }
 

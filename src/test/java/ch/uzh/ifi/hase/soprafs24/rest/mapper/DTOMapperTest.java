@@ -51,7 +51,6 @@ class DTOMapperTest {
 
     // check content
     assertEquals(user.getId(), userGetDTO.getId());
-    assertEquals(user.getPassword(), userGetDTO.getPassword());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
     assertEquals(user.getStatus(), userGetDTO.getStatus());
     assertEquals(user.getBirthday(), userGetDTO.getBirthday());
@@ -79,7 +78,6 @@ class DTOMapperTest {
   void testConvertUserPutDTOToEntity() {
     // Create UserPutDTO
     UserPutDTO userPutDTO = new UserPutDTO();
-    userPutDTO.setPassword("password123");
     userPutDTO.setUsername("testUser");
     userPutDTO.setEmail("test@example.com");
     userPutDTO.setBirthday(LocalDate.of(2000,11,11));
@@ -88,7 +86,6 @@ class DTOMapperTest {
     User user = DTOMapper.INSTANCE.convertUserPutDTOToEntity(userPutDTO);
 
     // Check content
-    assertEquals(userPutDTO.getPassword(), user.getPassword());
     assertEquals(userPutDTO.getUsername(), user.getUsername());
     assertEquals(userPutDTO.getEmail(), user.getEmail());
     assertEquals(userPutDTO.getBirthday(), user.getBirthday());
@@ -363,21 +360,16 @@ class DTOMapperTest {
   @Test
   void testConvertEntityToMemberGetDTO() {
     // Create User
-    User user = new User();
-    user.setId(1L);
-    user.setUsername("john_doe");
-    Image profileImage = new Image();
-    byte[] byteArray = "profile_picture_bytes".getBytes();
-    profileImage.setProfilePicture(byteArray);
-    user.setProfileImage(profileImage);
+    Image image = new Image();
+    image.setId(1L);
+    image.setUserId(2L);
+    image.setProfilePicture(new byte[0]);
 
     // MAP -> Create MemberGetDTO
-    MemberGetDTO memberGetDTO = DTOMapper.INSTANCE.convertEntityToMemberGetDTO(user);
+    MemberGetDTO memberGetDTO = DTOMapper.INSTANCE.convertEntityToMemberGetDTO(image);
 
     // Check content
-    assertEquals(user.getId(), memberGetDTO.getId());
-    assertEquals(user.getUsername(), memberGetDTO.getUsername());
-    assertArrayEquals(user.getProfileImage().getProfilePicture(), memberGetDTO.getProfilePicture());
+    assertEquals(image.getUserId(), memberGetDTO.getUserId());
   }
 
   @Test
