@@ -95,7 +95,7 @@ class UserRepositoryIntegrationTest {
     entityManager.flush();
 
     // when
-    List<User> found = userRepository.findAllByUsernameStartsWith("fo");
+    List<User> found = userRepository.findAllByUsernameStartsWithIgnoreCase("fo");
 
     // then
     assertEquals(2, found.size());

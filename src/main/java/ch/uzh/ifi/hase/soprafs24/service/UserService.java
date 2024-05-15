@@ -154,7 +154,7 @@ public class UserService {
 
   public List<User> getMatchingUsers(String token, String username) {
     User requester = getUserByToken(token);
-    List<User> matchingUsers = userRepository.findAllByUsernameStartsWith(username);
+    List<User> matchingUsers = userRepository.findAllByUsernameStartsWithIgnoreCase(username);
     matchingUsers = matchingUsers.stream()
             .filter(user -> !Objects.equals(user.getId(), requester.getId()))
             .collect(Collectors.toList());

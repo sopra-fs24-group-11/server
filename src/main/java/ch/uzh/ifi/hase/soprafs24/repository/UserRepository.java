@@ -12,6 +12,6 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
   User findByToken(String name);
   User findByUsername(String username);
-  List<User> findAllByUsernameStartsWith(String username);
+  List<User> findAllByUsernameStartsWithIgnoreCase(String username);
   List <User> findAllByStatusAndLastOnlineBefore(UserStatus userStatus,  LocalDateTime dateTime);
 }
