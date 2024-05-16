@@ -70,8 +70,9 @@
 | 6    | Gabriel | # - server    | Done        |
 | 6    | Jan     | #10 - client  | Done        |
 | 6    | Jan     | #13 - client  | Done        |
-| 6    | Livio   | # - client    | Done        |
-| 6    | Livio   | # - client    | Done        |
+| 6    | Livio   | #8 - client   | Done        |
+| 6    | Livio   | #51 - client  | Done        |
+| 6    | Livio   | #52 - client  | Done        |
 | 6    | Patrik  | # - client    | Done        |
 | 6    | Patrik  | # - client    | Done        |
 | 7    | Marc    | #20 - server  | Done        |
