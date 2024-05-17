@@ -43,7 +43,7 @@ public class ConnectionService {
 
   public static List<Station> getLocationsName(String name) {
     try {
-      // Http request to transport.opendata
+      // Http request to transport.opendata: encode name for correct API request
       String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder()
@@ -151,6 +151,7 @@ public class ConnectionService {
                     .getJSONObject("journey")
                     .getString("category");
             ConnectionType retType;
+            // using switch statement since this is the only occurrence in the code (use lookup table if duplicated)
             switch (jsonType) {
               case "T":
                 retType = ConnectionType.TRAM; break;
