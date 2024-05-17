@@ -214,7 +214,7 @@ public class UserService {
 
 
   public void increaseLevel(User user, double plus) {
-    user.setLevel(user.getLevel()+plus);
+    user.setLevel(Math.round((user.getLevel()+plus)*100)/100.0);
     userRepository.save(user);
     userRepository.flush();
   }
