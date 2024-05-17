@@ -66,8 +66,8 @@
 | 6    | Marc    | #31 - client  | Done        |
 | 6    | Marc    | #32 - client  | Done        |
 | 6    | Marc    | #35 - client  | Done        |
-| 6    | Gabriel | # - server    | Done        |
-| 6    | Gabriel | # - server    | Done        |
+| 6    | Gabriel | #101 - server | Done        |
+| 6    | Gabriel | #134 - server | Done        |
 | 6    | Jan     | #10 - client  | Done        |
 | 6    | Jan     | #13 - client  | Done        |
 | 6    | Livio   | #8 - client   | Done        |
