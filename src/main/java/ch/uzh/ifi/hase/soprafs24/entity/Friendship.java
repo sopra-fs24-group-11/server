@@ -22,7 +22,7 @@ public class Friendship implements Serializable {
   private User friend2;
 
   @Column(nullable = false)
-  private int points;
+  private double points;
 
   @Column(nullable = false)
   private FriendShipStatus status;
@@ -59,11 +59,11 @@ public class Friendship implements Serializable {
     this.status = status;
   }
 
-  public int getPoints() {
+  public double getPoints() {
     return points;
   }
 
-  public void setPoints(int points) {
+  public void setPoints(double points) {
     this.points = points;
   }
 }

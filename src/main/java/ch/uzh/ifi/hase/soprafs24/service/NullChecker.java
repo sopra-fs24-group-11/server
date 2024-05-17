@@ -31,8 +31,8 @@ public class NullChecker {
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
-    if (dto.getUsername().length() > 30) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername kann nicht länger als 30 Zeichen sein.");
+    if (dto.getUsername().length() > 15) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername kann nicht länger als 15 Zeichen sein.");
     }
     if (dto.getUsername().length() < 2) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername muss mindestens 2 Zeichen lang haben.");
@@ -63,8 +63,8 @@ public class NullChecker {
     if (dto.getUsername() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Benutzername kann nicht null sein.");
     }
-    if (dto.getUsername().length() > 30) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername kann nicht länger als 30 Zeichen sein.");
+    if (dto.getUsername().length() > 15) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername kann nicht länger als 15 Zeichen sein.");
     }
     if (dto.getUsername().length() < 2) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Benutzername muss mindestens 2 Zeichen lang haben.");
