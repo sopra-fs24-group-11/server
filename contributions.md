@@ -73,8 +73,8 @@
 | 6    | Livio   | #8 - client   | Done        |
 | 6    | Livio   | #51 - client  | Done        |
 | 6    | Livio   | #52 - client  | Done        |
-| 6    | Patrik  | # - client    | Done        |
-| 6    | Patrik  | # - client    | Done        |
+| 6    | Patrik  | #60 - client  | Done        |
+| 6    | Patrik  | #25 - client  | Done        |
 | 7    | Marc    | #20 - server  | Done        |
 | 7    | Marc    | #22 - server  | Done        |
 | 7    | Marc    | #54 - server  | Done        |
