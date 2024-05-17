@@ -5,7 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.FriendShipStatus;
 public class Friend {
   private Long friendId;
   private String username;
-  private int points;
+  private double points;
   private Double level;
   private FriendShipStatus status;
 
@@ -25,11 +25,11 @@ public class Friend {
     this.username = username;
   }
 
-  public int getPoints() {
+  public double getPoints() {
     return points;
   }
 
-  public void setPoints(int points) {
+  public void setPoints(double points) {
     this.points = points;
   }
 

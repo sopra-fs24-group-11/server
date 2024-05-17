@@ -5,7 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 public class FriendGetDTO {
   private Long friendId;
   private String username;
-  private int points;
+  private double points;
   private Double level;
   private UserStatus status;
 
@@ -25,11 +25,11 @@ public class FriendGetDTO {
     this.username = username;
   }
 
-  public int getPoints() {
+  public double getPoints() {
     return points;
   }
 
-  public void setPoints(int points) {
+  public void setPoints(double points) {
     this.points = points;
   }
 

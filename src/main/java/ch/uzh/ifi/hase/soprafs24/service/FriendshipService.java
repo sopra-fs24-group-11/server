@@ -236,7 +236,7 @@ public class FriendshipService {
     return result;
   }
 
-  public void increasePoints(List<User> users) {
+  public void increasePoints(List<User> users, double increase) {
     if (users.size()<2) {
       return;
     }
@@ -244,7 +244,7 @@ public class FriendshipService {
       for (User friend2 : users) {
         Friendship friendship = friendshipRepository.findByFriend1AndFriend2(friend1, friend2);
         if (friendship != null) {
-          friendship.setPoints(friendship.getPoints()+60);
+          friendship.setPoints(Math.max(Math.round((friendship.getPoints()+increase)*100)/100.0, 5.0));
           friendshipRepository.save(friendship);
           friendshipRepository.flush();
         }

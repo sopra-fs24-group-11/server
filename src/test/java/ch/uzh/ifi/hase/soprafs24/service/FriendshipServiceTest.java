@@ -238,7 +238,7 @@ class FriendshipServiceTest {
     users.add(testUser2);
 
     // when
-    friendshipService.increasePoints(users);
+    friendshipService.increasePoints(users, 0.5);
 
     // then
     verify(friendshipRepository, times(1)).findByFriend1AndFriend2(testUser1, testUser2);
