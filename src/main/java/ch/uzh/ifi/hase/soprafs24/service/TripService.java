@@ -137,7 +137,7 @@ public class TripService {
     notificationService.createTripNotification(trip, String.format("%s hat die Details der Reise angepasst", administrator.getUsername()));
     List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
     for (User user : users) {
-      notificationService.createUserNotification(user, String.format("Details des Auflugs '%s' wurde geändert", trip.getTripName()));
+      notificationService.createUserNotification(user, String.format("Details der Reise '%s' wurden geändert", trip.getTripName()));
     }
   }
 

@@ -159,7 +159,7 @@ public class TripParticipantService {
   public void isPartOfTripAndHasAccepted(User user, Trip trip) {
     TripParticipant participant = tripParticipantRepository.findByUserAndTripAndStatus(user, trip, InvitationStatus.ACCEPTED);
     if (participant == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Du bist nicht Mitglied dieser Reise. Falls du eingeladen wurden, nimm die Einladung im Dashboard an.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Du bist nicht Mitglied dieser Reise. Falls du eingeladen wurdest, nimm die Einladung im Dashboard an.");
     }
   }
 
