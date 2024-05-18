@@ -30,6 +30,9 @@ public class ParticipantConnection implements Serializable {
   @Column(nullable = false)
   private LocalDateTime departureTime;
 
+  @Column(nullable = true)
+  private String departurePlatform;
+
   @Embedded
   @AttributeOverride(name = "stationName", column = @Column(name = "departure_station_name", nullable = false))
   @AttributeOverride(name = "stationCode", column = @Column(name = "departure_station_code", nullable = false))
@@ -37,6 +40,9 @@ public class ParticipantConnection implements Serializable {
 
   @Column(nullable = false)
   private LocalDateTime arrivalTime;
+
+  @Column(nullable = true)
+  private String arrivalPlatform;
 
   @Embedded
   @AttributeOverride(name = "stationName", column = @Column(name = "arrival_station_name", nullable = false))
@@ -75,6 +81,14 @@ public class ParticipantConnection implements Serializable {
     this.departureTime = departureTime;
   }
 
+  public String getDeparturePlatform() {
+    return departurePlatform;
+  }
+
+  public void setDeparturePlatform(String departurePlatform) {
+    this.departurePlatform = departurePlatform;
+  }
+
   public Station getDeparturePoint() {
     return departurePoint;
   }
@@ -89,6 +103,14 @@ public class ParticipantConnection implements Serializable {
 
   public void setArrivalTime(LocalDateTime arrivalTime) {
     this.arrivalTime = arrivalTime;
+  }
+
+  public String getArrivalPlatform() {
+    return arrivalPlatform;
+  }
+
+  public void setArrivalPlatform(String arrivalPlatform) {
+    this.arrivalPlatform = arrivalPlatform;
   }
 
   public Station getArrivalPoint() {

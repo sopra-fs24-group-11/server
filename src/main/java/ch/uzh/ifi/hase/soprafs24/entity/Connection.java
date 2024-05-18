@@ -7,26 +7,13 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Connection implements Serializable {
-  @Column(nullable = false)
   private ConnectionType connectionType;
-
-  @Column(nullable = false)
   private String connectionName;
-
-  @Column(nullable = false)
   private LocalDateTime departureTime;
-
-  @Embedded
-  @AttributeOverride(name = "stationName", column = @Column(name = "departure_station_name", nullable = false))
-  @AttributeOverride(name = "stationCode", column = @Column(name = "departure_station_code", nullable = false))
+  private String departurePlatform;
   private Station departurePoint;
-
-  @Column(nullable = false)
   private LocalDateTime arrivalTime;
-
-  @Embedded
-  @AttributeOverride(name = "stationName", column = @Column(name = "arrival_station_name", nullable = false))
-  @AttributeOverride(name = "stationCode", column = @Column(name = "arrival_station_code", nullable = false))
+  private String arrivalPlatform;
   private Station arrivalPoint;
 
 
@@ -54,6 +41,14 @@ public class Connection implements Serializable {
     this.departureTime = departureTime;
   }
 
+  public String getDeparturePlatform() {
+    return departurePlatform;
+  }
+
+  public void setDeparturePlatform(String departurePlatform) {
+    this.departurePlatform = departurePlatform;
+  }
+
   public Station getDeparturePoint() {
     return departurePoint;
   }
@@ -70,6 +65,14 @@ public class Connection implements Serializable {
     this.arrivalTime = arrivalTime;
   }
 
+  public String getArrivalPlatform() {
+    return arrivalPlatform;
+  }
+
+  public void setArrivalPlatform(String arrivalPlatform) {
+    this.arrivalPlatform = arrivalPlatform;
+  }
+
   public Station getArrivalPoint() {
     return arrivalPoint;
   }
@@ -77,4 +80,6 @@ public class Connection implements Serializable {
   public void setArrivalPoint(Station arrivalPoint) {
     this.arrivalPoint = arrivalPoint;
   }
+
+
 }
