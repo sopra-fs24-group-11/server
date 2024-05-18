@@ -194,7 +194,7 @@ public class ConnectionService {
             // setup of connection departure platform
             String retDeparturePlatform = jsonSection
                     .getJSONObject("departure")
-                    .getString("platform");
+                    .optString("platform", "");
 
             // setup of connection arrival time
             String jsonArrivalTime = jsonSection
@@ -219,7 +219,7 @@ public class ConnectionService {
             // setup of connection departure platform
             String retArrivalPlatform = jsonSection
                     .getJSONObject("arrival")
-                    .getString("platform");
+                    .optString("platform", "");
 
             // setup of full connection object
             Connection retConnection = new Connection();
