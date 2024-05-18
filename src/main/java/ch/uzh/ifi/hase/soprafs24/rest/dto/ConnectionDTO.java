@@ -9,8 +9,10 @@ public class ConnectionDTO {
     private ConnectionType connectionType;
     private String connectionName;
     private LocalDateTime departureTime;
+    private String departurePlatform;
     private Station departurePoint;
     private LocalDateTime arrivalTime;
+    private String arrivalPlatform;
     private Station arrivalPoint;
 
     public ConnectionType getConnectionType() {
@@ -37,6 +39,14 @@ public class ConnectionDTO {
       this.departureTime = departureTime;
     }
 
+    public String getDeparturePlatform() {
+      return departurePlatform;
+    }
+
+    public void setDeparturePlatform(String departurePlatform) {
+      this.departurePlatform = departurePlatform;
+    }
+
     public Station getDeparturePoint() {
       return departurePoint;
     }
@@ -51,6 +61,14 @@ public class ConnectionDTO {
 
     public void setArrivalTime(LocalDateTime arrivalTime) {
       this.arrivalTime = arrivalTime;
+    }
+
+    public String getArrivalPlatform() {
+      return arrivalPlatform;
+    }
+
+    public void setArrivalPlatform(String arrivalPlatform) {
+      this.arrivalPlatform = arrivalPlatform;
     }
 
     public Station getArrivalPoint() {

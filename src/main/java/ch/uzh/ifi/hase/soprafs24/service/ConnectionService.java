@@ -191,6 +191,11 @@ public class ConnectionService {
             retDepartureStation.setStationCode(jsonDepartureId);
             retDepartureStation.setStationName(jsonDepartureName);
 
+            // setup of connection departure platform
+            String retDeparturePlatform = jsonSection
+                    .getJSONObject("departure")
+                    .optString("platform", "");
+
             // setup of connection arrival time
             String jsonArrivalTime = jsonSection
                     .getJSONObject("arrival")
@@ -211,14 +216,21 @@ public class ConnectionService {
             retArrivalStation.setStationCode(jsonArrivalId);
             retArrivalStation.setStationName(jsonArrivalName);
 
+            // setup of connection departure platform
+            String retArrivalPlatform = jsonSection
+                    .getJSONObject("arrival")
+                    .optString("platform", "");
+
             // setup of full connection object
             Connection retConnection = new Connection();
             retConnection.setConnectionType(retType);
             retConnection.setConnectionName(retName);
             retConnection.setDepartureTime(retDepartureTime);
             retConnection.setDeparturePoint(retDepartureStation);
+            retConnection.setDeparturePlatform(retDeparturePlatform);
             retConnection.setArrivalTime(retArrivalTime);
             retConnection.setArrivalPoint(retArrivalStation);
+            retConnection.setArrivalPlatform(retArrivalPlatform);
 
             // add new connection to list
             try {
