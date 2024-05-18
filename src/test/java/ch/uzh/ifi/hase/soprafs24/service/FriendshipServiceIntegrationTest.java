@@ -321,11 +321,11 @@ class FriendshipServiceIntegrationTest {
     List<User> users = new ArrayList<>();
     users.add(testUser1);
     users.add(testUser2);
-    friendshipService.increasePoints(users);
+    friendshipService.increasePoints(users, 0.5);
     Friendship friendship = friendshipRepository.findByFriend1AndFriend2(testUser1, testUser2);
 
     // Verify
-    assertEquals(60, friendship.getPoints());
+    assertEquals(0.5, friendship.getPoints());
   }
 
   @Test

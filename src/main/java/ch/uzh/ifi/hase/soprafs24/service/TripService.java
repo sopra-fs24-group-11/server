@@ -189,7 +189,7 @@ public class TripService {
       tripRepository.save(trip);
       notificationService.createTripNotification(trip, "Die Reise ist beendet! Hurraa!");
       List<User> users = tripParticipantService.getTripUsersWhoHaveAccepted(trip);
-      friendshipService.increasePoints(users);
+      friendshipService.increasePoints(users, (float)trip.getNumberOfParticipants()/30);
       for (User u : users) {
         notificationService.createUserNotification(u, String.format("Die Reise '%s' ist beendet.", trip.getTripName()));
         userService.increaseLevel(u, (double)trip.getNumberOfParticipants()/10);
