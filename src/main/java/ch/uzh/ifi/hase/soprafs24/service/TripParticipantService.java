@@ -123,7 +123,6 @@ public class TripParticipantService {
 
   public void deleteAllForAUser(User user) {
     // this is for a user who deletes his account
-    // TO DO: delete / revert list items
     List<TripParticipant> tripAdmins = tripParticipantRepository.findAllByUserAndTripAdministrator(user, user);
     if (!tripAdmins.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Du kannst deinen Account nicht löschen, solange du Administrator in mindestens einer Reise sind. Bitte lösche diese Reisen. %d solche Reisen sind übrig.", tripAdmins.size()));
@@ -135,6 +134,20 @@ public class TripParticipantService {
       Trip trip = pa.getTrip();
       trip.setNumberOfParticipants(trip.getNumberOfParticipants()-1);
       trip = tripRepository.save(trip);
+
+
+      // if admin, we have to revert the invitator to null for all the other participants
+      List<TripParticipant> participants = getTripParticipants(trip);
+      for (TripParticipant p : participants) {
+        if (Objects.equals(p.getInvitator().getId(), user.getId())) {
+          p.setInvitator(null);
+          tripParticipantRepository.save(p);
+        }
+      }
+      tripParticipantRepository.flush();
+
+
+
       tripRepository.flush();
       notificationService.createTripNotification(trip, String.format("%s hat die Reise verlassen", user.getUsername()));
     }

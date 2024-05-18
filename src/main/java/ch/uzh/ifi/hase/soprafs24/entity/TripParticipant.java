@@ -23,7 +23,7 @@ public class TripParticipant implements Serializable {
   private LocalDateTime startTime;
 
   @ManyToOne
-  @JoinColumn(name = "invitator_id", nullable = false)
+  @JoinColumn(name = "invitator_id", nullable = true)
   private User invitator;
 
   @Column(nullable = false)
