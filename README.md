@@ -1,6 +1,6 @@
 # **Get-Together - Server**
 
-<img src=https://github.com/sopra-fs24-group-11/client/blob/main/src/graphics/Get-Together.png />
+<img src="https://github.com/sopra-fs24-group-11/client/assets/120049684/1144ddc0-64e8-46fd-8ad7-16a8040692d7" alt="Get-Together Logo" style="width: 50%;" />
 
 ## Table of Content
 
