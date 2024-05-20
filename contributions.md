@@ -39,10 +39,10 @@
 | 4    | Marc    | #111 - server | Done        |
 | 4    | Gabriel | #109 - server | Done        |
 | 4    | Gabriel | #113 - server | Done        |
-| 4    | Jan     | 40 - client   | Done        |
-| 4    | Jan     | 44 - client   | Done        |
-| 4    | Livio   | #37 - client   | Done       |
-| 4    | Livio   | #38 - client   | Done       |
+| 4    | Jan     | #40 - client  | Done        |
+| 4    | Jan     | #44 - client  | Done        |
+| 4    | Livio   | #37 - client  | Done        |
+| 4    | Livio   | #38 - client  | Done        |
 | 4    | Patrik  | #43 - client  | Done        |
 | 4    | Patrik  | #63 - client  | Done        |
 | 5    | Marc    | #37 - server  | Done        |
@@ -90,8 +90,10 @@
 | 7    | Marc    | #115 - server | Done        |
 | 7    | Gabriel | # - server    | Done        |
 | 7    | Gabriel | # - server    | Done        |
-| 7    | Jan     | # - client    | Done        |
-| 7    | Jan     | # - client    | Done        |
+| 7    | Jan     | #36 - client  | Done        |
+| 7    | Jan     | #39 - client  | Done        |
+| 7    | Jan     | #55 - client  | Done        |
+| 7    | Jan     | #57 - client  | Done        |
 | 7    | Livio   | # - client    | Done        |
 | 7    | Livio   | # - client    | Done        |
 | 7    | Patrik  | # - client    | Done        |
