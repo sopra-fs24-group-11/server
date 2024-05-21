@@ -92,8 +92,6 @@
 | 7    | Gabriel | [#103 - server](https://github.com/sopra-fs24-group-11/server/issues/103) | Done        |
 | 7    | Gabriel | [#104 - server](https://github.com/sopra-fs24-group-11/server/issues/104) | Done        |
 | 7    | Gabriel | [#105 - server](https://github.com/sopra-fs24-group-11/server/issues/105) | Done        |
-| 7    | Gabriel | [# - server]    | Done        |
-| 7    | Gabriel | [# - server]    | Done        |
 | 7    | Jan     | [#36 - client](https://github.com/sopra-fs24-group-11/client/issues/36)  | Done        |
 | 7    | Jan     | [#39 - client](https://github.com/sopra-fs24-group-11/client/issues/39)  | Done        |
 | 7    | Jan     | [#55 - client](https://github.com/sopra-fs24-group-11/client/issues/55)  | Done        |
