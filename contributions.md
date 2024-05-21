@@ -94,5 +94,5 @@
 | 7    | Jan     | # - client    | Done        |
 | 7    | Livio   | # - client    | Done        |
 | 7    | Livio   | # - client    | Done        |
-| 7    | Patrik  | # - client    | Done        |
-| 7    | Patrik  | # - client    | Done        |
+| 7    | Patrik  | #56 - client  | Done        |
+| 7    | Patrik  | #54 - client  | Done        |
