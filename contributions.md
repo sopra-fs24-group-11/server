@@ -100,5 +100,5 @@
 | 7    | Jan     | [#57 - client](https://github.com/sopra-fs24-group-11/client/issues/57)  | Done        |
 | 7    | Livio   | [# - client]    | Done        |
 | 7    | Livio   | [# - client]    | Done        |
-| 7    | Patrik  | [#56 - client](https://github.com/sopra-fs24-group-11/client/issues/56)  | Done        |
-| 7    | Patrik  | [#54 - client](https://github.com/sopra-fs24-group-11/client/issues/54)  | Done        |
+| 7    | Patrik  | [#24 - client](https://github.com/sopra-fs24-group-11/client/issues/24)  | Done        |
+| 7    | Patrik  | [#22 - client](https://github.com/sopra-fs24-group-11/client/issues/22)  | Done        |
