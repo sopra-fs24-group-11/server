@@ -1,6 +1,6 @@
 # **Get-Together - Server**
 
-<img src=https://github.com/sopra-fs24-group-11/client/blob/main/src/graphics/Get-Together.png />
+<img src="https://github.com/sopra-fs24-group-11/client/assets/120049684/1144ddc0-64e8-46fd-8ad7-16a8040692d7" alt="Get-Together Logo" style="width: 50%;" />
 
 ## Table of Content
 
@@ -28,8 +28,8 @@ Welcome to Get-Together! Our platform revolutionizes trip planning by providing 
 
 ## Main Components
 
-The [controllers](https://github.com/sopra-fs24-group-11/server/tree/main/src/main/java/ch/uzh/ifi/hase/soprafs24/controller) act as the receivers of REST calls. They handle incoming requests and delegate the necessary tasks to the appropriate services. We chose to implement two such controllers, namely the TripController and UserController, so that a functional seperation can be achieved between trip logic and pure user logic (like profile management).<br />
-The services play a crucial role in the project as they encapsulate the core logic and ensure the integrity of our trip planner. These services are responsible for creating trips, adding & inviting friends, joining and leaving trips as well as handling list actions.<br />
+The [Controllers](https://github.com/sopra-fs24-group-11/server/tree/main/src/main/java/ch/uzh/ifi/hase/soprafs24/controller) act as the receivers of REST calls. They handle incoming requests and delegate the necessary tasks to the appropriate services. We chose to implement two such controllers, namely the [TripController](https://github.com/sopra-fs24-group-11/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs24/controller/TripController.java) and [UserController](https://github.com/sopra-fs24-group-11/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs24/controller/UserController.java), so that a functional seperation can be achieved between trip logic and pure user logic (like profile or friend management).<br />
+The services play a crucial role in the project as they encapsulate the core logic and ensure the integrity of our trip planner. These services are responsible for creating trips, adding & inviting friends, joining and leaving trips as well as handling list actions. Many services are connected, since for example, when in a trip, the [TripService](https://github.com/sopra-fs24-group-11/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs24/service/TripService.java), [ListService](https://github.com/sopra-fs24-group-11/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs24/service/ListService.java), [TripParticipantService](https://github.com/sopra-fs24-group-11/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs24/service/TripParticipantService.java) and [ConnectionService](https://github.com/sopra-fs24-group-11/server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs24/service/ConnectionService.java) are needed. <br />
 Overall, the controllers and services form an integral part of the Get-Together project. The controllers handle incoming requests while the services ensure proper user & trip logic and functionality.
 
 
@@ -69,18 +69,22 @@ We also recommend using [Postman](https://www.getpostman.com) to test your API E
 ### Deployment
 The main branch is automatically mirrored onto Google Cloud App Engine via GitHub workflow, each time you push onto the main branch. 
 
+We are using Google Cloud SQL together with PostgreSQL, which means that we have a persistent database that stays online when pushing.
 
 ## Roadmap
 Potentially interesting additions to our project could be:
 - Add secure connection (https instead of http).
 - Adding car, bike and other transportation (not just limited on public transport).
-- Make app responsive for mobile screens (since target audience is smartphone users).
+- Make app more responsive for mobile screens (since target audience is smartphone users).
 
 ## Authors and Acknowledgment
 
 ### Authors
 * **Marc Heinimann** - [Marc-Hei](https://github.com/Marc-hei)
 * **Gabriel Stegmaier** - [gstegm](https://github.com/gstegm)
+* **Livio Hartmann** - [livio-h](https://github.com/livio-h)
+* **Patrik Rosenkranz** - [pr-120](https://github.com/pr-120)
+* **Jan Joos** - [jxnjo](https://github.com/jxnjo)
 
 ### Acknowledgments
 We  would like to thank our TA [Cédric](https://github.com/cedric-vr) and the whole team of the course Software Engineering Lab from the University of Zurich.
