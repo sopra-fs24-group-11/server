@@ -89,6 +89,9 @@
 | 7    | Marc    | [#112 - server](https://github.com/sopra-fs24-group-11/server/issues/112) | Done        |
 | 7    | Marc    | [#114 - server](https://github.com/sopra-fs24-group-11/server/issues/114) | Done        |
 | 7    | Marc    | [#115 - server](https://github.com/sopra-fs24-group-11/server/issues/115) | Done        |
+| 7    | Marc    | [#66 - client](https://github.com/sopra-fs24-group-11/client/issues/66) | Done        |
+| 7    | Marc    | [#67 - client](https://github.com/sopra-fs24-group-11/client/issues/67) | Done        |
+| 7    | Marc    | [#68 - client](https://github.com/sopra-fs24-group-11/client/issues/68) | Done        |
 | 7    | Gabriel | [#103 - server](https://github.com/sopra-fs24-group-11/server/issues/103) | Done        |
 | 7    | Gabriel | [#104 - server](https://github.com/sopra-fs24-group-11/server/issues/104) | Done        |
 | 7    | Gabriel | [#105 - server](https://github.com/sopra-fs24-group-11/server/issues/105) | Done        |
