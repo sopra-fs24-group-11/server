@@ -13,7 +13,7 @@ public class Feedback implements Serializable {
   private Long id;
   @Column(nullable = false)
   private Long userId;
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "LONGTEXT")
   private String message;
 
   public Long getId() {

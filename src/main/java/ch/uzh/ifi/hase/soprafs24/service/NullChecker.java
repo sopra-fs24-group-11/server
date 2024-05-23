@@ -102,6 +102,9 @@ public class NullChecker {
     if (dto.getMessage() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message kann nicht null sein.");
     }
+    if (dto.getMessage().length() > 5000) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message kann maximal 5000 Zeichen lang sein.");
+    }
   }
 
   public static void tripPostDTOChecker (TripPostDTO dto) {
