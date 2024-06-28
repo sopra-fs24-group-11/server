@@ -29,27 +29,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-#   deploy:
-#     name: Deploying to Google Cloud
-#     runs-on: ubuntu-latest
-#     needs: test
+  deploy:
+     name: Deploying to Google Cloud
+     runs-on: ubuntu-latest
+     needs: test
 
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v2
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v2
 
-#       - name: Add database variables to application properties
-#         run: |
-#          echo "spring.datasource.url=${{ secrets.DB_URL }}" >> src/main/resources/application-prod.properties
-#          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> src/main/resources/application-prod.properties
+       - name: Add database variables to application properties
+         run: |
+          echo "spring.datasource.url=${{ secrets.DB_URL }}" >> src/main/resources/application-prod.properties
+          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> src/main/resources/application-prod.properties
 
-#       - name: Deploy to App Engine
-#         id: deploy
-#         uses: google-github-actions/deploy-appengine@v0.2.0
-#         with:
-#           deliverables: app.yaml
-#           version: v1
-#           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
+       - name: Deploy to App Engine
+         id: deploy
+         uses: google-github-actions/deploy-appengine@v0.2.0
+         with:
+           deliverables: app.yaml
+           version: v1
+           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
 
-#       - name: Test
-#         run: curl "${{ steps.deploy.outputs.url }}"
+       - name: Test
+         run: curl "${{ steps.deploy.outputs.url }}"

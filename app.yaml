@@ -3,9 +3,9 @@
 
 runtime: java17
 instance_class: F2
-automatic_scaling:
-  min_instances: 1
-  max_instances: 1
+#automatic_scaling:
+#  min_instances: 1
+#  max_instances: 1
 
 vpc_access_connector:
   name: projects/sopra-fs24-group-11-server/locations/europe-west6/connectors/get-together-connector
